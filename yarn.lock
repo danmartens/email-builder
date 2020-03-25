@@ -3988,7 +3988,7 @@ postcss@^7.0.26:
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-posthtml-attrs-parser@^0.1.0:
+posthtml-attrs-parser@^0.1.0, posthtml-attrs-parser@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posthtml-attrs-parser/-/posthtml-attrs-parser-0.1.1.tgz#cc33e00155fb99ba96f67e25e330461f05742ac8"
   integrity sha1-zDPgAVX7mbqW9n4l4zBGHwV0Ksg=
