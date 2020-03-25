@@ -1,4 +1,7 @@
+import fs from 'fs';
+import path from 'path';
 import posthtml, { PostHTML } from 'posthtml';
+
 import inlineCSS from 'posthtml-inline-css';
 import prettier from 'prettier';
 import Handlebars from 'handlebars';
@@ -106,6 +109,10 @@ const tableElement = (tree) => {
 };
 
 export const renderEmail = async (html, data = {}) => {
+  const emailTemplate = Handlebars.compile(
+    fs.readFileSync(path.join(__dirname, 'email.hbs')).toString()
+  );
+
   const template = Handlebars.compile(html);
 
   const result = await posthtml([
@@ -113,7 +120,7 @@ export const renderEmail = async (html, data = {}) => {
     paddingAttribute,
     paddingElement,
     tableElement
-  ]).process(template(data));
+  ]).process(emailTemplate({ isDevelopment: true, content: template(data) }));
 
   return prettier.format(result.html, { parser: 'html' });
 };
