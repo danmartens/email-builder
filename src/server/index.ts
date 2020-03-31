@@ -18,6 +18,11 @@ export const server = () => {
       template({
         emails: fs
           .readdirSync(path.resolve(__dirname, '../emails'))
+          .filter((item) =>
+            fs
+              .statSync(path.join(path.resolve(__dirname, '../emails'), item))
+              .isDirectory()
+          )
           .map((item) => {
             return {
               name: item
