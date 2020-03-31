@@ -27,7 +27,9 @@ export const server = () => {
     );
   });
 
-  app.get('/:name', (req, res) => {
+  app.get('/emails/:name', (req, res) => {
+    const emailName = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
+
     const html = fs
       .readFileSync(
         path.resolve(
@@ -40,9 +42,20 @@ export const server = () => {
       )
       .toString();
 
-    renderEmail(html).then((data) => {
+    renderEmail(emailName, html).then((data) => {
       res.send(data);
     });
+  });
+
+  app.get('/assets/:name/:asset', (req, res) => {
+    const file = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        `../emails/${req.params.name}/assets/${req.params.asset}`
+      )
+    );
+
+    res.send(file);
   });
 
   const watcher = chokidar.watch(path.resolve(__dirname, '../emails/**/*.hbs'));

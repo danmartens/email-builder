@@ -108,7 +108,27 @@ const tableElement = (tree) => {
   });
 };
 
-export const renderEmail = async (html, data = {}) => {
+const imageElement = (emailName: string) => (tree) => {
+  tree.match({ tag: 'img' }, (node) => {
+    if (!node.attrs.src.startsWith('/')) {
+      return node;
+    }
+
+    const src = `/assets/${emailName}/${node.attrs.src.replace(/^\//, '')}`;
+    const width = node.attrs.width || node.attrs['max-width'];
+
+    return {
+      ...node,
+      attrs: {
+        ...node.attrs,
+        src,
+        width
+      }
+    };
+  });
+};
+
+export const renderEmail = async (emailName: string, html, data = {}) => {
   const emailTemplate = Handlebars.compile(
     fs.readFileSync(path.join(__dirname, 'email.hbs')).toString()
   );
@@ -116,7 +136,8 @@ export const renderEmail = async (html, data = {}) => {
   const template = Handlebars.compile(html);
 
   const result = await posthtml([
-    inlineCSS('p { color:red; }'),
+    inlineCSS(),
+    imageElement(emailName),
     paddingAttribute,
     paddingElement,
     tableElement
