@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script>
+      const socket = new WebSocket('ws://localhost:8080');
+
+      socket.addEventListener('message', () => {
+        location.reload();
+      });
+    </script>
+  </head>
+
+  <body>
+    {{{message}}}
+  </body>
+</html>

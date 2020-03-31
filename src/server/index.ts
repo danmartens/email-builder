@@ -33,23 +33,25 @@ export const server = () => {
   });
 
   app.get('/emails/:name', (req, res) => {
-    const emailName = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
+    const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
+    const rootPath = path.resolve(__dirname, `../emails/${name}`);
 
     const html = fs
-      .readFileSync(
-        path.resolve(
-          __dirname,
-          `../emails/${req.params.name.replace(
-            /[^a-z0-9\-_]/gi,
-            ''
-          )}/template.hbs`
-        )
-      )
+      .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail(emailName, html).then((data) => {
-      res.send(data);
-    });
+    renderEmail({ name, rootPath }, html).then(
+      (data) => {
+        res.send(data);
+      },
+      (error) => {
+        const errorTemplate = Handlebars.compile(
+          fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
+        );
+
+        res.send(errorTemplate({ message: error.message }));
+      }
+    );
   });
 
   app.get('/assets/:name/:asset', (req, res) => {

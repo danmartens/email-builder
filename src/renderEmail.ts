@@ -128,20 +128,42 @@ const imageElement = (emailName: string) => (tree) => {
   });
 };
 
-export const renderEmail = async (emailName: string, html, data = {}) => {
+import { Template } from './types';
+
+export const renderEmail = async (template: Template, html, data = {}) => {
   const emailTemplate = Handlebars.compile(
     fs.readFileSync(path.join(__dirname, 'email.hbs')).toString()
   );
 
-  const template = Handlebars.compile(html);
+  const handlebarsTemplate = Handlebars.compile(html);
+
+  if (template.rootPath != null) {
+    const partialsDirectoryPath = path.join(template.rootPath, 'partials');
+
+    if (fs.existsSync(partialsDirectoryPath)) {
+      const handlebarsPartialPaths = fs
+        .readdirSync(partialsDirectoryPath)
+        .map((item) => path.join(partialsDirectoryPath, item))
+        .filter((item) => fs.statSync(item).isFile());
+
+      for (const partialPath of handlebarsPartialPaths) {
+        Handlebars.registerPartial(
+          path.basename(partialPath.replace(/\.hbs$/, '')),
+          Handlebars.compile(fs.readFileSync(partialPath).toString())
+        );
+      }
+    }
+  }
 
   const result = await posthtml([
     inlineCSS(),
-    imageElement(emailName),
+    imageElement(template.name),
     paddingAttribute,
     paddingElement,
     tableElement
-  ]).process(emailTemplate({ isDevelopment: true, content: template(data) }));
+  ]).process(
+    emailTemplate({ isDevelopment: true, content: handlebarsTemplate(data) })
+  );
 
   return prettier.format(result.html, { parser: 'html' });
 };
