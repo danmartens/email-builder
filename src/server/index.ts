@@ -45,6 +45,8 @@ export const server = () => {
         res.send(data);
       },
       (error) => {
+        console.error(error);
+
         const errorTemplate = Handlebars.compile(
           fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
         );
