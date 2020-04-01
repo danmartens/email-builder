@@ -5,58 +5,9 @@ import posthtml, { PostHTML } from 'posthtml';
 import inlineCSS from 'posthtml-inline-css';
 import prettier from 'prettier';
 import Handlebars from 'handlebars';
-
-interface BoxValues {
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
-}
-
-const parseBoxValues = (values: string): BoxValues => {
-  if (typeof values === 'string') {
-    const parsedValues = values.split(/\s+/).map((value) => parseInt(value));
-
-    switch (parsedValues.length) {
-      case 4:
-        return {
-          top: parsedValues[0],
-          left: parsedValues[1],
-          bottom: parsedValues[2],
-          right: parsedValues[3]
-        };
-
-      case 2:
-        return {
-          top: parsedValues[0],
-          left: parsedValues[1],
-          bottom: parsedValues[0],
-          right: parsedValues[1]
-        };
-
-      case 1:
-        return {
-          top: parsedValues[0],
-          left: parsedValues[0],
-          bottom: parsedValues[0],
-          right: parsedValues[0]
-        };
-
-      default:
-        throw new Error(`Invalid padding value: "${values}"`);
-    }
-  }
-
-  return { top: 0, left: 0, bottom: 0, right: 0 };
-};
-
-interface Node {
-  tag: string;
-  attrs?: {
-    [key: string]: string;
-  };
-  content?: Node | Node[];
-}
+import marked from 'marked';
+import { parseBoxValues } from './parseBoxValues';
+import { Node } from './types';
 
 const buildAttrs = (attrs: { [key: string]: string | number | undefined }) => {
   return Object.fromEntries(
@@ -111,13 +62,15 @@ class Section {
         padding.top > 0
           ? {
               tag: 'tr',
-              content: {
-                tag: 'td',
-                attrs: buildAttrs({
-                  colspan,
-                  height: padding.top
-                })
-              }
+              content: [
+                {
+                  tag: 'td',
+                  attrs: buildAttrs({
+                    colspan,
+                    height: padding.top
+                  })
+                }
+              ]
             }
           : undefined,
         {
@@ -129,15 +82,17 @@ class Section {
             {
               tag: 'td',
               attrs: buildAttrs({ align }),
-              content: {
-                ...this.node,
-                attrs: {
-                  ...(this.node.attrs || {}),
-                  align: undefined,
-                  padding: undefined,
-                  'max-width': undefined
+              content: [
+                {
+                  ...this.node,
+                  attrs: {
+                    ...(this.node.attrs || {}),
+                    align: undefined,
+                    padding: undefined,
+                    'max-width': undefined
+                  }
                 }
-              }
+              ]
             },
             padding.right > 0
               ? { tag: 'td', attrs: buildAttrs({ width: padding.right }) }
@@ -147,13 +102,15 @@ class Section {
         padding.bottom > 0
           ? {
               tag: 'tr',
-              content: {
-                tag: 'td',
-                attrs: buildAttrs({
-                  colspan,
-                  height: padding.bottom
-                })
-              }
+              content: [
+                {
+                  tag: 'td',
+                  attrs: buildAttrs({
+                    colspan,
+                    height: padding.bottom
+                  })
+                }
+              ]
             }
           : undefined
       ]
@@ -199,22 +156,54 @@ const tableElement = (tree) => {
 };
 
 const imageElement = (emailName: string) => (tree) => {
-  tree.match({ tag: 'img' }, (node) => {
-    if (!node.attrs.src.startsWith('/')) {
+  tree.match({ tag: 'img' }, (node: Node) => {
+    if (!node.attrs?.src?.startsWith('/')) {
       return node;
     }
 
     const src = `/assets/${emailName}/${node.attrs.src.replace(/^\//, '')}`;
     const width = node.attrs.width || node.attrs['max-width'];
 
-    return {
-      ...node,
-      attrs: {
-        ...node.attrs,
-        src,
-        width
+    return mergeStyle(
+      {
+        width: '100%',
+        'max-width': `${width}px`
+      },
+      {
+        ...node,
+        attrs: {
+          ...node.attrs,
+          src,
+          width
+        }
       }
-    };
+    );
+  });
+};
+
+import parse from 'posthtml-parser';
+
+const syntaxAttribute = (tree) => {
+  tree.match({ attrs: { syntax: /[a-z]+/ } }, (node) => {
+    if (node.attrs.syntax === 'markdown') {
+      return {
+        ...node,
+        attrs: buildAttrs({
+          ...node.attrs,
+          syntax: undefined
+        }),
+        content: parse(
+          marked(
+            node.content[0]
+              .split('\n')
+              .map((line) => line.replace(/^\s+/, ''))
+              .join('\n')
+          )
+        )
+      };
+    }
+
+    throw new Error(`Unkown syntax: ${node.attrs.syntax}`);
   });
 };
 
@@ -246,6 +235,7 @@ export const renderEmail = async (template: Template, html, data = {}) => {
   }
 
   const result = await posthtml([
+    syntaxAttribute,
     inlineCSS(),
     imageElement(template.name),
     section,

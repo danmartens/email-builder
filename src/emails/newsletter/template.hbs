@@ -1,20 +1,77 @@
 <style>
+  h2 {
+    font-family: Courier New, Courier, monospace;
+    color: #000000;
+    text-align: center;
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
   p {
-    font-family: monospace;
+    font-family: Courier New, Courier, monospace;
     font-size: 16px;
     line-height: 1.5em;
   }
+
+  hr {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    width: 80px;
+    margin-top: 60px;
+    margin-bottom: 6px;
+  }
 </style>
 
+{{#*inline "section"}}
+  <div padding="20 0">
+    {{#if imageSrc}}
+      <img align="center" padding="0 0 40 0" width="500" src={{imageSrc}} />
+    {{/if}}
+
+    {{#if heading}}<h2>{{heading}}</h2>{{/if}}
+
+    <div syntax="markdown">
+      {{> @partial-block }}
+    </div>
+  </div>
+{{/inline}}
+
 <div align="center">
-  <p padding="20 30 45 30" max-width="600">
-    After working on the registration system and website for XOXO for the past 9
-    months, we figured it was only fitting to send our Andy (Mangold) to join “the
-    Andys” (Baio and McMillan) at the festival this year. It was well worth the
-    trip to Portland to make new friends and catch up with old ones. After
-    watching Jenny Odell’s talk, he walked straight out of Revolution Hall, took
-    a bus to Powell’s, and bought a copy of her book “How to Do Nothing”, which he
-    finished before landing back home in Baltimore. The book, and XOXO in general,
-    both earn his whole-hearted endorsement.
-  </p>
+  <div padding="80 30 45 30" max-width="600">
+    {{#> section heading="❤️ Happy Valentine’s Day!"}}
+      We sent out physical Valentines this year – conversation hearts
+      with a nerdy twist. Reach out to get on our mailing list for 2021!
+    {{/section}}
+
+    {{#> section heading="✨ Recent Work" imageSrc="/this_is_fine.jpeg"}}
+      In preparation for the release of Queens,
+      [Kilotype’s](https://kilotype.de) largest font family to date,
+      type designers William Montrose and Sebastian Losch wanted to add
+      a simple and beautiful purchasing grid to the website we designed
+      and built for them in 2018. We worked with them to refine and
+      implement a solution that transforms complex font, license, and
+      style selections into a soothing and satisfying experience.
+      Student licenses are also now available!
+
+      Our collaboration with Figure 53 – makers of the industry standard
+      live performance software, QLab – continued over the past year
+      after they reached out to team up with us again for a redesign of
+      [Figure53.com](https://figure53.com). Through a discovery process,
+      we helped separate [QLab](https://qlab.app), a reliable, focused,
+      professional-grade product, from the squishy real-life humans that
+      make it, making way for a holistic redesign of each site under the
+      Figure 53 Umbrella.
+    {{/section}}
+
+    {{#> section heading="🎭 Around Baltimore"}}
+      Some Friends attended the first performance and opening night at
+      [The Voxel](https://voxel.org)! If you’re a local or visiting
+      Baltimore, we recommend going to see The Acme Corperation’s _The
+      First Thing That Happens_ through March 1st or another show in the
+      future.
+    {{/section}}
+  </div>
 </div>

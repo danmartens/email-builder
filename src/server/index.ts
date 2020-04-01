@@ -4,6 +4,7 @@ import express from 'express';
 import WebSocket from 'ws';
 import chokidar from 'chokidar';
 import Handlebars from 'handlebars';
+import stripAnsi from 'strip-ansi';
 import { renderEmail } from '../renderEmail';
 
 export const server = () => {
@@ -51,7 +52,7 @@ export const server = () => {
           fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
         );
 
-        res.send(errorTemplate({ message: error.message }));
+        res.send(errorTemplate({ message: stripAnsi(error.message) }));
       }
     );
   });
