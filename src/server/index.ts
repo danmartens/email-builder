@@ -5,7 +5,7 @@ import WebSocket from 'ws';
 import chokidar from 'chokidar';
 import Handlebars from 'handlebars';
 import stripAnsi from 'strip-ansi';
-import { renderEmail } from '../renderEmail';
+import { renderEmail } from '../posthtml/renderEmail';
 
 export const server = () => {
   const app = express();

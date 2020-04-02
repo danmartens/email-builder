@@ -5,7 +5,7 @@ export interface BoxValues {
   right: number;
 }
 
-export const parseBoxValues = (values: string): BoxValues => {
+const parseBoxValues = (values: string): BoxValues => {
   if (typeof values === 'string') {
     const parsedValues = values.split(/\s+/).map((value) => parseInt(value));
 
@@ -41,3 +41,5 @@ export const parseBoxValues = (values: string): BoxValues => {
 
   return { top: 0, left: 0, bottom: 0, right: 0 };
 };
+
+export default parseBoxValues;

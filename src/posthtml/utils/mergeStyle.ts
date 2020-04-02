@@ -1,7 +1,7 @@
 import parseAttrs from 'posthtml-attrs-parser';
-import { Node } from './types';
+import { Node } from '../types';
 
-export const mergeStyle = (style: object, node: Node) => {
+const mergeStyle = (style: object, node: Node): Node => {
   const attrs = parseAttrs(node.attrs);
 
   attrs.style = { ...style, ...(attrs.style || {}) };
@@ -11,3 +11,5 @@ export const mergeStyle = (style: object, node: Node) => {
     attrs: attrs.compose()
   };
 };
+
+export default mergeStyle;
