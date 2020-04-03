@@ -8,6 +8,7 @@ import tableElement from './tableElement';
 import imageElement from './imageElement';
 import section from './section';
 import syntaxAttribute from './syntaxAttribute';
+import removeUselessElements from './removeUselessElements';
 // const addUniqueId = (node: Node)=> {
 //   if (node.attrs?.id != null) {
 //     return node;
@@ -75,7 +76,8 @@ export const renderEmail = async (template: Template, html, data = {}) => {
     inlineCSS(),
     section,
     imageElement(template.name),
-    tableElement
+    tableElement,
+    removeUselessElements
   ]).process(
     emailTemplate({ isDevelopment: true, content: handlebarsTemplate(data) })
   );
