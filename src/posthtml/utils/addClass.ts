@@ -1,10 +1,14 @@
 import parseAttrs from 'posthtml-attrs-parser';
 import { Node } from '../types';
 
-const mergeStyle = (style: object) => (node: Node): Node => {
+const addClass = (className: string) => (node: Node): Node => {
   const attrs = parseAttrs(node.attrs);
 
-  attrs.style = { ...style, ...(attrs.style || {}) };
+  if (attrs.class == null) {
+    attrs.class = [];
+  }
+
+  attrs.class.push(className);
 
   return {
     ...node,
@@ -12,4 +16,4 @@ const mergeStyle = (style: object) => (node: Node): Node => {
   };
 };
 
-export default mergeStyle;
+export default addClass;

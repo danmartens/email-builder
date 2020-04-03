@@ -8,42 +8,7 @@ import tableElement from './tableElement';
 import imageElement from './imageElement';
 import section from './section';
 import syntaxAttribute from './syntaxAttribute';
-import removeUselessElements from './removeUselessElements';
-// const addUniqueId = (node: Node)=> {
-//   if (node.attrs?.id != null) {
-//     return node;
-//   }
-
-//   return {
-//     ...node,
-//     attrs: {
-//       ...node.attrs,
-//       id:
-//     }
-//   }
-// }
-// const reverseMergeAttrs = (attrs: object, node: Node): Node => {
-//   return {
-//     ...node,
-//     attrs: {
-//       ...attrs,
-//       ...(node.attrs ?? {})
-//     }
-//   };
-// };
-
-// const getAttr = (node: Node, attr: string): string | undefined => {
-//   if (node.attrs == null) {
-//     return;
-//   }
-
-//   return node.attrs[attr];
-// };
-
-// const hasClass = (node: Node, className: string) => {
-//   return node.attrs?.class?.split(/\s+/)?.includes(className) || false;
-// };
-
+import removeExtraElements from './removeExtraElements';
 import { Template } from './types';
 
 export const renderEmail = async (template: Template, html, data = {}) => {
@@ -77,7 +42,7 @@ export const renderEmail = async (template: Template, html, data = {}) => {
     section,
     imageElement(template.name),
     tableElement,
-    removeUselessElements
+    removeExtraElements
   ]).process(
     emailTemplate({ isDevelopment: true, content: handlebarsTemplate(data) })
   );

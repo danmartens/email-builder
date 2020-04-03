@@ -1,0 +1,36 @@
+[
+  {
+    "label": "Section 1 Heading",
+    "name": "section1Heading",
+    "type": "text",
+    "defaultValue": "This is a Newsletter"
+  },
+  {
+    "label": "Section 1 Image",
+    "name": "section1ImageUrl",
+    "type": "image",
+    "dimensions": {
+      "maxWidth": 400,
+      "maxHeight": 400
+    },
+    "defaultValue": "https://place-hold.it/400x400"
+  },
+  {
+    "label": "Section 1 Text",
+    "name": "section1Text",
+    "type": "text",
+    "defaultValue": "lorem ipsum"
+  },
+  {
+    "label": "Section 1 CTA URL",
+    "name": "section1CtaUrl",
+    "type": "text",
+    "defaultValue": "https://friendsoftheweb.com/work"
+  },
+  {
+    "label": "Section 1 CTA Text",
+    "name": "section1CtaText",
+    "type": "text",
+    "defaultValue": "View Our Work"
+  }
+]

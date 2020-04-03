@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <title></title>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
 
-    {{#if isDevelopment}}
-      <script>
-        const socket = new WebSocket('ws://localhost:8080');
+    <style>
+      /* Reset for Windows Mail 10 */
+      a { text-decoration: none; }
 
-        socket.addEventListener('message', () => {
-          location.reload();
-        });
-      </script>
-    {{/if}}
+      /* Reset for MS Office */
+      p { margin: 0; }
+
+      @media only screen and (-webkit-min-device-pixel-ratio: 2),
+                             (min-resolution: 192dpi) {
+        .non-retina-image {
+          display: none !important;
+        }
+
+        .retina-image {
+          display: block !important;
+        }
+      }
+    </style>
+
+    <!--[if (!IE)&(!mso)]>-->
+      <style>
+        table {
+          width: 100% !important;
+        }
+      </style>
+    <!--<![endif]-->
   </head>
 
   <body style="margin: 0; padding: 0;">

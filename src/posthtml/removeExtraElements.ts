@@ -1,6 +1,6 @@
 import { Node } from './types';
 
-const removeUselessElements = (tree) => {
+const removeExtraElements = (tree) => {
   tree.match({ tag: 'td' }, (node: Node) => {
     if (
       node.content?.length === 1 &&
@@ -15,4 +15,4 @@ const removeUselessElements = (tree) => {
   });
 };
 
-export default removeUselessElements;
+export default removeExtraElements;
