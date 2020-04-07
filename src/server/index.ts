@@ -145,7 +145,7 @@ export const server = () => {
           const objectKey = `${name}-${fingerprint}${ext}`;
 
           return putObject(s3BucketName, objectKey, imageBuffer).then(() => {
-            console.log('Successfully uploaded image.');
+            console.log(`Successfully uploaded image: ${objectKey}`);
 
             res.setHeader('Content-Type', 'application/json');
 
@@ -185,10 +185,16 @@ export const server = () => {
   });
 
   watcher.on('change', (changedPath) => {
+    const relativeChangedPath = changedPath.replace(emailsPath, '');
+
+    console.log(`File changed: ${relativeChangedPath}`);
+
     for (const connection of connections) {
+      if (connection.readyState !== WebSocket.OPEN) continue;
+
       connection.send(
         JSON.stringify({
-          path: changedPath.replace(emailsPath, '')
+          path: relativeChangedPath
         })
       );
     }
@@ -214,10 +220,18 @@ export const server = () => {
         }
 
         console.log(
-          `\n📧 Development server is now listening at ${chalk.cyan(
+          `📧 Server is now listening at ${chalk.cyan(
             `http://${host}:${port}`
           )}\n`
         );
+
+        console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);
+
+        if (s3BucketName != null) {
+          console.log(`S3 Bucket: \t${chalk.cyan(s3BucketName)}`);
+        }
+
+        console.log('\nWatching for changes...\n');
 
         // ['SIGINT', 'SIGTERM'].forEach(signal => {
         //   process.on(signal, () => {
