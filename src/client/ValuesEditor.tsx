@@ -86,8 +86,8 @@ export function ValuesEditor(props: Props) {
             {valueSchema.type === 'image' && (
               <ImageUploader
                 value={values.get(valueSchema.name)}
-                maxWidth={valueSchema.dimensions?.maxWidth || 1000}
-                maxHeight={valueSchema.dimensions?.maxHeight || 1000}
+                maxWidth={valueSchema.dimensions?.maxWidth}
+                maxHeight={valueSchema.dimensions?.maxHeight}
                 onUpload={(url) => {
                   onChange(values.set(valueSchema.name, url));
                 }}

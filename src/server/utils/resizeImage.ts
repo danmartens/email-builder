@@ -1,10 +1,11 @@
 import sharp from 'sharp';
+import { Dimensions } from '../types';
 
 export default function resizeImage(
   inputPath: string,
-  dimensions: [number, number]
+  [width, height]: Dimensions
 ) {
   return sharp(inputPath)
-    .resize({ width: dimensions[0] })
+    .resize({ width, height })
     .toBuffer();
 }

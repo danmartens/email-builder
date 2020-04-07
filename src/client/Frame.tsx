@@ -9,13 +9,13 @@ interface Props {
 }
 
 const useWebSocket = (url: string) => {
-  const [data, setData] = useState<string>();
+  const [message, setMessage] = useState<{ data: string }>();
 
   useEffect(() => {
     const socket = new WebSocket(url);
 
     socket.addEventListener('message', (event) => {
-      setData(event.data);
+      setMessage(event);
     });
 
     return () => {
@@ -23,7 +23,7 @@ const useWebSocket = (url: string) => {
     };
   }, []);
 
-  return data;
+  return message;
 };
 
 const Frame: React.FC<Props> = (props) => {

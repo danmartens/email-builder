@@ -5,8 +5,8 @@ import Loader from './Loader';
 
 interface Props {
   value: string;
-  maxWidth: number;
-  maxHeight: number;
+  maxWidth?: number;
+  maxHeight?: number;
   onUpload(url: string): void;
 }
 
@@ -41,13 +41,19 @@ export default class ImageUploader extends React.PureComponent<Props, State> {
       const data = new FormData();
 
       data.set('image', file);
-      data.set('maxWidth', maxWidth.toString());
-      data.set('maxHeight', maxHeight.toString());
+
+      if (maxWidth != null) {
+        data.set('maxWidth', maxWidth.toString());
+      }
+
+      if (maxHeight != null) {
+        data.set('maxHeight', maxHeight.toString());
+      }
 
       axios.post('/images', data).then(({ data }) => {
         this.setState({ status: 'success' });
 
-        this.props.onUpload(data.imageUrl);
+        this.props.onUpload(data.retinaImageUrl);
       });
     }
   }

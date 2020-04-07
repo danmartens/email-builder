@@ -10,8 +10,7 @@
     "name": "section1ImageUrl",
     "type": "image",
     "dimensions": {
-      "maxWidth": 400,
-      "maxHeight": 400
+      "maxWidth": 400
     },
     "defaultValue": "https://place-hold.it/400x400"
   },
