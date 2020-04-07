@@ -1,62 +1,20 @@
-import React, { useRef, useState, useEffect } from 'react';
-import Values from './Values';
-import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
+import React, { useRef, useLayoutEffect } from 'react';
 
 interface Props {
   editorVisible: boolean;
-  emailName: string;
-  values: Values;
+  source: string;
 }
 
-const useWebSocket = (url: string) => {
-  const [message, setMessage] = useState<{ data: string }>();
-
-  useEffect(() => {
-    const socket = new WebSocket(url);
-
-    socket.addEventListener('message', (event) => {
-      setMessage(event);
-    });
-
-    return () => {
-      socket.close();
-    };
-  }, []);
-
-  return message;
-};
-
 const Frame: React.FC<Props> = (props) => {
-  const { emailName, editorVisible, values } = props;
+  const { editorVisible, source } = props;
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const message = useWebSocket('ws://localhost:8081');
 
-  useDebouncedLayoutEffect(
-    () => {
-      const controller = new AbortController();
-      const { signal } = controller;
-
-      fetch(`http://localhost:5000/emails/${emailName}`, {
-        method: 'post',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ data: values.valueOf() }),
-        signal
-      })
-        .then((response) => response.text())
-        .then((html) => {
-          if (frameRef.current != null) {
-            frameRef.current.contentWindow.document.open();
-            frameRef.current.contentWindow.document.write(html);
-          }
-        });
-
-      return () => {
-        controller.abort();
-      };
-    },
-    250,
-    [emailName, values, message]
-  );
+  useLayoutEffect(() => {
+    if (frameRef.current != null) {
+      frameRef.current.contentWindow.document.open();
+      frameRef.current.contentWindow.document.write(source);
+    }
+  }, [source]);
 
   return (
     <iframe

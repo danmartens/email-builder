@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ToggleSource from './ToggleSource';
 import ValuesEditor from './ValuesEditor';
@@ -8,6 +8,8 @@ import storeValues from './utils/storeValues';
 import fetchValues from './utils/fetchValues';
 import Values from './Values';
 import { Schema } from '../types';
+import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
+import useWebSocket from './utils/useWebSocket';
 
 declare global {
   interface Window {
@@ -15,96 +17,99 @@ declare global {
   }
 }
 
-interface Props {}
-
-type State = { editorVisible: boolean; sourceVisible: boolean; values: Values };
-
-function getEditorVisible(): boolean {
-  try {
-    return JSON.parse(sessionStorage.getItem('editorVisible') || 'false');
-  } catch (error) {
-    return false;
-  }
-}
-
 const { EMAIL } = window;
 
-class Email extends React.PureComponent<Props, State> {
-  static defaultProps = { schema: {} };
+const Email: React.FC = () => {
+  const [schema, setSchema] = useState(EMAIL.schema);
 
-  state = {
-    editorVisible: getEditorVisible(),
-    sourceVisible: false,
-    values: new Values(fetchValues(EMAIL.name, EMAIL.schema))
-  };
-
-  componentDidMount() {
-    this.updateMargin();
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevState.editorVisible !== this.state.editorVisible) {
-      this.updateMargin();
-
-      try {
-        sessionStorage.setItem(
-          'editorVisible',
-          JSON.stringify(this.state.editorVisible)
-        );
-      } catch (error) {}
+  const [editorVisible, setEditorVisible] = useState(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem('editorVisible') || 'false');
+    } catch (error) {
+      return false;
     }
+  });
 
-    if (prevState.values !== this.state.values) {
-      storeValues(EMAIL.name, this.state.values);
-    }
-  }
+  const [values, setValues] = useState(
+    new Values(fetchValues(EMAIL.name, schema))
+  );
 
-  updateMargin() {
+  const [source, setSource] = useState<string>();
+
+  const message = useWebSocket('ws://localhost:8081');
+
+  useDebouncedLayoutEffect(
+    () => {
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      fetch(`http://localhost:5000/emails/${EMAIL.name}`, {
+        method: 'post',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ data: values.valueOf() }),
+        signal
+      })
+        .then((response) => response.text())
+        .then((source) => {
+          setSource(source);
+        });
+
+      return () => {
+        controller.abort();
+      };
+    },
+    250,
+    [values, message]
+  );
+
+  const sourceVisible = false;
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('editorVisible', JSON.stringify(editorVisible));
+    } catch (error) {}
+
     if (document.body == null) {
       return;
     }
 
-    if (this.state.editorVisible) {
+    if (editorVisible) {
       document.body.style.marginLeft = '300px';
     } else {
       document.body.style.marginLeft = '0';
     }
-  }
+  }, [editorVisible]);
 
-  render() {
-    const { values, editorVisible, sourceVisible } = this.state;
+  useEffect(() => {
+    storeValues(EMAIL.name, values);
+  }, [values]);
 
-    return (
-      <>
-        <ButtonGroup>
-          <ToggleSource
-            sourceVisible={sourceVisible}
-            onClick={() => {
-              this.setState({ sourceVisible: !sourceVisible });
-            }}
-          />
-        </ButtonGroup>
-
-        <Frame
-          editorVisible={editorVisible}
-          emailName="newsletter"
-          values={values}
-        />
-
-        <ValuesEditor
-          schema={EMAIL.schema}
-          values={values}
-          visible={editorVisible}
-          onToggle={() => {
-            this.setState({ editorVisible: !editorVisible });
-          }}
-          onChange={(values) => {
-            this.setState({ values });
+  return (
+    <>
+      {/* <ButtonGroup>
+        <ToggleSource
+          sourceVisible={sourceVisible}
+          onClick={() => {
+            // this.setState({ sourceVisible: !sourceVisible });
           }}
         />
-      </>
-    );
-  }
-}
+      </ButtonGroup> */}
+
+      <Frame editorVisible={editorVisible} source={source} />
+
+      <ValuesEditor
+        schema={schema}
+        values={values}
+        visible={editorVisible}
+        onToggle={() => {
+          setEditorVisible((value) => !value);
+        }}
+        onChange={(values) => {
+          setValues(values);
+        }}
+      />
+    </>
+  );
+};
 
 ReactDOM.render(<Email />, document.getElementById('container'));
