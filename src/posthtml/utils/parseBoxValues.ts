@@ -7,7 +7,10 @@ export interface BoxValues {
 
 const parseBoxValues = (values: string): BoxValues => {
   if (typeof values === 'string') {
-    const parsedValues = values.split(/\s+/).map((value) => parseInt(value));
+    const parsedValues = values
+      .split(/\s+/)
+      .filter((value) => /^\d+$/.test(value))
+      .map((value) => parseInt(value));
 
     switch (parsedValues.length) {
       case 4:
