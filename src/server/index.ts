@@ -13,12 +13,9 @@ import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
 import config from '../../webpack.config';
 import { renderEmail } from '../posthtml/renderEmail';
-import resizeImage from './utils/resizeImage';
-import getFingerprint from './utils/getFingerprint';
-import putObject from './utils/putObject';
 import parseSchema from './utils/parseSchema';
 import Configuration from '../Configuration';
-import { Dimensions } from './types';
+import resizeAndUploadImages from './utils/resizeAndUploadImages';
 
 export const server = () => {
   const {
@@ -124,55 +121,6 @@ export const server = () => {
     res.send(file);
   });
 
-  const dimensionsString = (dimensions: Dimensions): string => {
-    const [width, height] = dimensions;
-
-    if (width != null && height != null) {
-      return `${width}w${height}h`;
-    }
-
-    if (width != null) {
-      return `${width}w`;
-    }
-
-    if (height != null) {
-      return `${height}h`;
-    }
-  };
-
-  const resizeAndUploadImages = async (
-    imageFile: { originalname: string; path: string },
-    dimensions: Dimensions
-  ) => {
-    const { name, ext } = path.parse(imageFile.originalname);
-
-    const retinaDimensions: Dimensions = [
-      dimensions[0] != null ? dimensions[0] * 1.5 : undefined,
-      dimensions[1] != null ? dimensions[1] * 1.5 : undefined
-    ];
-
-    const [imageBuffer, retinaImageBuffer, fingerprint] = await Promise.all([
-      resizeImage(imageFile.path, dimensions),
-      resizeImage(imageFile.path, retinaDimensions),
-      getFingerprint(imageFile.path)
-    ]);
-
-    const imageKey = `${name}-${dimensionsString(
-      dimensions
-    )}-${fingerprint}${ext}`;
-
-    const retinaImageKey = `${name}-${dimensionsString(
-      retinaDimensions
-    )}-${fingerprint}${ext}`;
-
-    await Promise.all([
-      putObject(s3BucketName, imageKey, imageBuffer as Buffer),
-      putObject(s3BucketName, retinaImageKey, retinaImageBuffer as Buffer)
-    ]);
-
-    return [imageKey, retinaImageKey];
-  };
-
   app.post(
     '/images',
     upload.single('image'),
@@ -216,8 +164,6 @@ export const server = () => {
         });
     }
   );
-
-  console.log('SETUP');
 
   const watcher = chokidar.watch(
     path.resolve(emailsPath, '**/*.{hbs,json,png,jpg,jpeg,gif}')

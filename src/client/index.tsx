@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import download from 'downloadjs';
-import ToggleSource from './ToggleSource';
 import ValuesEditor from './ValuesEditor';
 import Frame from './Frame';
 import ButtonGroup from './ButtonGroup';
@@ -63,8 +62,6 @@ const Email: React.FC = () => {
     250,
     [values, message]
   );
-
-  const sourceVisible = false;
 
   useEffect(() => {
     try {

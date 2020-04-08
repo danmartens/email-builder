@@ -22,7 +22,7 @@ const useDebouncedLayoutEffect = (
         cleanup.current();
       }
     };
-  }, [delay, effect, ...deps]);
+  }, [delay, ...deps]);
 };
 
 export default useDebouncedLayoutEffect;
