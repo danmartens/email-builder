@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import download from 'downloadjs';
 import ToggleSource from './ToggleSource';
 import ValuesEditor from './ValuesEditor';
 import Frame from './Frame';
@@ -10,6 +11,7 @@ import Values from './Values';
 import { Schema } from '../types';
 import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
 import useWebSocket from './utils/useWebSocket';
+import Button from './Button';
 
 declare global {
   interface Window {
@@ -86,14 +88,16 @@ const Email: React.FC = () => {
 
   return (
     <>
-      {/* <ButtonGroup>
-        <ToggleSource
-          sourceVisible={sourceVisible}
+      <ButtonGroup>
+        <Button
+          disabled={source == null}
           onClick={() => {
-            // this.setState({ sourceVisible: !sourceVisible });
+            download(source, `${EMAIL.name}.html`, 'text/html');
           }}
-        />
-      </ButtonGroup> */}
+        >
+          ↓
+        </Button>
+      </ButtonGroup>
 
       <Frame editorVisible={editorVisible} source={source} />
 

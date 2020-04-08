@@ -64,8 +64,8 @@ const imageElement = (emailName: string) => (tree) => {
             tag: 'style',
             attrs: {},
             content: [
-              `@media only screen (-webkit-max-device-pixel-ratio: 1.99),
-                              (max-resolution: 191dpi) {
+              `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
+                                      (max-resolution: 191dpi) {
                 #${id} {
                   width: 100% !important;
                   max-width: ${width}px !important;
