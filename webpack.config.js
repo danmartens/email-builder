@@ -4,20 +4,13 @@ const webpack = require('webpack');
 const projectRoot = process.cwd();
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   context: projectRoot,
   plugins: [new webpack.HotModuleReplacementPlugin()],
   entry: path.resolve(__dirname, './src/client/index.tsx'),
   output: {
-    path: path.join(projectRoot, 'src/server/public/assets')
+    path: path.join(projectRoot, 'lib/server/public')
   },
-  // resolve: {
-  //   modules: [
-  //     projectRoot,
-  //     path.join(projectRoot, 'node_modules'),
-  //     'node_modules'
-  //   ]
-  // },
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json']
   },

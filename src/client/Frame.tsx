@@ -2,7 +2,7 @@ import React, { useRef, useLayoutEffect } from 'react';
 
 interface Props {
   editorVisible: boolean;
-  source: string;
+  source: string | undefined;
 }
 
 const Frame: React.FC<Props> = (props) => {
@@ -10,7 +10,7 @@ const Frame: React.FC<Props> = (props) => {
   const frameRef = useRef<HTMLIFrameElement>(null);
 
   useLayoutEffect(() => {
-    if (frameRef.current != null) {
+    if (frameRef.current != null && source != null) {
       frameRef.current.contentWindow.document.open();
       frameRef.current.contentWindow.document.write(source);
     }

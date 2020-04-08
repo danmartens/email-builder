@@ -17,7 +17,7 @@ import parseSchema from './utils/parseSchema';
 import Configuration from '../Configuration';
 import resizeAndUploadImages from './utils/resizeAndUploadImages';
 
-export const server = () => {
+export const server = (mode: 'development' | 'production' = 'production') => {
   const {
     projectPath,
     emailsPath,
@@ -37,6 +37,10 @@ export const server = () => {
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
+
+  if (mode === 'production') {
+    app.use(express.static(path.join(__dirname, 'public')));
+  }
 
   app.get('/', (req, res) => {
     const template = Handlebars.compile(
@@ -75,7 +79,10 @@ export const server = () => {
       res.send(
         template({
           name,
-          schema: JSON.stringify(parseSchema(schema))
+          schema: JSON.stringify(parseSchema(schema)),
+          scriptUrl: `http://${host}:${
+            mode === 'production' ? port : assetsPort
+          }/main.js`
         })
       );
     } catch (error) {
@@ -196,7 +203,17 @@ export const server = () => {
   });
 
   app.listen(port, () => {
-    if (process.env.NODE_ENV !== 'production') {
+    console.log(
+      `📧 Server is now listening at ${chalk.cyan(`http://${host}:${port}`)}\n`
+    );
+
+    console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);
+
+    if (s3BucketName != null) {
+      console.log(`S3 Bucket: \t${chalk.cyan(s3BucketName)}`);
+    }
+
+    if (mode === 'development') {
       const options = {
         host,
         port: assetsPort,
@@ -212,18 +229,6 @@ export const server = () => {
       server.listen(assetsPort, host, (error) => {
         if (error) {
           return console.log(error);
-        }
-
-        console.log(
-          `📧 Server is now listening at ${chalk.cyan(
-            `http://${host}:${port}`
-          )}\n`
-        );
-
-        console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);
-
-        if (s3BucketName != null) {
-          console.log(`S3 Bucket: \t${chalk.cyan(s3BucketName)}`);
         }
 
         console.log('\nWatching for changes...\n');
