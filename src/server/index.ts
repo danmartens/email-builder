@@ -97,7 +97,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail({ mode: 'development', name, rootPath }, html, {
+    renderEmail({ name, rootPath }, html, {
       publish: false,
       data: req.body.data
     }).then(
@@ -124,7 +124,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail({ mode: 'production', name, rootPath }, html, {
+    renderEmail({ name, rootPath }, html, {
       publish: true,
       data: req.body.data
     }).then(

@@ -22,6 +22,7 @@ const { EMAIL } = window;
 
 const Email: React.FC = () => {
   const [schema, setSchema] = useState(EMAIL.schema);
+  const [reloading, setReloading] = useState(true);
   const [downloading, setDownloading] = useState(false);
 
   const [editorVisible, setEditorVisible] = useState(() => {
@@ -40,6 +41,10 @@ const Email: React.FC = () => {
 
   const message = useWebSocket('ws://localhost:8081');
 
+  useEffect(() => {
+    setReloading(true);
+  }, [values, message]);
+
   useDebouncedLayoutEffect(
     () => {
       const controller = new AbortController();
@@ -54,13 +59,16 @@ const Email: React.FC = () => {
         .then((response) => response.text())
         .then((source) => {
           setSource(source);
+        })
+        .finally(() => {
+          setReloading(false);
         });
 
       return () => {
         controller.abort();
       };
     },
-    250,
+    500,
     [values, message]
   );
 
@@ -113,7 +121,11 @@ const Email: React.FC = () => {
         </Button>
       </ButtonGroup>
 
-      <Frame editorVisible={editorVisible} source={source} />
+      <Frame
+        editorVisible={editorVisible}
+        source={source}
+        reloading={reloading}
+      />
 
       <ValuesEditor
         schema={schema}
