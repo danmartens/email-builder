@@ -16,7 +16,7 @@ const imageElement = (emailName: string) => (tree) => {
       }
 
       const id = uniqueId('image-');
-      const width = node.attrs.width || node.attrs['data-max-width'];
+      const width = node.attrs['data-max-width'] || node.attrs.width;
 
       let src = node.attrs.src;
 
@@ -24,7 +24,7 @@ const imageElement = (emailName: string) => (tree) => {
         src = `/assets/${emailName}/${node.attrs.src.replace(/^\//, '')}`;
       }
 
-      const nonRetinaImage = pipe(
+      let nonRetinaImage = pipe(
         mergeStyle({
           width: '100%',
           'max-width': `${width}px`
@@ -33,9 +33,16 @@ const imageElement = (emailName: string) => (tree) => {
           src,
           width,
           'data-original-src': node.attrs.src
-        }),
-        addClass('non-retina-image')
+        })
       )(node);
+
+      if (width == null) {
+        transformedNodes.add(nonRetinaImage);
+
+        return nonRetinaImage;
+      }
+
+      nonRetinaImage = addClass('non-retina-image')(nonRetinaImage);
 
       const retinaImage = pipe(
         mergeStyle({

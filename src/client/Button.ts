@@ -25,6 +25,11 @@ const Button = styled.button`
   :hover {
     background-color: rgba(47, 224, 200, 0.5);
   }
+
+  :disabled {
+    background-color: rgba(200, 200, 200, 0.3);
+    color: rgba(100, 100, 100, 0.8);
+  }
 `;
 
 Button.defaultProps = {

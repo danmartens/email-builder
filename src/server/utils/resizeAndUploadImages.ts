@@ -29,16 +29,20 @@ const resizeAndUploadImage = async (
     .update(resizedImage.toString(), 'utf8')
     .digest('hex');
 
-  const objectKey = `${name}-${dimensionsString(
-    dimensions
-  )}-${fingerprint}${ext}`;
+  const objectKey = [name, dimensionsString(dimensions), `${fingerprint}${ext}`]
+    .filter((part) => part != null)
+    .join('-');
 
   return putObject(s3BucketName, objectKey, resizedImage as Buffer).then(
-    (result) => ({
-      objectKey,
-      objectUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${objectKey}`,
-      result
-    })
+    (result) => {
+      console.log(`Uploaded image: ${objectKey}`);
+
+      return {
+        objectKey,
+        objectUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${objectKey}`,
+        result
+      };
+    }
   );
 };
 

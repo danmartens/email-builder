@@ -10,8 +10,20 @@ import section from './section';
 import syntaxAttribute from './syntaxAttribute';
 import removeExtraElements from './removeExtraElements';
 import { Template } from './types';
+import uploadImages from './uploadImages';
 
-export const renderEmail = async (template: Template, html, data = {}) => {
+interface Options {
+  publish: boolean;
+  data?: object;
+}
+
+export const renderEmail = async (
+  template: Template,
+  html,
+  options: Options = {
+    publish: false
+  }
+) => {
   const emailTemplate = Handlebars.compile(
     fs.readFileSync(path.join(__dirname, 'email.hbs')).toString()
   );
@@ -36,15 +48,21 @@ export const renderEmail = async (template: Template, html, data = {}) => {
     }
   }
 
-  const result = await posthtml([
-    syntaxAttribute,
-    inlineCSS(),
-    section,
-    imageElement(template.name),
-    tableElement,
-    removeExtraElements
-  ]).process(
-    emailTemplate({ isDevelopment: true, content: handlebarsTemplate(data) })
+  const result = await posthtml(
+    [
+      syntaxAttribute,
+      inlineCSS(),
+      section,
+      imageElement(template.name),
+      tableElement,
+      removeExtraElements,
+      options.publish ? uploadImages(template) : undefined
+    ].filter(Boolean)
+  ).process(
+    emailTemplate({
+      isDevelopment: true,
+      content: handlebarsTemplate(options.data)
+    })
   );
 
   return prettier.format(result.html, { parser: 'html' });

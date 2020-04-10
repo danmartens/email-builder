@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import download from 'downloadjs';
 import ValuesEditor from './ValuesEditor';
@@ -22,6 +22,7 @@ const { EMAIL } = window;
 
 const Email: React.FC = () => {
   const [schema, setSchema] = useState(EMAIL.schema);
+  const [downloading, setDownloading] = useState(false);
 
   const [editorVisible, setEditorVisible] = useState(() => {
     try {
@@ -83,16 +84,32 @@ const Email: React.FC = () => {
     storeValues(EMAIL.name, values);
   }, [values]);
 
+  const handleDownload = useCallback(() => {
+    setDownloading(true);
+
+    fetch(`http://localhost:5000/emails/${EMAIL.name}/publish`, {
+      method: 'post',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ data: values.valueOf() })
+    })
+      .then((response) => response.text())
+      .then((source) => {
+        download(source, `${EMAIL.name}.html`, 'text/html');
+      })
+      .finally(() => {
+        setDownloading(false);
+      });
+  }, [values]);
+
   return (
     <>
       <ButtonGroup>
         <Button
-          disabled={source == null}
-          onClick={() => {
-            download(source, `${EMAIL.name}.html`, 'text/html');
-          }}
+          title="Download"
+          disabled={downloading}
+          onClick={handleDownload}
         >
-          ↓
+          ⬇
         </Button>
       </ButtonGroup>
 

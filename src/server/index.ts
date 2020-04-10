@@ -97,11 +97,10 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail(
-      { mode: 'development', name, rootPath },
-      html,
-      req.body.data
-    ).then(
+    renderEmail({ mode: 'development', name, rootPath }, html, {
+      publish: false,
+      data: req.body.data
+    }).then(
       (data) => {
         res.send(data);
       },
@@ -117,7 +116,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     );
   });
 
-  app.post('/emails/:name/download', (req, res) => {
+  app.post('/emails/:name/publish', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
     const rootPath = path.resolve(emailsPath, name);
 
@@ -125,11 +124,10 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail(
-      { mode: 'production', name, rootPath },
-      html,
-      req.body.data
-    ).then(
+    renderEmail({ mode: 'production', name, rootPath }, html, {
+      publish: true,
+      data: req.body.data
+    }).then(
       (data) => {
         res.send(data);
       },
@@ -147,10 +145,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
   app.get('/assets/:name/:asset', (req, res) => {
     const file = fs.readFileSync(
-      path.resolve(
-        __dirname,
-        `../emails/${req.params.name}/assets/${req.params.asset}`
-      )
+      path.join(emailsPath, `${req.params.name}/assets/${req.params.asset}`)
     );
 
     res.send(file);
@@ -179,10 +174,6 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         }
       ])
         .then(([image, retinaImage]) => {
-          console.log(
-            `Uploaded images:\n  - ${image.objectKey}\n  - ${retinaImage.objectKey}\n`
-          );
-
           res.setHeader('Content-Type', 'application/json');
 
           res.send(

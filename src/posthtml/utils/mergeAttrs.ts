@@ -1,12 +1,13 @@
 import { Node } from '../types';
+import buildAttrs from './buildAttrs';
 
 const mergeAttrs = (attrs: object) => (node: Node): Node => {
   return {
     ...node,
-    attrs: {
+    attrs: buildAttrs({
       ...(node.attrs ?? {}),
       ...attrs
-    }
+    })
   };
 };
 
