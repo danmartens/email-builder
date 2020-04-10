@@ -28,6 +28,12 @@ class Configuration {
   get s3BucketName(): string | undefined {
     return process.env.S3_BUCKET_NAME;
   }
+
+  get s3Subdomain() {
+    return this.awsRegion == null || this.awsRegion === 'us-east-1'
+      ? 's3'
+      : `s3-${this.awsRegion}`;
+  }
 }
 
 export default Configuration;

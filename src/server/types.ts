@@ -1,1 +1,4 @@
-export type Dimensions = [number | undefined, number | undefined];
+export interface Dimensions {
+  width?: number;
+  height?: number;
+}

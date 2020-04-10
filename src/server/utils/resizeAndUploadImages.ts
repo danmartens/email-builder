@@ -1,47 +1,49 @@
 import path from 'path';
+import crypto from 'crypto';
 import resizeImage from './resizeImage';
-import getFingerprint from './getFingerprint';
 import putObject from './putObject';
 import Configuration from '../../Configuration';
 import { Dimensions } from '../types';
 
-const resizeAndUploadImages = async (
+const resizeAndUploadImages = (
+  imageFile: { originalname: string; path: string },
+  imageDimensions: Dimensions[]
+) =>
+  Promise.all(
+    imageDimensions.map((dimensions) =>
+      resizeAndUploadImage(imageFile, dimensions)
+    )
+  );
+
+const resizeAndUploadImage = async (
   imageFile: { originalname: string; path: string },
   dimensions: Dimensions
 ) => {
-  const { s3BucketName } = new Configuration();
-
+  const { s3BucketName, s3Subdomain } = new Configuration();
   const { name, ext } = path.parse(imageFile.originalname);
 
-  const retinaDimensions: Dimensions = [
-    dimensions[0] != null ? dimensions[0] * 1.5 : undefined,
-    dimensions[1] != null ? dimensions[1] * 1.5 : undefined
-  ];
+  const resizedImage = await resizeImage(imageFile.path, dimensions);
 
-  const [imageBuffer, retinaImageBuffer, fingerprint] = await Promise.all([
-    resizeImage(imageFile.path, dimensions),
-    resizeImage(imageFile.path, retinaDimensions),
-    getFingerprint(imageFile.path)
-  ]);
+  const fingerprint = crypto
+    .createHash('md5')
+    .update(resizedImage.toString(), 'utf8')
+    .digest('hex');
 
-  const imageKey = `${name}-${dimensionsString(
+  const objectKey = `${name}-${dimensionsString(
     dimensions
   )}-${fingerprint}${ext}`;
 
-  const retinaImageKey = `${name}-${dimensionsString(
-    retinaDimensions
-  )}-${fingerprint}${ext}`;
-
-  await Promise.all([
-    putObject(s3BucketName, imageKey, imageBuffer as Buffer),
-    putObject(s3BucketName, retinaImageKey, retinaImageBuffer as Buffer)
-  ]);
-
-  return [imageKey, retinaImageKey];
+  return putObject(s3BucketName, objectKey, resizedImage as Buffer).then(
+    (result) => ({
+      objectKey,
+      objectUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${objectKey}`,
+      result
+    })
+  );
 };
 
 const dimensionsString = (dimensions: Dimensions): string => {
-  const [width, height] = dimensions;
+  const { width, height } = dimensions;
 
   if (width != null && height != null) {
     return `${width}w${height}h`;

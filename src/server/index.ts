@@ -24,12 +24,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     port,
     host,
     assetsPort,
-    s3BucketName,
-    awsRegion
+    s3BucketName
   } = new Configuration();
-
-  const s3Subdomain =
-    awsRegion == null || awsRegion === 'us-east-1' ? 's3' : `s3-${awsRegion}`;
 
   const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
 
@@ -101,7 +97,39 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       .readFileSync(path.join(rootPath, 'template.hbs'))
       .toString();
 
-    renderEmail({ name, rootPath }, html, req.body.data).then(
+    renderEmail(
+      { mode: 'development', name, rootPath },
+      html,
+      req.body.data
+    ).then(
+      (data) => {
+        res.send(data);
+      },
+      (error) => {
+        console.error(error);
+
+        const errorTemplate = Handlebars.compile(
+          fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
+        );
+
+        res.send(errorTemplate({ message: stripAnsi(error.message) }));
+      }
+    );
+  });
+
+  app.post('/emails/:name/download', (req, res) => {
+    const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
+    const rootPath = path.resolve(emailsPath, name);
+
+    const html = fs
+      .readFileSync(path.join(rootPath, 'template.hbs'))
+      .toString();
+
+    renderEmail(
+      { mode: 'production', name, rootPath },
+      html,
+      req.body.data
+    ).then(
       (data) => {
         res.send(data);
       },
@@ -143,18 +171,24 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       const maxHeight =
         req.body.maxHeight != null ? parseInt(req.body.maxHeight) : undefined;
 
-      resizeAndUploadImages(req.file, [maxWidth, maxHeight])
-        .then(([imageKey, retinaImageKey]) => {
+      resizeAndUploadImages(req.file, [
+        { width: maxWidth, height: maxHeight },
+        {
+          width: maxWidth != null ? maxWidth * 1.5 : undefined,
+          height: maxHeight != null ? maxHeight * 1.5 : undefined
+        }
+      ])
+        .then(([image, retinaImage]) => {
           console.log(
-            `Uploaded images:\n  - ${imageKey}\n  - ${retinaImageKey}\n`
+            `Uploaded images:\n  - ${image.objectKey}\n  - ${retinaImage.objectKey}\n`
           );
 
           res.setHeader('Content-Type', 'application/json');
 
           res.send(
             JSON.stringify({
-              imageUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${imageKey}`,
-              retinaImageUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${retinaImageKey}`
+              imageUrl: image.objectUrl,
+              retinaImageUrl: retinaImage.objectUrl
             })
           );
         })

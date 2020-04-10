@@ -6,7 +6,7 @@ export default function putObject(
   bucketName: string,
   objectKey: string,
   fileBuffer: Buffer
-) {
+): Promise<AWS.S3.PutObjectOutput> {
   return new Promise((resolve, reject) => {
     s3.putObject(
       {
