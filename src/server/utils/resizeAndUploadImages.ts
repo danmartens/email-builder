@@ -29,7 +29,11 @@ const resizeAndUploadImage = async (
     .update(resizedImage.toString(), 'utf8')
     .digest('hex');
 
-  const objectKey = [name, dimensionsString(dimensions), `${fingerprint}${ext}`]
+  const objectKey = [
+    name.replace(/[^a-z0-9]+/gi, '-'),
+    dimensionsString(dimensions),
+    `${fingerprint}${ext}`
+  ]
     .filter((part) => part != null)
     .join('-');
 
