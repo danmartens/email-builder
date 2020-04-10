@@ -1,12 +1,21 @@
 {
   "name": "email",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "bin": "./lib/index.js",
   "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 10.13.0"
+  },
   "scripts": {
     "build": "scripts/build",
     "prepack": "scripts/prepack",
-    "start": "nodemon --exec \"ts-node src/index.ts\" --ext ts \"./src/**/*\""
+    "start": "nodemon --exec \"ts-node src/index.ts develop\" --ext ts \"./src/**/*\"",
+    "types:check": "tsc --noEmit",
+    "types:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
@@ -33,6 +42,7 @@
     "babel-loader": "^8.1.0",
     "chalk": "^4.0.0",
     "chokidar": "^3.3.1",
+    "commander": "^5.0.0",
     "dotenv": "^8.2.0",
     "downloadjs": "^1.4.7",
     "express": "^4.17.1",

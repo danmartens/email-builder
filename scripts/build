@@ -2,12 +2,12 @@
 
 set -ex
 
-export NODE_ENV=production
-
 rm -rf lib
 
 yarn run tsc
 
+chmod +x lib/index.js
+
 rm -rf lib/client
 
-yarn run webpack
+NODE_ENV=production yarn run webpack
