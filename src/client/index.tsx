@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 import download from 'downloadjs';
 import ValuesEditor from './ValuesEditor';
 import Frame from './Frame';
@@ -11,6 +12,7 @@ import { Schema } from '../types';
 import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
 import useWebSocket from './utils/useWebSocket';
 import Button from './Button';
+import { SCREEN_SIZES } from './constants';
 
 declare global {
   interface Window {
@@ -22,6 +24,7 @@ const { EMAIL } = window;
 
 const Email: React.FC = () => {
   const [schema, setSchema] = useState(EMAIL.schema);
+  const [screenWidthIndex, setScreenWidthIndex] = useState(0);
   const [reloading, setReloading] = useState(true);
   const [downloading, setDownloading] = useState(false);
 
@@ -112,6 +115,21 @@ const Email: React.FC = () => {
   return (
     <>
       <ButtonGroup>
+        <SelectWrapper>
+          <select
+            value={screenWidthIndex}
+            onChange={(event) => {
+              setScreenWidthIndex(event.currentTarget.selectedIndex);
+            }}
+          >
+            {SCREEN_SIZES.map(({ label }, index) => (
+              <option key={index} value={index}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </SelectWrapper>
+
         <Button
           title="Download"
           disabled={downloading}
@@ -123,6 +141,7 @@ const Email: React.FC = () => {
 
       <Frame
         editorVisible={editorVisible}
+        screenSize={SCREEN_SIZES[screenWidthIndex]}
         source={source}
         reloading={reloading}
       />
@@ -141,5 +160,9 @@ const Email: React.FC = () => {
     </>
   );
 };
+
+const SelectWrapper = styled.div`
+  margin-right: 16px;
+`;
 
 ReactDOM.render(<Email />, document.getElementById('container'));
