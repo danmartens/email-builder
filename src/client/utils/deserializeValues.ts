@@ -1,17 +1,16 @@
 import { Schema } from '../../types';
+import mergeListItemDefaultValues from './mergeListItemDefaultValues';
 
-function fetchValues(
-  templateName: string,
-  schema: Schema
-): { [key: string]: string | undefined } {
+const deserializeValues = (
+  schema: Schema,
+  serializedData: string
+): { [key: string]: string | undefined } => {
   const schemaKeys = schema.map(({ name }) => name);
 
   let dataKeys = [];
   let data = {};
 
   try {
-    const serializedData = localStorage.getItem(templateName);
-
     if (serializedData != null) {
       data = JSON.parse(serializedData);
       dataKeys = Object.keys(data);
@@ -31,12 +30,18 @@ function fetchValues(
   // Add keys and default values to the data which are now present in the
   // current schema.
   for (const key of schemaKeys) {
-    if (!dataKeys.includes(key)) {
-      data[key] = schema.find(({ name }) => name === key).defaultValue;
+    const value = schema.find(({ name }) => name === key);
+
+    if (value?.type === 'list') {
+      data[key] = (data[key] || []).map((itemData) =>
+        mergeListItemDefaultValues(value.schema, itemData)
+      );
+    } else if (!dataKeys.includes(key)) {
+      data[key] = value.defaultValue;
     }
   }
 
   return data;
-}
+};
 
-export default fetchValues;
+export default deserializeValues;

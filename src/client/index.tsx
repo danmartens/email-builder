@@ -6,8 +6,7 @@ import ValuesEditor from './ValuesEditor';
 import Frame from './Frame';
 import ButtonGroup from './ButtonGroup';
 import storeValues from './utils/storeValues';
-import fetchValues from './utils/fetchValues';
-import Values from './Values';
+import deserializeValues from './utils/deserializeValues';
 import { Schema } from '../types';
 import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
 import useWebSocket from './utils/useWebSocket';
@@ -37,7 +36,7 @@ const Email: React.FC = () => {
   });
 
   const [values, setValues] = useState(
-    new Values(fetchValues(EMAIL.name, schema))
+    deserializeValues(schema, localStorage.getItem(EMAIL.name))
   );
 
   const [source, setSource] = useState<string>();

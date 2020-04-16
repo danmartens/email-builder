@@ -1,1 +1,1 @@
-export { Schema } from './server/utils/parseSchema';
+export { Schema, ListValueSchema } from './server/utils/parseSchema';

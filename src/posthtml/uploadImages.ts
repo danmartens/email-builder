@@ -14,6 +14,8 @@ const uploadImages = (template: Template) => (tree, callback) => {
   };
 
   tree.match({ tag: 'img', attrs: { 'data-original-src': /^\// } }, (node) => {
+    tasks++;
+
     const filePath = path.join(
       emailsPath,
       template.name,
@@ -35,16 +37,16 @@ const uploadImages = (template: Template) => (tree, callback) => {
           )
         }
       ]
-    ).then(([image]) => {
-      node.attrs.src = image.objectUrl;
-
-      done();
-    });
-
-    tasks++;
+    )
+      .then(([image]) => {
+        node.attrs.src = image.objectUrl;
+      })
+      .finally(done);
 
     return node;
   });
+
+  if (tasks === 0) callback(null, tree);
 };
 
 export default uploadImages;

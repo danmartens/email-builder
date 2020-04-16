@@ -30,11 +30,23 @@ const ImageValueCodec = t.type({
   ])
 });
 
-const SchemaCodec = t.array(
+const ListValueSchemaCodec = t.array(
   t.union([StringValueCodec, TextValueCodec, ImageValueCodec])
 );
 
+const ListValueCodec = t.type({
+  type: t.literal('list'),
+  name: t.string,
+  label: t.string,
+  schema: ListValueSchemaCodec
+});
+
+const SchemaCodec = t.array(
+  t.union([StringValueCodec, TextValueCodec, ImageValueCodec, ListValueCodec])
+);
+
 export type Schema = t.TypeOf<typeof SchemaCodec>;
+export type ListValueSchema = t.TypeOf<typeof ListValueSchemaCodec>;
 
 const parseSchema = (schema: string): Schema => {
   const result = SchemaCodec.decode(JSON.parse(schema));
