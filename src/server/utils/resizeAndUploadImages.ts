@@ -39,7 +39,7 @@ const resizeAndUploadImage = async (
 
   return putObject(s3BucketName, objectKey, resizedImage as Buffer).then(
     (result) => {
-      console.log(`Uploaded image: ${objectKey}`);
+      console.log(`Image uploaded: ${objectKey}`);
 
       return {
         objectKey,

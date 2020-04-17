@@ -11,3 +11,5 @@ chmod +x lib/index.js
 rm -rf lib/client
 
 NODE_ENV=production yarn run webpack
+
+cp -R src/templates lib/templates

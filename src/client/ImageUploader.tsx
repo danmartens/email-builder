@@ -1,6 +1,4 @@
 import React from 'react';
-import axios from 'axios';
-
 import Loader from './Loader';
 
 interface Props {
@@ -50,11 +48,16 @@ export default class ImageUploader extends React.PureComponent<Props, State> {
         data.set('maxHeight', maxHeight.toString());
       }
 
-      axios.post('/images', data).then(({ data }) => {
-        this.setState({ status: 'success' });
+      fetch('/images', {
+        method: 'post',
+        body: data
+      })
+        .then((response) => response.json())
+        .then((responseBody) => {
+          this.setState({ status: 'success' });
 
-        this.props.onUpload(data.retinaImageUrl);
-      });
+          this.props.onUpload(responseBody.retinaImageUrl);
+        });
     }
   }
 

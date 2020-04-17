@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-const ButtonGroup = styled.div`
+const ButtonGroup = styled.div<{
+  top?: number;
+  bottom?: 'auto' | number;
+  right?: number;
+}>`
   position: absolute;
   display: flex;
   align-items: center;

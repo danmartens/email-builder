@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script>
+      if (location.hostname === 'localhost') {
+        const socket = new WebSocket('ws://localhost:8081');
+
+        socket.addEventListener('message', () => {
+          location.reload();
+        });
+      }
+    </script>
+  </head>
+
+  <body>
+    <style>
+      body {
+        margin: 2em 1.5em;
+      }
+
+      p {
+        color: #721c24;
+        background-color: #f8d7da;
+        padding: 1.5em 1.5em;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 16px;
+        max-width: 60em;
+        margin: 0 auto;
+      }
+    </style>
+
+    <p>
+      {{{message}}}
+    </p>
+  </body>
+</html>

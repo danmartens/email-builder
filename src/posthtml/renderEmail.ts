@@ -11,6 +11,7 @@ import syntaxAttribute from './syntaxAttribute';
 import removeExtraElements from './removeExtraElements';
 import { Template } from './types';
 import uploadImages from './uploadImages';
+import unsubscribeElement from './unsubscribeElement';
 
 interface Options {
   publish: boolean;
@@ -25,7 +26,9 @@ export const renderEmail = async (
   }
 ) => {
   const emailTemplate = Handlebars.compile(
-    fs.readFileSync(path.join(__dirname, 'email.hbs')).toString()
+    fs
+      .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
+      .toString()
   );
 
   const handlebarsTemplate = Handlebars.compile(html);
@@ -55,6 +58,7 @@ export const renderEmail = async (
       section,
       imageElement(template.name),
       tableElement,
+      options.publish ? undefined : unsubscribeElement,
       removeExtraElements,
       options.publish ? uploadImages(template) : undefined
     ].filter(Boolean)

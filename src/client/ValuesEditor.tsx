@@ -161,7 +161,7 @@ const ValueEditor: React.FC<{
   );
 };
 
-const Editor = styled.div`
+const Editor = styled.div<{ visible: boolean }>`
   position: fixed;
   box-sizing: border-box;
   left: ${(props) => (props.visible ? 0 : `-${editorWidth}px`)};
@@ -199,11 +199,11 @@ const TextArea = styled(AutosizeTextArea)`
   resize: none;
 `;
 
-const EditorActions = styled.div`
+const EditorActions = styled.div<{ visible: boolean }>`
   box-sizing: border-box;
   position: fixed;
   bottom: 0;
-  left: ${(props) => (props.visible ? 0 : `-${editorWidth}px`)};
+  left: ${({ visible }) => (visible ? 0 : `-${editorWidth}px`)};
   width: ${editorWidth}px;
   height: ${editorActionsHeight}px;
   display: flex;

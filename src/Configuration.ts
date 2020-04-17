@@ -34,6 +34,10 @@ class Configuration {
       ? 's3'
       : `s3-${this.awsRegion}`;
   }
+
+  get basicAuthPassword() {
+    return process.env.BASIC_AUTH_PASSWORD;
+  }
 }
 
 export default Configuration;

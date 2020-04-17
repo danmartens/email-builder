@@ -1,12 +1,14 @@
 import path from 'path';
 import fs from 'fs';
+import url from 'url';
 import express, { Request } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
+import basicAuth from 'express-basic-auth';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import WebSocket from 'ws';
+import debounce from 'lodash/debounce';
 import chokidar from 'chokidar';
-import Handlebars from 'handlebars';
 import stripAnsi from 'strip-ansi';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
@@ -16,6 +18,7 @@ import { renderEmail } from '../posthtml/renderEmail';
 import parseSchema from './utils/parseSchema';
 import Configuration from '../Configuration';
 import resizeAndUploadImages from './utils/resizeAndUploadImages';
+import renderTemplate from '../renderTemplate';
 
 export const server = (mode: 'development' | 'production' = 'production') => {
   const {
@@ -24,12 +27,31 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     port,
     host,
     assetsPort,
-    s3BucketName
+    s3BucketName,
+    basicAuthPassword
   } = new Configuration();
 
   const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
 
   const app = express();
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        const fullUrl = url.parse(
+          `${req.protocol}://${req.headers.host}${req.originalUrl}`
+        );
+
+        res.redirect(`https://${fullUrl.hostname}${req.originalUrl}`);
+      } else {
+        next();
+      }
+    });
+  }
+
+  if (basicAuthPassword != null) {
+    app.use(basicAuth({ users: { user: basicAuthPassword } }));
+  }
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,12 +61,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
   }
 
   app.get('/', (req, res) => {
-    const template = Handlebars.compile(
-      fs.readFileSync(path.resolve(__dirname, './views/index.hbs')).toString()
-    );
-
-    res.send(
-      template({
+    if (fs.existsSync(emailsPath)) {
+      renderTemplate('index', {
         emails: fs
           .readdirSync(emailsPath)
           .filter((item) =>
@@ -55,8 +73,17 @@ export const server = (mode: 'development' | 'production' = 'production') => {
               name: item
             };
           })
-      })
-    );
+      }).then((html) => {
+        res.send(html);
+      });
+    } else {
+      renderTemplate('error', {
+        message: `Please create an "emails" directory in your project directory (${projectPath}).`
+      }).then((html) => {
+        res.status(500);
+        res.send(html);
+      });
+    }
   });
 
   app.get('/emails/:name', (req, res) => {
@@ -64,28 +91,31 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     const rootPath = path.resolve(emailsPath, name);
 
     try {
-      const schema = fs
-        .readFileSync(path.join(rootPath, 'schema.json'))
-        .toString();
+      let schema = '[]';
+      const schemaPath = path.join(rootPath, 'schema.json');
 
-      const template = Handlebars.compile(
-        fs.readFileSync(path.resolve(__dirname, './views/show.hbs')).toString()
-      );
+      if (fs.existsSync(schemaPath)) {
+        schema = fs.readFileSync(schemaPath).toString();
+      }
 
-      res.send(
-        template({
-          name,
-          schema: JSON.stringify(parseSchema(schema)),
-          scriptUrl: `http://${host}:${
-            mode === 'production' ? port : assetsPort
-          }/main.js`
-        })
-      );
+      renderTemplate('show', {
+        name,
+        schema: JSON.stringify(parseSchema(schema)),
+        scriptUrl: `${mode === 'production' ? 'https' : 'http'}://${host}:${
+          mode === 'production' ? port : assetsPort
+        }/main.js`
+      }).then((html) => {
+        res.send(html);
+      });
     } catch (error) {
       console.error(error);
 
-      // TODO: Better error handling
-      res.send('ERR');
+      renderTemplate('error', {
+        message: stripAnsi(error.message)
+      }).then((html) => {
+        res.status(500);
+        res.send(html);
+      });
     }
   });
 
@@ -107,11 +137,12 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       (error) => {
         console.error(error);
 
-        const errorTemplate = Handlebars.compile(
-          fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
-        );
-
-        res.send(errorTemplate({ message: stripAnsi(error.message) }));
+        renderTemplate('error', {
+          message: stripAnsi(error.message)
+        }).then((html) => {
+          res.status(500);
+          res.send(html);
+        });
       }
     );
   });
@@ -134,11 +165,12 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       (error) => {
         console.error(error);
 
-        const errorTemplate = Handlebars.compile(
-          fs.readFileSync(path.resolve(__dirname, '../error.hbs')).toString()
-        );
-
-        res.send(errorTemplate({ message: stripAnsi(error.message) }));
+        renderTemplate('error', {
+          message: stripAnsi(error.message)
+        }).then((html) => {
+          res.status(500);
+          res.send(html);
+        });
       }
     );
   });
@@ -198,7 +230,11 @@ export const server = (mode: 'development' | 'production' = 'production') => {
   );
 
   const watcher = chokidar.watch(
-    path.resolve(emailsPath, '**/*.{hbs,json,png,jpg,jpeg,gif}')
+    path.resolve(projectPath, '**/*.{hbs,json,png,jpg,jpeg,gif}'),
+    {
+      ignored: path.resolve(projectPath, 'node_modules'),
+      ignoreInitial: true
+    }
   );
 
   const server = new WebSocket.Server({
@@ -211,11 +247,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     connections.add(connection);
   });
 
-  watcher.on('change', (changedPath) => {
-    const relativeChangedPath = changedPath.replace(emailsPath, '');
-
-    console.log(`File changed: ${relativeChangedPath}\n`);
-
+  const notify = debounce((relativeChangedPath: string) => {
     for (const connection of connections) {
       if (connection.readyState !== WebSocket.OPEN) continue;
 
@@ -225,6 +257,22 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         })
       );
     }
+  }, 50);
+
+  watcher.on('change', (changedPath) => {
+    const relativeChangedPath = changedPath.replace(projectPath, '');
+
+    console.log(`File changed: ${relativeChangedPath}`);
+
+    notify(relativeChangedPath);
+  });
+
+  watcher.on('add', (changedPath) => {
+    const relativeChangedPath = changedPath.replace(projectPath, '');
+
+    console.log(`File added: ${relativeChangedPath}`);
+
+    notify(relativeChangedPath);
   });
 
   app.listen(port, () => {

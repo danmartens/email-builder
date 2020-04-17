@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script>
+      if (location.hostname === 'localhost') {
+        const socket = new WebSocket('ws://localhost:8081');
+
+        socket.addEventListener('message', () => {
+          location.reload();
+        });
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: 'Source Code Pro', Menlo, monospace;
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      li {
+        text-transform: capitalize;
+        margin: 1em 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        {{#each emails}}
+          <li>
+            <a href="/emails/{{name}}">{{name}}</a>
+          </li>
+        {{/each}}
+      </ul>
+    </nav>
+  </body>
+</html>
