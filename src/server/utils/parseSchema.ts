@@ -30,15 +30,17 @@ const ImageValueCodec = t.type({
   ])
 });
 
-const ListValueSchemaCodec = t.array(
-  t.union([StringValueCodec, TextValueCodec, ImageValueCodec])
-);
+const ListValueSchemaCodec = t.union([
+  StringValueCodec,
+  TextValueCodec,
+  ImageValueCodec
+]);
 
 const ListValueCodec = t.type({
   type: t.literal('list'),
   name: t.string,
   label: t.string,
-  schema: ListValueSchemaCodec
+  schema: t.array(ListValueSchemaCodec)
 });
 
 const SchemaCodec = t.array(

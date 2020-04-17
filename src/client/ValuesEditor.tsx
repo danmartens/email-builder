@@ -8,6 +8,7 @@ import ImportFile from './ImportFile';
 import EditorToggle from './EditorToggle';
 import { Schema } from '../types';
 import mergeListItemDefaultValues from './utils/mergeListItemDefaultValues';
+import { ListValueSchema } from '../server/utils/parseSchema';
 
 interface Props<TValues extends {} = {}> {
   visible: boolean;
@@ -17,8 +18,148 @@ interface Props<TValues extends {} = {}> {
   onChange(values: TValues): void;
 }
 
-const editorWidth = 300;
-const editorActionsHeight = 48;
+export const editorWidth = 350;
+export const editorActionsHeight = 48;
+
+const ValuesEditor: React.FC<Props> = (props) => {
+  const { values, visible, schema, onChange, onToggle } = props;
+
+  return (
+    <>
+      <Editor visible={visible}>
+        {schema.map((valueSchema) => (
+          <FormGroup key={valueSchema.name}>
+            <Label>{valueSchema.label}</Label>
+
+            {valueSchema.type === 'list' ? (
+              <>
+                {getIn(values, [valueSchema.name], []).map((_, index) => (
+                  <ListItem key={index}>
+                    {valueSchema.schema.map((nestedValueSchema) => (
+                      <FormGroup key={nestedValueSchema.name}>
+                        <Label>{nestedValueSchema.label}</Label>
+
+                        <ValueEditor
+                          schema={nestedValueSchema}
+                          value={getIn(
+                            values,
+                            [valueSchema.name, index, nestedValueSchema.name],
+                            ''
+                          )}
+                          onChange={(value) => {
+                            onChange(
+                              setIn(
+                                values,
+                                [
+                                  valueSchema.name,
+                                  index,
+                                  nestedValueSchema.name
+                                ],
+                                value
+                              )
+                            );
+                          }}
+                        />
+                      </FormGroup>
+                    ))}
+
+                    <Button
+                      onClick={() => {
+                        onChange(removeIn(values, [valueSchema.name, index]));
+                      }}
+                    >
+                      × Remove
+                    </Button>
+                  </ListItem>
+                ))}
+
+                <Button
+                  onClick={() => {
+                    onChange(
+                      updateIn(values, [valueSchema.name], (value) => {
+                        console.log({ value });
+                        return [
+                          ...value,
+                          mergeListItemDefaultValues(valueSchema.schema)
+                        ];
+                      })
+                    );
+                  }}
+                >
+                  + Add Item
+                </Button>
+              </>
+            ) : (
+              <ValueEditor
+                schema={valueSchema}
+                value={getIn(values, [valueSchema.name], '')}
+                onChange={(value) => {
+                  onChange(setIn(values, [valueSchema.name], value));
+                }}
+              />
+            )}
+          </FormGroup>
+        ))}
+
+        <EditorActions visible={visible}>
+          <ExportFile />
+          <ImportFile />
+        </EditorActions>
+      </Editor>
+
+      <EditorToggle
+        editorWidth={editorWidth}
+        visible={visible}
+        onClick={onToggle}
+      >
+        {props.visible ? '❮' : '❯'}
+      </EditorToggle>
+    </>
+  );
+};
+
+const ValueEditor: React.FC<{
+  schema: ListValueSchema;
+  value: string;
+  onChange(value: string): void;
+}> = (props) => {
+  const { schema, value, onChange } = props;
+
+  return (
+    <>
+      {schema.type === 'image' && (
+        <ImageUploader
+          value={value}
+          maxWidth={schema.dimensions?.maxWidth}
+          maxHeight={schema.dimensions?.maxHeight}
+          onUpload={(url) => {
+            onChange(url);
+          }}
+        />
+      )}
+
+      {schema.type === 'string' && (
+        <Input
+          type="text"
+          value={value}
+          onChange={(event) => {
+            onChange(event.currentTarget.value);
+          }}
+        />
+      )}
+
+      {schema.type === 'text' && (
+        <TextArea
+          rows={3}
+          value={value}
+          onChange={(event) => {
+            onChange(event.currentTarget.value);
+          }}
+        />
+      )}
+    </>
+  );
+};
 
 const Editor = styled.div`
   position: fixed;
@@ -31,6 +172,13 @@ const Editor = styled.div`
   background-color: rgba(250, 250, 250, 0.9);
   overflow-y: scroll;
   border-right: 1px solid rgb(235, 235, 235);
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1.5em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Label = styled.label`
@@ -65,199 +213,6 @@ const EditorActions = styled.div`
   background-color: rgba(230, 230, 230, 0.98);
 `;
 
-export function ValuesEditor(props: Props) {
-  const { values, visible, schema, onChange, onToggle } = props;
-
-  return (
-    <>
-      <Editor visible={visible}>
-        {schema.map((valueSchema) => (
-          <div
-            key={valueSchema.name}
-            style={{
-              marginBottom: '1.5em',
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-          >
-            <Label>{valueSchema.label}</Label>
-
-            {valueSchema.type === 'image' && (
-              <ImageUploader
-                value={getIn(values, [valueSchema.name], '')}
-                maxWidth={valueSchema.dimensions?.maxWidth}
-                maxHeight={valueSchema.dimensions?.maxHeight}
-                onUpload={(url) => {
-                  onChange(setIn(values, [valueSchema.name], url));
-                }}
-              />
-            )}
-
-            {valueSchema.type === 'string' && (
-              <Input
-                type="text"
-                value={getIn(values, [valueSchema.name], '')}
-                onChange={(event) => {
-                  onChange(
-                    setIn(values, [valueSchema.name], event.currentTarget.value)
-                  );
-                }}
-              />
-            )}
-
-            {valueSchema.type === 'text' && (
-              <TextArea
-                rows={3}
-                value={getIn(values, [valueSchema.name], '')}
-                onChange={(event) => {
-                  onChange(
-                    setIn(values, [valueSchema.name], event.currentTarget.value)
-                  );
-                }}
-              />
-            )}
-
-            {valueSchema.type === 'list' && (
-              <>
-                {getIn(values, [valueSchema.name], []).map((_, index) => (
-                  <ListItem key={index}>
-                    {valueSchema.schema.map((nestedValueSchema) => (
-                      <div
-                        key={nestedValueSchema.name}
-                        style={{
-                          marginBottom: '1.5em',
-                          flex: 1,
-                          display: 'flex',
-                          flexDirection: 'column'
-                        }}
-                      >
-                        <Label>{nestedValueSchema.label}</Label>
-
-                        {nestedValueSchema.type === 'image' && (
-                          <ImageUploader
-                            value={getIn(
-                              values,
-                              [valueSchema.name, index, nestedValueSchema.name],
-                              ''
-                            )}
-                            maxWidth={nestedValueSchema.dimensions?.maxWidth}
-                            maxHeight={nestedValueSchema.dimensions?.maxHeight}
-                            onUpload={(url) => {
-                              onChange(
-                                setIn(
-                                  values,
-                                  [
-                                    valueSchema.name,
-                                    index,
-                                    nestedValueSchema.name
-                                  ],
-                                  url
-                                )
-                              );
-                            }}
-                          />
-                        )}
-
-                        {nestedValueSchema.type === 'string' && (
-                          <Input
-                            type="text"
-                            value={getIn(
-                              values,
-                              [valueSchema.name, index, nestedValueSchema.name],
-                              ''
-                            )}
-                            onChange={(event) => {
-                              onChange(
-                                setIn(
-                                  values,
-                                  [
-                                    valueSchema.name,
-                                    index,
-                                    nestedValueSchema.name
-                                  ],
-
-                                  event.currentTarget.value
-                                )
-                              );
-                            }}
-                          />
-                        )}
-
-                        {nestedValueSchema.type === 'text' && (
-                          <TextArea
-                            rows={3}
-                            value={getIn(
-                              values,
-                              [valueSchema.name, index, nestedValueSchema.name],
-                              ''
-                            )}
-                            onChange={(event) => {
-                              onChange(
-                                setIn(
-                                  values,
-                                  [
-                                    valueSchema.name,
-                                    index,
-                                    nestedValueSchema.name
-                                  ],
-
-                                  event.currentTarget.value
-                                )
-                              );
-                            }}
-                          />
-                        )}
-                      </div>
-                    ))}
-
-                    <Button
-                      onClick={() => {
-                        onChange(removeIn(values, [valueSchema.name, index]));
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </ListItem>
-                ))}
-
-                <Button
-                  onClick={() => {
-                    onChange(
-                      updateIn(values, [valueSchema.name], (value) => {
-                        console.log({ value });
-                        return [
-                          ...value,
-                          mergeListItemDefaultValues(valueSchema.schema)
-                        ];
-                      })
-                    );
-                  }}
-                >
-                  Append Item
-                </Button>
-              </>
-            )}
-          </div>
-        ))}
-
-        <EditorActions visible={visible}>
-          <ExportFile />
-          <ImportFile />
-        </EditorActions>
-      </Editor>
-
-      <EditorToggle
-        editorWidth={editorWidth}
-        visible={visible}
-        onClick={onToggle}
-      >
-        {props.visible ? '❮' : '❯'}
-      </EditorToggle>
-    </>
-  );
-}
-
 const ListItem = styled.fieldset`
   box-sizing: border-box;
   display: flex;
@@ -284,7 +239,5 @@ const Button = styled.button`
     background-color: rgb(47, 224, 200, 0.7);
   }
 `;
-
-ValuesEditor.displayName = 'ValuesEditor';
 
 export default ValuesEditor;

@@ -1,7 +1,7 @@
 import { ListValueSchema } from '../../types';
 
 const mergeListItemDefaultValues = (
-  schema: ListValueSchema,
+  schema: ListValueSchema[],
   data: object = {}
 ) =>
   schema.reduce((value, item) => {

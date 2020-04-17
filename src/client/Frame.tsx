@@ -2,6 +2,7 @@ import React, { useRef, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import Loader from './Loader';
 import { ScreenSize } from './constants';
+import { editorWidth } from './ValuesEditor';
 
 interface Props {
   editorVisible: boolean;
@@ -63,10 +64,10 @@ const Frame: React.FC<Props> = (props) => {
 
 const Container = styled.div<{ editorVisible: boolean }>`
   position: fixed;
-  left: ${({ editorVisible }) => (editorVisible ? 300 : 0)};
+  left: ${({ editorVisible }) => (editorVisible ? editorWidth : 0)};
   height: 100%;
   width: ${({ editorVisible }) =>
-    editorVisible ? 'calc(100% - 300px)' : '100%'};
+    editorVisible ? `calc(100% - ${editorWidth}px)` : '100%'};
   background-color: #f4f4f4;
 `;
 

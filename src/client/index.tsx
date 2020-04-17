@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import download from 'downloadjs';
-import ValuesEditor from './ValuesEditor';
+import ValuesEditor, { editorWidth } from './ValuesEditor';
 import Frame from './Frame';
 import ButtonGroup from './ButtonGroup';
 import storeValues from './utils/storeValues';
@@ -84,7 +84,7 @@ const Email: React.FC = () => {
     }
 
     if (editorVisible) {
-      document.body.style.marginLeft = '300px';
+      document.body.style.marginLeft = `${editorWidth}px`;
     } else {
       document.body.style.marginLeft = '0';
     }
