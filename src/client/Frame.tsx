@@ -24,40 +24,25 @@ const Frame: React.FC<Props> = (props) => {
 
   return (
     <Container editorVisible={editorVisible}>
-      <div
-        style={{
-          position: 'absolute',
-          height: screenSize.height != null ? `${screenSize.height}px` : '100%',
-          width: screenSize.width != null ? `${screenSize.width}px` : '100%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: '#ffffff',
-          boxShadow: 'rgba(0, 0, 0, 0.25) 0px 0px 20px 0px',
-          borderRadius: screenSize.radius,
-          border: `${screenSize.bezel}px solid #999999`,
-          transition: 'width 750ms, border-radius 750ms, border 750ms'
-        }}
+      <Device
+        width={screenSize.width}
+        height={screenSize.height}
+        cornerRadius={screenSize.cornerRadius}
+        bezelWidth={screenSize.bezelWidth}
       >
         <Overlay visible={reloading}>
           <Loader />
         </Overlay>
 
-        <iframe
-          ref={frameRef}
-          src="about:blank"
-          frameBorder="0"
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            top: 0,
-            left: 0
-          }}
-        ></iframe>
+        <Screen ref={frameRef} src="about:blank" frameBorder="0" />
 
-        <Header height={64} borderRadius={screenSize.radius} />
-      </div>
+        {screenSize.headerHeight != null && (
+          <Header
+            height={screenSize.headerHeight}
+            cornerRadius={screenSize.cornerRadius}
+          />
+        )}
+      </Device>
     </Container>
   );
 };
@@ -71,7 +56,35 @@ const Container = styled.div<{ editorVisible: boolean }>`
   background-color: #f4f4f4;
 `;
 
-const Header = styled.div<{ height: number; borderRadius: number }>`
+const Device = styled.div<{
+  height: number;
+  width: number;
+  cornerRadius?: number;
+  bezelWidth?: number;
+}>`
+  position: absolute;
+  height: ${({ height }) => (height != null ? `${height}px` : '100%')};
+  width: ${({ width }) => (width != null ? `${width}px` : '100%')};
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 20px 0px;
+  ${({ cornerRadius }) =>
+    cornerRadius != null ? `border-radius: ${cornerRadius}px` : undefined};
+  ${({ bezelWidth }) =>
+    bezelWidth != null ? `border: ${bezelWidth}px solid #999999` : undefined};
+`;
+
+const Screen = styled.iframe`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+`;
+
+const Header = styled.div<{ height: number; cornerRadius: number }>`
   position: absolute;
   height: ${({ height }) => `${height}px`};
   width: 100%;
@@ -79,8 +92,8 @@ const Header = styled.div<{ height: number; borderRadius: number }>`
   left: 0;
   backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.7);
-  border-top-left-radius: ${({ borderRadius }) => `${borderRadius}px`};
-  border-top-right-radius: ${({ borderRadius }) => `${borderRadius}px`};
+  ${({ cornerRadius }) => `border-top-left-radius: ${cornerRadius}px`};
+  ${({ cornerRadius }) => `border-top-right-radius: ${cornerRadius}px`};
 `;
 
 const Overlay = styled.div<{ visible: boolean }>`
@@ -88,7 +101,7 @@ const Overlay = styled.div<{ visible: boolean }>`
   z-index: 1;
   position: fixed;
   height: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.15);
   top: 0;
   left: 0;
   width: 100%;
