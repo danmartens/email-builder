@@ -37,8 +37,11 @@ jobs:
       - name: Install Node Dependencies
         run: yarn install
 
-      # - name: Run Prettier
-      #   run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
+      - name: Run TypeScript
+        run: yarn run tsc --noEmit
+
+      - name: Run Prettier
+        run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
 
       - name: Run Jest
         run: yarn test
