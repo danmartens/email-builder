@@ -11,6 +11,7 @@
     "node": ">= 10.13.0"
   },
   "scripts": {
+    "test": "jest",
     "build": "scripts/build",
     "prepack": "scripts/prepack",
     "start": "nodemon --exec \"ts-node src/index.ts develop\" --ext js,ts \"./src/**/*\"",
