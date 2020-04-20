@@ -1,17 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import posthtml from 'posthtml';
-import inlineCSS from 'posthtml-inline-css';
 import prettier from 'prettier';
 import Handlebars from 'handlebars';
-import tableElement from './tableElement';
-import imageElement from './imageElement';
-import section from './section';
-import syntaxAttribute from './syntaxAttribute';
-import removeExtraElements from './removeExtraElements';
 import { Template } from './types';
-import uploadImages from './uploadImages';
-import unsubscribeElement from './unsubscribeElement';
+import processHtml from './processHtml';
 
 interface Options {
   publish: boolean;
@@ -51,18 +43,9 @@ export const renderEmail = async (
     }
   }
 
-  const result = await posthtml(
-    [
-      syntaxAttribute,
-      inlineCSS(),
-      section,
-      imageElement(template.name),
-      tableElement,
-      options.publish ? undefined : unsubscribeElement,
-      removeExtraElements,
-      options.publish ? uploadImages(template) : undefined
-    ].filter(Boolean)
-  ).process(
+  const result = await processHtml(
+    template,
+    options,
     emailTemplate({
       isDevelopment: true,
       content: handlebarsTemplate(options.data)
