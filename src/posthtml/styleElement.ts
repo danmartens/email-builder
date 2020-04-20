@@ -1,3 +1,4 @@
+import 'core-js/es/array/flat-map';
 import { Node } from './types';
 
 const styleElement = (tree) => {
