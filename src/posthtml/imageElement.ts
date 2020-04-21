@@ -4,6 +4,7 @@ import mergeStyle from './utils/mergeStyle';
 import mergeAttrs from './utils/mergeAttrs';
 import addClass from './utils/addClass';
 import { Node } from './types';
+import parseResponsiveValue from './utils/parseResponsiveValue';
 
 const imageElement = (emailName: string) => (tree) => {
   const transformedNodes = new WeakSet<Node>();
@@ -15,28 +16,34 @@ const imageElement = (emailName: string) => (tree) => {
         return node;
       }
 
-      const id = uniqueId('image-');
+      const id = uniqueId('i');
       const width = node.attrs['data-max-width'] || node.attrs.width;
 
-      let src = node.attrs.src;
+      const srcset = parseResponsiveValue(
+        node.attrs.srcset ?? node.attrs.src,
+        (src) => {
+          if (src.startsWith('/')) {
+            return `/assets/${emailName}/${src.replace(/^\//, '')}`;
+          }
 
-      if (node.attrs?.src?.startsWith('/')) {
-        src = `/assets/${emailName}/${node.attrs.src.replace(/^\//, '')}`;
-      }
+          return src;
+        }
+      );
 
       let nonRetinaImage = pipe(
         mergeStyle({
           width: '100%',
-          'max-width': `${width}px`
+          'max-width': width != null ? `${width}px` : undefined
         }),
         mergeAttrs({
-          src,
+          src: srcset.defaultValue,
           width,
-          'data-original-src': node.attrs.src
+          'data-original-src': node.attrs.src,
+          srcset: undefined
         })
       )(node);
 
-      if (width == null) {
+      if (width == null || srcset.get('2x') == null) {
         transformedNodes.add(nonRetinaImage);
 
         return nonRetinaImage;
@@ -52,8 +59,9 @@ const imageElement = (emailName: string) => (tree) => {
         }),
         mergeAttrs({
           id,
-          src,
-          'data-original-src': node.attrs.src
+          src: srcset.get('2x'),
+          'data-original-src': node.attrs.src,
+          srcset: undefined
         }),
         addClass('retina-image')
       )(node);
