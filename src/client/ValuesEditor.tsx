@@ -120,25 +120,25 @@ const ValuesEditor: React.FC<Props> = (props) => {
 
 const ValueEditor: React.FC<{
   schema: ListValueSchema;
-  value: string;
-  onChange(value: string): void;
+  value: string | { src: string; srcset: string };
+  onChange(value: string | { src: string; srcset: string }): void;
 }> = (props) => {
   const { schema, value, onChange } = props;
 
   return (
     <>
-      {schema.type === 'image' && (
+      {schema.type === 'image' && typeof value !== 'string' && (
         <ImageUploader
           value={value}
           maxWidth={schema.dimensions?.maxWidth}
           maxHeight={schema.dimensions?.maxHeight}
-          onUpload={(url) => {
-            onChange(url);
+          onUpload={(result) => {
+            onChange(result);
           }}
         />
       )}
 
-      {schema.type === 'string' && (
+      {schema.type === 'string' && typeof value === 'string' && (
         <Input
           type="text"
           value={value}

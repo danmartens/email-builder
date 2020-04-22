@@ -20,7 +20,10 @@ const ImageValueCodec = t.type({
   type: t.literal('image'),
   name: t.string,
   label: t.string,
-  defaultValue: t.union([t.string, t.void]),
+  defaultValue: t.union([
+    t.type({ src: t.string, srcset: t.union([t.string, t.undefined]) }),
+    t.undefined
+  ]),
   dimensions: t.union([
     t.type({
       maxWidth: t.union([t.number, t.undefined]),
