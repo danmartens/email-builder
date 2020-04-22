@@ -2,10 +2,10 @@ import React from 'react';
 import Loader from './Loader';
 
 interface Props {
-  value: string;
+  value?: { src: string; srcset: string };
   maxWidth?: number;
   maxHeight?: number;
-  onUpload(url: string): void;
+  onUpload(result: { src: string; srcset: string }): void;
 }
 
 type State = {
@@ -56,7 +56,7 @@ export default class ImageUploader extends React.PureComponent<Props, State> {
         .then((responseBody) => {
           this.setState({ status: 'success' });
 
-          this.props.onUpload(responseBody.retinaImageUrl);
+          this.props.onUpload(responseBody);
         });
     }
   }
@@ -106,7 +106,7 @@ export default class ImageUploader extends React.PureComponent<Props, State> {
           }}
         >
           <img
-            src={imageDataUrl || value}
+            src={imageDataUrl || value?.src}
             style={{ width: '80%', opacity: status === 'pending' ? 0.75 : 1 }}
           />
 

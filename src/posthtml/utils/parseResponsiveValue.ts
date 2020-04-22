@@ -11,13 +11,13 @@ const parseResponsiveValue = <
   }
 
   for (const part of rawValue.split(/\s*,\s*/)) {
-    const parsed = /^(.*?)(\d+[whx])?$/.exec(part);
+    const parsed = /^(.*?)\s*(\d+[whx])?$/.exec(part);
 
     if (parsed == null) {
       throw new Error(`Invalid attribute value: ${rawValue}`);
     }
 
-    const [_, value, breakpoint] = parsed;
+    const [, value, breakpoint] = parsed;
 
     if (breakpoint != null) {
       result[breakpoint] = parseValue(value);
@@ -38,6 +38,10 @@ class ResponsiveValue<T> {
 
   get defaultValue(): T | undefined {
     return this.value.default;
+  }
+
+  get(key: string): T | undefined {
+    return this.value[key];
   }
 
   buildMediaQueries(predicate: (value: T) => string): string[] {

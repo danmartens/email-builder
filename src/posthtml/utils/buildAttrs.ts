@@ -1,3 +1,5 @@
+import 'core-js/es/object/from-entries';
+
 const buildAttrs = (attrs: { [key: string]: string | number | undefined }) => {
   return Object.fromEntries(
     Object.entries(attrs)

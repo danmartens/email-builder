@@ -210,8 +210,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
           res.send(
             JSON.stringify({
-              imageUrl: image.objectUrl,
-              retinaImageUrl: retinaImage.objectUrl
+              src: image.objectUrl,
+              srcset: `${retinaImage.objectUrl} 2x, ${image.objectUrl}`
             })
           );
         })
