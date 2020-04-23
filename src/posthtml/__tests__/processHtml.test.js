@@ -14,7 +14,7 @@ const normalizeAndProcessHtml = async (html) => {
   return [...tree];
 };
 
-test('inlines styles and moves style tags to the head', async () => {
+test('inlines styles and moves @media rules to the head', async () => {
   const tree = await normalizeAndProcessHtml(`
     <html>
       <head></head>
@@ -26,6 +26,10 @@ test('inlines styles and moves style tags to the head', async () => {
 
         <style>
           body { background: blue; }
+
+          @media screen and (min-width: 600px) {
+            body { background: green; }
+          }
         </style>
       </body>
     </html>
@@ -39,7 +43,11 @@ test('inlines styles and moves style tags to the head', async () => {
           content: [
             {
               tag: 'style',
-              content: ['body { color: red; }', 'body { background: blue; }']
+              content: [
+                `@media screen and (min-width: 600px) {
+            body { background: green; }
+          }`
+              ]
             }
           ]
         },
@@ -71,6 +79,7 @@ test('converts srcset to multiple images with media queries', async () => {
               tag: 'style',
               content: [
                 `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
+                                      (-webkit-max-device-pixel-ratio: 1.9895833333333333),
                                       (max-resolution: 191dpi) {
                 #i1 {
                   width: 100% !important;
@@ -108,7 +117,7 @@ test('converts srcset to multiple images with media queries', async () => {
                   }
                 },
                 '<!--<![endif]-->',
-                undefined
+                { tag: undefined }
               ]
             }
           ]

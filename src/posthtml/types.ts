@@ -5,7 +5,7 @@ export interface Template {
 
 export interface Node {
   tag: string | undefined;
-  attrs: {
+  attrs?: {
     [key: string]: string | undefined;
   };
   content?: Array<string | Node>;
