@@ -1,8 +1,17 @@
 import 'core-js/es/array/flat-map';
+import postcss from 'postcss';
+import autoprefixer from 'autoprefixer';
 import { Node } from './types';
 
-const styleElement = (tree) => {
+const styleElement = (tree, callback) => {
   const elements: Node[] = [];
+  let tasks = 0;
+
+  const done = () => {
+    tasks--;
+
+    if (tasks === 0) callback(null, tree);
+  };
 
   tree.match({ tag: 'style' }, (node: Node) => {
     if (node.attrs != null && 'data-ignore' in node.attrs) {
@@ -17,17 +26,32 @@ const styleElement = (tree) => {
   });
 
   tree.match({ tag: 'head' }, (node) => {
+    tasks++;
+
+    const styleNode = {
+      tag: 'style',
+      content: []
+    };
+
+    const styles: string = elements
+      .flatMap(({ content }) => content)
+      .join('\n');
+
+    postcss([autoprefixer])
+      .process(styles, { from: undefined })
+      .then((result) => {
+        styleNode.content.push(result.css);
+
+        done();
+      });
+
     return {
       ...node,
-      content: [
-        ...(node.content ?? []),
-        {
-          tag: 'style',
-          content: elements.flatMap(({ content }) => content)
-        }
-      ]
+      content: [...(node.content ?? []), styleNode]
     };
   });
+
+  if (tasks === 0) callback(null, tree);
 };
 
 export default styleElement;

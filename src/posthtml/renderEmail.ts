@@ -16,7 +16,7 @@ export const renderEmail = async (
   options: Options = {
     publish: false
   }
-) => {
+): Promise<string> => {
   const emailTemplate = Handlebars.compile(
     fs
       .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
@@ -51,6 +51,10 @@ export const renderEmail = async (
       content: handlebarsTemplate(options.data)
     })
   );
+
+  if (options.publish) {
+    return result.html;
+  }
 
   return prettier.format(result.html, { parser: 'html' });
 };

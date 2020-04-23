@@ -4673,7 +4673,7 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-isobject@^2.0.0:
+isobject@^2.0.0, isobject@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.1.0.tgz#f065561096a3f1da2ef46272f815c840d87e0c89"
   integrity sha1-8GVWEJaj8dou9GJy+BXIQNh+DIk=
@@ -6354,7 +6354,7 @@ postcss@^5.0.12:
     source-map "^0.5.6"
     supports-color "^3.2.3"
 
-postcss@^7.0.26:
+postcss@^7.0.26, postcss@^7.0.27:
   version "7.0.27"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.27.tgz#cc67cdc6b0daa375105b7c424a85567345fc54d9"
   integrity sha512-WuQETPMcW9Uf1/22HWUWP9lgsIC+KEHg2kozMflKjbeUtw9ujvFX6QmIfozaErDkmLWS9WEnEdEe6Uo9/BNTdQ==
@@ -6386,6 +6386,15 @@ posthtml-match-helper@^1.0.1:
   resolved "https://registry.yarnpkg.com/posthtml-match-helper/-/posthtml-match-helper-1.0.1.tgz#451253de8e5844a348e963ad5edd7769eb129513"
   integrity sha1-RRJT3o5YRKNI6WOtXt13aesSlRM=
 
+posthtml-parser@^0.3.0:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/posthtml-parser/-/posthtml-parser-0.3.3.tgz#3fe986fca9f00c0f109d731ba590b192f26e776d"
+  integrity sha512-H/Z/yXGwl49A7hYQLV1iQ3h87NE0aZ/PMZhFwhw3lKeCAN+Ti4idrHvVvh4/GX10I7u77aQw+QB4vV5/Lzvv5A==
+  dependencies:
+    htmlparser2 "^3.9.2"
+    isobject "^2.1.0"
+    object-assign "^4.1.1"
+
 posthtml-parser@^0.4.1, posthtml-parser@^0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/posthtml-parser/-/posthtml-parser-0.4.2.tgz#a132bbdf0cd4bc199d34f322f5c1599385d7c6c1"
@@ -6393,10 +6402,23 @@ posthtml-parser@^0.4.1, posthtml-parser@^0.4.2:
   dependencies:
     htmlparser2 "^3.9.2"
 
+posthtml-render@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/posthtml-render/-/posthtml-render-1.0.6.tgz#1b88b8e7860a8ebdfe2f2a1310a4642a55cf5bda"
+  integrity sha1-G4i454YKjr3+LyoTEKRkKlXPW9o=
+
 posthtml-render@^1.1.5:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/posthtml-render/-/posthtml-render-1.2.0.tgz#3df0c800a8bbb95af583a94748520469477addf4"
   integrity sha512-dQB+hoAKDtnI94RZm/wxBUH9My8OJcXd0uhWmGh2c7tVtQ85A+OS3yCN3LNbFtPz3bViwBJXAeoi+CBGMXM0DA==
+
+posthtml-spaceless@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/posthtml-spaceless/-/posthtml-spaceless-0.0.3.tgz#979fcea5409036f43d88f80decd62d9fc81b5165"
+  integrity sha512-5IJ5unzVkxZHu4n7aGQV1edFO/gJRlqGLfDGN+xxO9HpKwR6pgIHVb/DSZr4gxwzXuD6J/YMbdh+Z/HBlWib/w==
+  dependencies:
+    posthtml-parser "^0.3.0"
+    posthtml-render "1.0.6"
 
 posthtml@^0.12.0:
   version "0.12.0"

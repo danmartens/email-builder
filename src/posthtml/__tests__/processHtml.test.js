@@ -39,7 +39,7 @@ test('inlines styles and moves style tags to the head', async () => {
           content: [
             {
               tag: 'style',
-              content: ['body { color: red; }', 'body { background: blue; }']
+              content: ['body { color: red; }\nbody { background: blue; }']
             }
           ]
         },
@@ -71,6 +71,7 @@ test('converts srcset to multiple images with media queries', async () => {
               tag: 'style',
               content: [
                 `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
+                                      (-webkit-max-device-pixel-ratio: 1.9895833333333333),
                                       (max-resolution: 191dpi) {
                 #i1 {
                   width: 100% !important;

@@ -1,4 +1,5 @@
 import posthtml from 'posthtml';
+import spaceless from 'posthtml-spaceless';
 import inlineCSS from 'posthtml-inline-css';
 import tableElement from './tableElement';
 import imageElement from './imageElement';
@@ -27,6 +28,7 @@ const processHtml = (
       options.publish ? undefined : unsubscribeElement,
       styleElement,
       removeExtraElements,
+      spaceless(),
       options.publish ? uploadImages(template) : undefined
     ].filter(Boolean)
   ).process(html);
