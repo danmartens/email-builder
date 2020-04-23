@@ -108,7 +108,7 @@ test('converts srcset to multiple images with media queries', async () => {
                   }
                 },
                 '<!--<![endif]-->',
-                undefined
+                { tag: undefined }
               ]
             }
           ]
