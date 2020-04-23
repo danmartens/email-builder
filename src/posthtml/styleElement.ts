@@ -3,6 +3,16 @@ import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
 import { Node } from './types';
 
+const stripInlinableStyles = postcss.plugin('postcss-test', (options) => {
+  return (root, result) => {
+    root.walkRules((rule) => {
+      if (rule.parent.type !== 'atrule') {
+        rule.remove();
+      }
+    });
+  };
+});
+
 const styleElement = (tree, callback) => {
   const elements: Node[] = [];
   let tasks = 0;
@@ -13,43 +23,49 @@ const styleElement = (tree, callback) => {
     if (tasks === 0) callback(null, tree);
   };
 
-  tree.match({ tag: 'style' }, (node: Node) => {
-    if (node.attrs != null && 'data-ignore' in node.attrs) {
-      return node;
+  tree.match(
+    { tag: 'style' },
+    (node: Node): Node => {
+      if (node.attrs != null && 'data-ignore' in node.attrs) {
+        return node;
+      }
+
+      elements.push(node);
+
+      return {
+        tag: undefined
+      };
     }
+  );
 
-    elements.push(node);
+  tree.match(
+    { tag: 'head' },
+    (node): Node => {
+      tasks++;
 
-    return {
-      tag: undefined
-    };
-  });
+      const styleNode = {
+        tag: 'style',
+        content: []
+      };
 
-  tree.match({ tag: 'head' }, (node) => {
-    tasks++;
+      const styles: string = elements
+        .flatMap(({ content }) => content)
+        .join('\n');
 
-    const styleNode = {
-      tag: 'style',
-      content: []
-    };
+      postcss([stripInlinableStyles, autoprefixer])
+        .process(styles, { from: undefined })
+        .then((result) => {
+          styleNode.content.push(result.css);
 
-    const styles: string = elements
-      .flatMap(({ content }) => content)
-      .join('\n');
+          done();
+        });
 
-    postcss([autoprefixer])
-      .process(styles, { from: undefined })
-      .then((result) => {
-        styleNode.content.push(result.css);
-
-        done();
-      });
-
-    return {
-      ...node,
-      content: [...(node.content ?? []), styleNode]
-    };
-  });
+      return {
+        ...node,
+        content: [...(node.content ?? []), styleNode]
+      };
+    }
+  );
 
   if (tasks === 0) callback(null, tree);
 };
