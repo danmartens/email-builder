@@ -24,7 +24,7 @@ const ImportFile: React.FC<Props> = (props) => {
             () => {
               const data = JSON.parse(reader.result!.toString());
 
-              let nextValues = {
+              const nextValues = {
                 ...values,
                 ...data
               };

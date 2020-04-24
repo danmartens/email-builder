@@ -42,7 +42,10 @@ jobs:
         run: yarn install
 
       - name: Run TypeScript
-        run: yarn run tsc --noEmit
+        run: yarn types:check
 
       - name: Run Prettier
         run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
+
+      - name: Run ESLint
+        run: yarn lint
