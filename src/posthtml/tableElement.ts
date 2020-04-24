@@ -2,7 +2,7 @@ import mergeStyle from './utils/mergeStyle';
 
 const tableElement = (tree) => {
   tree.match({ tag: 'table' }, (node) => {
-    return mergeStyle({ 'border-collapse': 'collapse', width: '100%' })({
+    return mergeStyle({ 'border-collapse': 'collapse' })({
       ...node,
       attrs: {
         border: '0',
