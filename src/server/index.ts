@@ -61,7 +61,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     app.use(express.static(path.join(__dirname, 'public')));
   }
 
-  app.get('/', (req, res) => {
+  app.get('/', (_req, res) => {
     if (fs.existsSync(emailsPath)) {
       renderTemplate('index', {
         emails: fs
@@ -78,10 +78,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         res.send(html);
       });
     } else {
-      renderTemplate('error', {
-        message: `Please create an "emails" directory in your project directory (${projectPath}).`
-      }).then((html) => {
-        res.status(500);
+      renderTemplate('index', { emails: [] }).then((html) => {
         res.send(html);
       });
     }

@@ -19,6 +19,7 @@
     <style>
       body {
         font-family: 'Source Code Pro', Menlo, monospace;
+        margin: 3em 2em;
       }
 
       ul {
@@ -26,21 +27,36 @@
       }
 
       li {
-        text-transform: capitalize;
         margin: 1em 0;
+      }
+
+      code {
+        font-family: inherit;
+        background-color: #f3f4f4;
+        padding: 0.4em 0.75em;
       }
     </style>
   </head>
 
   <body>
-    <nav>
-      <ul>
-        {{#each emails}}
-          <li>
-            <a href="/emails/{{name}}">{{name}}</a>
-          </li>
-        {{/each}}
-      </ul>
-    </nav>
+    {{#if emails}}
+      <nav>
+        <ul>
+          {{#each emails}}
+            <li>
+              <a href="/emails/{{name}}">{{name}}</a>
+            </li>
+          {{/each}}
+        </ul>
+      </nav>
+    {{else}}
+      <p>
+        No templates found.
+      </p>
+
+      <p>
+        Run <code>yarn run email-builder new &lt;name&gt;</code> to create a new template.
+      </p>
+    {{/if}}
   </body>
 </html>
