@@ -83,7 +83,9 @@ const Email: React.FC = () => {
   useEffect(() => {
     try {
       sessionStorage.setItem('editorVisible', JSON.stringify(editorVisible));
-    } catch (error) {}
+    } catch (error) {
+      // Ignore error setting item
+    }
 
     if (document.body == null) {
       return;
