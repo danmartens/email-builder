@@ -1,3 +1,5 @@
+name: Test
+
 on:
   push:
     branches:
@@ -14,7 +16,7 @@ jobs:
       matrix:
         node: ['13', '12', '10']
 
-    name: Test Node ${{ matrix.node }}
+    name: Node ${{ matrix.node }}
 
     steps:
       - name: Checkout Code
