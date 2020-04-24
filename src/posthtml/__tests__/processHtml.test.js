@@ -79,7 +79,6 @@ test('converts srcset to multiple images with media queries', async () => {
               tag: 'style',
               content: [
                 `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
-                                      (-webkit-max-device-pixel-ratio: 1.9895833333333333),
                                       (max-resolution: 191dpi) {
                 #i1 {
                   width: 100% !important;
