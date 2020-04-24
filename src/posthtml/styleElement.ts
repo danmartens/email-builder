@@ -13,7 +13,7 @@ const stripInlinableStyles = postcss.plugin('postcss-test', (options) => {
   };
 });
 
-const styleElement = (tree, callback) => {
+const styleElement = (options: { publish: boolean }) => (tree, callback) => {
   const elements: Node[] = [];
   let tasks = 0;
 
@@ -52,7 +52,12 @@ const styleElement = (tree, callback) => {
         .flatMap(({ content }) => content)
         .join('\n');
 
-      postcss([stripInlinableStyles, autoprefixer])
+      postcss(
+        [
+          stripInlinableStyles,
+          options.publish ? autoprefixer : undefined
+        ].filter(Boolean)
+      )
         .process(styles, { from: undefined })
         .then((result) => {
           styleNode.content.push(result.css);

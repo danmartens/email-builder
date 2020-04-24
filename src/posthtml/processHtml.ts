@@ -11,6 +11,7 @@ import uploadImages from './uploadImages';
 import unsubscribeElement from './unsubscribeElement';
 import styleElement from './styleElement';
 import preprocessStyles from './preprocessStyles';
+import minifyStyles from './minifyStyles';
 
 const processHtml = (
   template: Template,
@@ -28,9 +29,10 @@ const processHtml = (
       imageElement(template.name),
       tableElement,
       options.publish ? undefined : unsubscribeElement,
-      styleElement,
+      styleElement(options),
       removeExtraElements,
       spaceless(),
+      options.publish ? minifyStyles : undefined,
       options.publish ? uploadImages(template) : undefined
     ].filter(Boolean)
   ).process(html);
