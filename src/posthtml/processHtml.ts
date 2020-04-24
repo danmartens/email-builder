@@ -10,6 +10,7 @@ import { Template } from './types';
 import uploadImages from './uploadImages';
 import unsubscribeElement from './unsubscribeElement';
 import styleElement from './styleElement';
+import preprocessStyles from './preprocessStyles';
 
 const processHtml = (
   template: Template,
@@ -21,6 +22,7 @@ const processHtml = (
   return posthtml(
     [
       syntaxAttribute,
+      preprocessStyles,
       inlineCSS(),
       section,
       imageElement(template.name),
