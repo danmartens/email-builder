@@ -72,7 +72,9 @@ class Section {
           id: this.id,
           width: this.maxWidth,
           style:
-            this.maxWidth != null ? `max-width: ${this.maxWidth}px` : undefined
+            this.maxWidth != null
+              ? `max-width: ${this.maxWidth}px`
+              : 'width: 100%'
         }),
         content: [
           padding.top > 0
