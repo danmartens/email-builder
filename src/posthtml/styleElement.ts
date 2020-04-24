@@ -1,10 +1,11 @@
 import 'core-js/es/array/flat-map';
 import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
-import { Node } from './types';
+import { PostHTMLNode, PostHTMLPlugin } from './types';
+import compact from 'lodash/compact';
 
-const stripInlinableStyles = postcss.plugin('postcss-test', (options) => {
-  return (root, result) => {
+const stripInlinableStyles = postcss.plugin('postcss-test', () => {
+  return (root) => {
     root.walkRules((rule) => {
       if (rule.parent.type !== 'atrule') {
         rule.remove();
@@ -13,8 +14,12 @@ const stripInlinableStyles = postcss.plugin('postcss-test', (options) => {
   };
 });
 
-const styleElement = (options: { publish: boolean }) => (tree, callback) => {
-  const elements: Node[] = [];
+const styleElement = (options: { publish: boolean }): PostHTMLPlugin => (
+  tree,
+  callback
+) => {
+  const elements: PostHTMLNode[] = [];
+
   let tasks = 0;
 
   const done = () => {
@@ -23,54 +28,48 @@ const styleElement = (options: { publish: boolean }) => (tree, callback) => {
     if (tasks === 0) callback(null, tree);
   };
 
-  tree.match(
-    { tag: 'style' },
-    (node: Node): Node => {
-      if (node.attrs != null && 'data-ignore' in node.attrs) {
-        return node;
-      }
-
-      elements.push(node);
-
-      return {
-        tag: undefined
-      };
+  tree.match({ tag: 'style' }, (node) => {
+    if (node.attrs != null && 'data-ignore' in node.attrs) {
+      return node;
     }
-  );
 
-  tree.match(
-    { tag: 'head' },
-    (node): Node => {
-      tasks++;
+    elements.push(node);
 
-      const styleNode = {
-        tag: 'style',
-        content: []
-      };
+    return {
+      tag: undefined
+    };
+  });
 
-      const styles: string = elements
-        .flatMap(({ content }) => content)
-        .join('\n');
+  tree.match({ tag: 'head' }, (node) => {
+    tasks++;
 
-      postcss(
-        [
-          stripInlinableStyles,
-          options.publish ? autoprefixer : undefined
-        ].filter(Boolean)
-      )
-        .process(styles, { from: undefined })
-        .then((result) => {
-          styleNode.content.push(result.css);
+    const styleNode: PostHTMLNode = {
+      tag: 'style',
+      content: []
+    };
 
-          done();
-        });
+    const styles: string = elements
+      .flatMap(({ content }) => content)
+      .join('\n');
 
-      return {
-        ...node,
-        content: [...(node.content ?? []), styleNode]
-      };
-    }
-  );
+    postcss(
+      compact([
+        stripInlinableStyles,
+        options.publish ? autoprefixer : undefined
+      ])
+    )
+      .process(styles, { from: undefined })
+      .then((result) => {
+        styleNode.content!.push(result.css);
+
+        done();
+      });
+
+    return {
+      ...node,
+      content: [...(node.content ?? []), styleNode]
+    };
+  });
 
   if (tasks === 0) callback(null, tree);
 };

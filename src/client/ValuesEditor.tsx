@@ -33,45 +33,47 @@ const ValuesEditor: React.FC<Props> = (props) => {
 
             {valueSchema.type === 'list' ? (
               <>
-                {getIn(values, [valueSchema.name], []).map((_, index) => (
-                  <ListItem key={index}>
-                    {valueSchema.schema.map((nestedValueSchema) => (
-                      <FormGroup key={nestedValueSchema.name}>
-                        <Label>{nestedValueSchema.label}</Label>
+                {(getIn(values, [valueSchema.name], []) as object[]).map(
+                  (_, index) => (
+                    <ListItem key={index}>
+                      {valueSchema.schema.map((nestedValueSchema) => (
+                        <FormGroup key={nestedValueSchema.name}>
+                          <Label>{nestedValueSchema.label}</Label>
 
-                        <ValueEditor
-                          schema={nestedValueSchema}
-                          value={getIn(
-                            values,
-                            [valueSchema.name, index, nestedValueSchema.name],
-                            ''
-                          )}
-                          onChange={(value) => {
-                            onChange(
-                              setIn(
-                                values,
-                                [
-                                  valueSchema.name,
-                                  index,
-                                  nestedValueSchema.name
-                                ],
-                                value
-                              )
-                            );
-                          }}
-                        />
-                      </FormGroup>
-                    ))}
+                          <ValueEditor
+                            schema={nestedValueSchema}
+                            value={getIn(
+                              values,
+                              [valueSchema.name, index, nestedValueSchema.name],
+                              ''
+                            )}
+                            onChange={(value) => {
+                              onChange(
+                                setIn(
+                                  values,
+                                  [
+                                    valueSchema.name,
+                                    index,
+                                    nestedValueSchema.name
+                                  ],
+                                  value
+                                )
+                              );
+                            }}
+                          />
+                        </FormGroup>
+                      ))}
 
-                    <Button
-                      onClick={() => {
-                        onChange(removeIn(values, [valueSchema.name, index]));
-                      }}
-                    >
-                      × Remove
-                    </Button>
-                  </ListItem>
-                ))}
+                      <Button
+                        onClick={() => {
+                          onChange(removeIn(values, [valueSchema.name, index]));
+                        }}
+                      >
+                        × Remove
+                      </Button>
+                    </ListItem>
+                  )
+                )}
 
                 <Button
                   onClick={() => {
@@ -102,8 +104,8 @@ const ValuesEditor: React.FC<Props> = (props) => {
         ))}
 
         <EditorActions visible={visible}>
-          <ExportFile />
-          <ImportFile />
+          <ExportFile values={values} />
+          <ImportFile values={values} onImport={onChange} />
         </EditorActions>
       </Editor>
 
@@ -148,7 +150,7 @@ const ValueEditor: React.FC<{
         />
       )}
 
-      {schema.type === 'text' && (
+      {schema.type === 'text' && typeof value === 'string' && (
         <TextArea
           rows={3}
           value={value}

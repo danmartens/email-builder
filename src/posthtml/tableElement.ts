@@ -1,6 +1,7 @@
 import mergeStyle from './utils/mergeStyle';
+import { PostHTMLPlugin } from './types';
 
-const tableElement = (tree) => {
+const tableElement: PostHTMLPlugin = (tree) => {
   tree.match({ tag: 'table' }, (node) => {
     return mergeStyle({ 'border-collapse': 'collapse' })({
       ...node,

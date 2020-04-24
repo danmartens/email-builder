@@ -17,8 +17,8 @@ const Frame: React.FC<Props> = (props) => {
 
   useLayoutEffect(() => {
     if (frameRef.current != null && source != null) {
-      frameRef.current.contentWindow.document.open();
-      frameRef.current.contentWindow.document.write(source);
+      frameRef.current.contentWindow!.document.open();
+      frameRef.current.contentWindow!.document.write(source);
     }
   }, [source]);
 
@@ -57,8 +57,8 @@ const Container = styled.div<{ editorVisible: boolean }>`
 `;
 
 const Device = styled.div<{
-  height: number;
-  width: number;
+  width: number | null;
+  height: number | null;
   cornerRadius?: number;
   bezelWidth?: number;
 }>`
@@ -84,7 +84,7 @@ const Screen = styled.iframe`
   left: 0;
 `;
 
-const Header = styled.div<{ height: number; cornerRadius: number }>`
+const Header = styled.div<{ height: number; cornerRadius?: number }>`
   position: absolute;
   height: ${({ height }) => `${height}px`};
   width: 100%;

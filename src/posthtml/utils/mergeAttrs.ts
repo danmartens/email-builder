@@ -1,7 +1,7 @@
-import { Node } from '../types';
+import { PostHTMLNode } from '../types';
 import buildAttrs from './buildAttrs';
 
-const mergeAttrs = (attrs: object) => (node: Node): Node => {
+const mergeAttrs = (attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
   return {
     ...node,
     attrs: buildAttrs({

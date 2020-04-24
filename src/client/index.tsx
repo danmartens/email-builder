@@ -29,7 +29,7 @@ const Email: React.FC = () => {
   const [reloading, setReloading] = useState(true);
   const [downloading, setDownloading] = useState(false);
 
-  const [editorVisible, setEditorVisible] = useState(() => {
+  const [editorVisible, setEditorVisible] = useState<boolean>(() => {
     if (schema.length === 0) return false;
 
     try {

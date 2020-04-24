@@ -1,10 +1,10 @@
 import parseAttrs from 'posthtml-attrs-parser';
-import { Node } from '../types';
+import { PostHTMLNode } from '../types';
 
-const mergeStyle = (style: object) => (node: Node): Node => {
-  const attrs = parseAttrs(node.attrs);
+const mergeStyle = (style: object) => (node: PostHTMLNode): PostHTMLNode => {
+  const attrs = parseAttrs(node.attrs ?? {});
 
-  attrs.style = { ...style, ...(attrs.style || {}) };
+  attrs.style = { ...style, ...(attrs.style ?? {}) };
 
   return {
     ...node,

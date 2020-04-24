@@ -20,6 +20,11 @@ const resizeAndUploadImage = async (
   dimensions: Dimensions
 ) => {
   const { s3BucketName, s3Subdomain } = new Configuration();
+
+  if (s3BucketName == null) {
+    throw new Error('Missing configuration "S3_BUCKET_NAME"');
+  }
+
   const { name, ext } = path.parse(imageFile.originalname);
 
   const resizedImage = await resizeImage(imageFile.path, dimensions);
@@ -50,7 +55,7 @@ const resizeAndUploadImage = async (
   );
 };
 
-const dimensionsString = (dimensions: Dimensions): string => {
+const dimensionsString = (dimensions: Dimensions): string | undefined => {
   const { width, height } = dimensions;
 
   if (width != null && height != null) {

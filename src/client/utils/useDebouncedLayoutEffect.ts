@@ -6,7 +6,7 @@ const useDebouncedLayoutEffect = (
   deps?: DependencyList
 ) => {
   const timeoutHandle = useRef<ReturnType<typeof setTimeout>>();
-  const cleanup = useRef<ReturnType<EffectCallback>>(null);
+  const cleanup = useRef<ReturnType<EffectCallback> | null>(null);
 
   useLayoutEffect(() => {
     timeoutHandle.current = setTimeout(() => {
@@ -22,7 +22,7 @@ const useDebouncedLayoutEffect = (
         cleanup.current();
       }
     };
-  }, [delay, ...deps]);
+  }, [delay, ...(deps || [])]);
 };
 
 export default useDebouncedLayoutEffect;

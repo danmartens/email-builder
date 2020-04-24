@@ -1,9 +1,12 @@
 import path from 'path';
-import { Template } from './types';
 import resizeAndUploadImages from '../server/utils/resizeAndUploadImages';
 import Configuration from '../Configuration';
+import { PostHTMLNode, Template, PostHTMLPlugin } from './types';
 
-const uploadImages = (template: Template) => (tree, callback) => {
+const uploadImages = (template: Template): PostHTMLPlugin => (
+  tree,
+  callback
+) => {
   const { emailsPath } = new Configuration();
   let tasks = 0;
 
@@ -13,38 +16,41 @@ const uploadImages = (template: Template) => (tree, callback) => {
     if (tasks === 0) callback(null, tree);
   };
 
-  tree.match({ tag: 'img', attrs: { 'data-original-src': /^\// } }, (node) => {
-    tasks++;
+  tree.match(
+    { tag: 'img', attrs: { 'data-original-src': /^\// } },
+    (node: PostHTMLNode): PostHTMLNode => {
+      tasks++;
 
-    const filePath = path.join(
-      emailsPath,
-      template.name,
-      'assets',
-      node.attrs['data-original-src']
-    );
+      const filePath = path.join(
+        emailsPath,
+        template.name,
+        'assets',
+        node.attrs!['data-original-src']!
+      );
 
-    const { name, ext } = path.parse(filePath);
+      const { name, ext } = path.parse(filePath);
 
-    resizeAndUploadImages(
-      {
-        path: filePath,
-        originalname: `${name}${ext}`
-      },
-      [
+      resizeAndUploadImages(
         {
-          width: parseInt(
-            node.attrs['data-max-width'] || node.attrs.width || 600
-          )
-        }
-      ]
-    )
-      .then(([image]) => {
-        node.attrs.src = image.objectUrl;
-      })
-      .finally(done);
+          path: filePath,
+          originalname: `${name}${ext}`
+        },
+        [
+          {
+            width: parseInt(
+              node.attrs!['data-max-width'] || node.attrs!.width || '600'
+            )
+          }
+        ]
+      )
+        .then(([image]) => {
+          node.attrs!.src = image.objectUrl;
+        })
+        .finally(done);
 
-    return node;
-  });
+      return node;
+    }
+  );
 
   if (tasks === 0) callback(null, tree);
 };

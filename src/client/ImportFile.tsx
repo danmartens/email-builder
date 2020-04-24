@@ -1,7 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const size = 36;
+interface Props<TValues extends {} = {}> {
+  values: TValues;
+  onImport(values: TValues): void;
+}
+
+const ImportFile: React.FC<Props> = (props) => {
+  const { values, onImport } = props;
+
+  return (
+    <Wrapper>
+      ↑ Import
+      <Input
+        type="file"
+        accept=".json"
+        onChange={(event) => {
+          const file = event.currentTarget.files![0];
+          const reader = new FileReader();
+
+          reader.addEventListener(
+            'load',
+            () => {
+              const data = JSON.parse(reader.result!.toString());
+
+              let nextValues = {
+                ...values,
+                ...data
+              };
+
+              onImport(nextValues);
+            },
+            false
+          );
+
+          reader.readAsText(file);
+        }}
+      />
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.div`
   transition: background-color 0.15s;
@@ -33,40 +71,4 @@ const Input = styled.input`
   cursor: pointer;
 `;
 
-export function Import(props) {
-  return (
-    <Wrapper>
-      ↑ Import
-      <Input
-        type="file"
-        accept=".json"
-        onChange={(event) => {
-          const file = event.currentTarget.files[0];
-          const reader = new FileReader();
-
-          reader.addEventListener(
-            'load',
-            () => {
-              const data = JSON.parse(reader.result.toString());
-              let nextValues = props.values;
-
-              for (const key of Object.keys(data)) {
-                nextValues = nextValues.set(key, data[key]);
-              }
-
-              props.onImport(nextValues);
-            },
-            false
-          );
-
-          reader.readAsText(file);
-        }}
-      />
-    </Wrapper>
-  );
-}
-
-Import.displayName = 'Import';
-Import.defaultProps = {};
-
-export default Import;
+export default ImportFile;

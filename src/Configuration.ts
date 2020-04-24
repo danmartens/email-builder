@@ -13,12 +13,12 @@ class Configuration {
     return process.env.HOST ?? 'localhost';
   }
 
-  get port(): string {
-    return process.env.PORT ?? '5000';
+  get port(): number {
+    return parseInt(process.env.PORT ?? '5000');
   }
 
-  get assetsPort(): string {
-    return process.env.ASSETS_PORT ?? '8080';
+  get assetsPort(): number {
+    return parseInt(process.env.ASSETS_PORT ?? '8080');
   }
 
   get awsRegion(): string | undefined {

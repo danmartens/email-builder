@@ -1,14 +1,15 @@
 import parseBoxValues from './utils/parseBoxValues';
 import buildAttrs from './utils/buildAttrs';
 import parseResponsiveValue from './utils/parseResponsiveValue';
-import { Node } from './types';
+import { PostHTMLNode, PostHTMLPlugin } from './types';
 import uniqueId from 'lodash/uniqueId';
+import compact from 'lodash/compact';
 
 class Section {
   private readonly id: string;
-  private readonly node: Node;
+  private readonly node: PostHTMLNode;
 
-  constructor(node: Node) {
+  constructor(node: PostHTMLNode) {
     this.id = uniqueId('s');
     this.node = node;
   }
@@ -43,7 +44,7 @@ class Section {
     return (this.node.attrs ?? {})['max-width'] ?? undefined;
   }
 
-  toNodes(): Node[] {
+  toNode(): PostHTMLNode {
     const { align, colspan } = this;
 
     const padding = this.padding.defaultValue ?? {
@@ -53,114 +54,117 @@ class Section {
       right: 0
     };
 
-    return [
-      {
-        tag: 'style',
-        attrs: {},
-        content: this.padding.buildMediaQueries((value) =>
-          [
-            `#${this.id}-pt { height: ${value.top}px; }`,
-            `#${this.id}-pl { width: ${value.left}px; }`,
-            `#${this.id}-pb { height: ${value.bottom}px; }`,
-            `#${this.id}-pr { width: ${value.right}px; }`
-          ].join(' ')
-        )
-      },
-      {
-        tag: 'table',
-        attrs: buildAttrs({
-          id: this.id,
-          width: this.maxWidth,
-          style:
-            this.maxWidth != null
-              ? `max-width: ${this.maxWidth}px`
-              : 'width: 100%'
-        }),
-        content: [
-          padding.top > 0
-            ? {
-                tag: 'tr',
-                attrs: {},
-                content: [
-                  {
-                    tag: 'td',
-                    attrs: buildAttrs({
-                      id: `${this.id}-pt`,
-                      colspan,
-                      height: padding.top
-                    })
-                  }
-                ]
-              }
-            : undefined,
-          {
-            tag: 'tr',
-            attrs: {},
-            content: [
-              padding.left > 0
-                ? {
-                    tag: 'td',
-                    attrs: buildAttrs({
-                      id: `${this.id}-pl`,
-                      width: padding.left
-                    })
-                  }
-                : undefined,
-              {
-                tag: 'td',
-                attrs: buildAttrs({ align }),
-                content: [
-                  {
-                    ...this.node,
-                    attrs: buildAttrs({
-                      ...(this.node.attrs || {}),
-                      align: undefined,
-                      padding: undefined,
-                      'max-width': undefined
-                    })
-                  }
-                ]
-              },
-              padding.right > 0
-                ? {
-                    tag: 'td',
-                    attrs: buildAttrs({
-                      id: `${this.id}-pr`,
-                      width: padding.right
-                    })
-                  }
-                : undefined
-            ].filter((item) => item != null)
-          },
-          padding.bottom > 0
-            ? {
-                tag: 'tr',
-                attrs: {},
-                content: [
-                  {
-                    tag: 'td',
-                    attrs: buildAttrs({
-                      id: `${this.id}-pb`,
-                      colspan,
-                      height: padding.bottom
-                    })
-                  }
-                ]
-              }
-            : undefined
-        ]
-      }
-    ];
+    return {
+      tag: undefined,
+      content: [
+        {
+          tag: 'style',
+          attrs: {},
+          content: this.padding.buildMediaQueries((value) =>
+            [
+              `#${this.id}-pt { height: ${value.top}px; }`,
+              `#${this.id}-pl { width: ${value.left}px; }`,
+              `#${this.id}-pb { height: ${value.bottom}px; }`,
+              `#${this.id}-pr { width: ${value.right}px; }`
+            ].join(' ')
+          )
+        },
+        {
+          tag: 'table',
+          attrs: buildAttrs({
+            id: this.id,
+            width: this.maxWidth,
+            style:
+              this.maxWidth != null
+                ? `max-width: ${this.maxWidth}px`
+                : 'width: 100%'
+          }),
+          content: compact([
+            padding.top > 0
+              ? {
+                  tag: 'tr',
+                  attrs: {},
+                  content: [
+                    {
+                      tag: 'td',
+                      attrs: buildAttrs({
+                        id: `${this.id}-pt`,
+                        colspan,
+                        height: padding.top
+                      })
+                    }
+                  ]
+                }
+              : undefined,
+            {
+              tag: 'tr',
+              attrs: {},
+              content: compact([
+                padding.left > 0
+                  ? {
+                      tag: 'td',
+                      attrs: buildAttrs({
+                        id: `${this.id}-pl`,
+                        width: padding.left
+                      })
+                    }
+                  : undefined,
+                {
+                  tag: 'td',
+                  attrs: buildAttrs({ align }),
+                  content: [
+                    {
+                      ...this.node,
+                      attrs: buildAttrs({
+                        ...(this.node.attrs || {}),
+                        align: undefined,
+                        padding: undefined,
+                        'max-width': undefined
+                      })
+                    }
+                  ]
+                },
+                padding.right > 0
+                  ? {
+                      tag: 'td',
+                      attrs: buildAttrs({
+                        id: `${this.id}-pr`,
+                        width: padding.right
+                      })
+                    }
+                  : undefined
+              ])
+            },
+            padding.bottom > 0
+              ? {
+                  tag: 'tr',
+                  attrs: {},
+                  content: [
+                    {
+                      tag: 'td',
+                      attrs: buildAttrs({
+                        id: `${this.id}-pb`,
+                        colspan,
+                        height: padding.bottom
+                      })
+                    }
+                  ]
+                }
+              : undefined
+          ])
+        }
+      ]
+    };
   }
 }
 
-const section = (tree) => {
+const section: PostHTMLPlugin = (tree) => {
   tree.match({ attrs: { padding: /\d+( \d+){0,3}/ } }, (node) => {
-    return new Section(node).toNodes();
+    return new Section(node).toNode();
   });
 
   tree.match({ attrs: { 'max-width': /\d+/ } }, (node) => {
-    return new Section(node).toNodes();
+    return new Section(node).toNode();
   });
 
   tree.match({ attrs: { align: /[a-z]+/ } }, (node) => {
@@ -168,7 +172,7 @@ const section = (tree) => {
       return node;
     }
 
-    return new Section(node).toNodes();
+    return new Section(node).toNode();
   });
 };
 

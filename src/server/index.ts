@@ -13,6 +13,7 @@ import stripAnsi from 'strip-ansi';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+// @ts-ignore
 import config from '../../webpack.config';
 import { renderEmail } from '../posthtml/renderEmail';
 import parseSchema from './utils/parseSchema';

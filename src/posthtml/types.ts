@@ -3,10 +3,22 @@ export interface Template {
   rootPath?: string;
 }
 
-export interface Node {
+export interface PostHTMLNode {
   tag: string | undefined;
   attrs?: {
     [key: string]: string | undefined;
   };
-  content?: Array<string | Node>;
+  content?: Array<string | PostHTMLNode>;
 }
+
+interface PostHTMLTree {
+  match(
+    condition: { tag?: string; attrs?: { [name: string]: string | RegExp } },
+    predicate: (node: PostHTMLNode) => PostHTMLNode
+  ): void;
+}
+
+export type PostHTMLPlugin = (
+  tree: PostHTMLTree,
+  callback: (arg1: null, tree: PostHTMLTree) => void
+) => void;

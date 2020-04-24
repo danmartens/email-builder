@@ -9,16 +9,16 @@ interface Props {
 }
 
 type State = {
-  status: null | 'pending' | 'success' | 'error';
-  file: Blob;
-  imageDataUrl?: string;
+  status: 'pending' | 'success' | 'error' | null;
+  file: Blob | null;
+  imageDataUrl: string | null;
 };
 
 export default class ImageUploader extends React.PureComponent<Props, State> {
-  state = { status: null, file: null, imageDataUrl: null };
+  state: State = { status: null, file: null, imageDataUrl: null };
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevState.file !== this.state.file) {
+    if (prevState.file !== this.state.file && this.state.file != null) {
       this.setState({ status: 'pending' });
 
       const { maxWidth, maxHeight } = this.props;
@@ -71,7 +71,7 @@ export default class ImageUploader extends React.PureComponent<Props, State> {
           type="file"
           accept=".jpg,.jpeg,.png,.gif"
           onChange={(event) => {
-            this.setState({ file: event.currentTarget.files[0] });
+            this.setState({ file: event.currentTarget.files![0] });
           }}
         />
 

@@ -20,7 +20,13 @@ const Button = styled.button`
   }
 `;
 
-export function Export(props) {
+interface Props {
+  values: object;
+}
+
+const ExportFile: React.FC<Props> = (props) => {
+  const { values } = props;
+
   return (
     <Button
       onClick={() => {
@@ -31,16 +37,12 @@ export function Export(props) {
 
         const fileName = `export-${year}-${month}-${day}.json`;
 
-        download(
-          JSON.stringify(props.values, null, 2),
-          fileName,
-          'application/json'
-        );
+        download(JSON.stringify(values, null, 2), fileName, 'application/json');
       }}
     >
       ↓ Export
     </Button>
   );
-}
+};
 
-export default Export;
+export default ExportFile;

@@ -3,12 +3,12 @@ import mergeListItemDefaultValues from './mergeListItemDefaultValues';
 
 const deserializeValues = (
   schema: Schema,
-  serializedData: string
+  serializedData: string | null
 ): { [key: string]: string | undefined } => {
   const schemaKeys = schema.map(({ name }) => name);
 
-  let dataKeys = [];
-  let data = {};
+  let dataKeys: string[] = [];
+  let data: { [key: string]: any } = {};
 
   try {
     if (serializedData != null) {
@@ -33,10 +33,11 @@ const deserializeValues = (
     const value = schema.find(({ name }) => name === key);
 
     if (value?.type === 'list') {
-      data[key] = (data[key] || []).map((itemData) =>
+      data[key] = (data[key] || []).map((itemData: { [key: string]: any }) =>
         mergeListItemDefaultValues(value.schema, itemData)
       );
     } else if (!dataKeys.includes(key)) {
+      // @ts-ignore
       data[key] = value.defaultValue;
     }
   }

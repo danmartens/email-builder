@@ -12,7 +12,7 @@ interface Options {
 
 export const renderEmail = async (
   template: Template,
-  html,
+  html: string,
   options: Options = {
     publish: false
   }
