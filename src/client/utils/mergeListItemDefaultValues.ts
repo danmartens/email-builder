@@ -7,7 +7,7 @@ const mergeListItemDefaultValues = (
   schema.reduce((value, item) => {
     return {
       ...value,
-      [item.name]: data[item.name] ?? item.defaultValue
+      [item.name]: data[item.name] ?? item.defaultValue ?? ''
     };
   }, {});
 
