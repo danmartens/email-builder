@@ -44,6 +44,10 @@ class Section {
     return (this.node.attrs ?? {})['max-width'] ?? undefined;
   }
 
+  private get background() {
+    return this.node?.attrs?.background;
+  }
+
   toNode(): PostHTMLNode {
     const { align, colspan } = this;
 
@@ -74,6 +78,7 @@ class Section {
           attrs: buildAttrs({
             id: this.id,
             width: this.maxWidth,
+            bgcolor: this.background,
             style:
               this.maxWidth != null
                 ? `max-width: ${this.maxWidth}px`
@@ -119,7 +124,8 @@ class Section {
                         ...(this.node.attrs || {}),
                         align: undefined,
                         padding: undefined,
-                        'max-width': undefined
+                        'max-width': undefined,
+                        background: undefined
                       })
                     }
                   ]
@@ -172,6 +178,10 @@ const section: PostHTMLPlugin = (tree) => {
       return node;
     }
 
+    return new Section(node).toNode();
+  });
+
+  tree.match({ attrs: { background: /#[0-9a-f]{3,6}/ } }, (node) => {
     return new Section(node).toNode();
   });
 };
