@@ -71,29 +71,25 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
     transformedNodes.add(nonRetinaImage);
     transformedNodes.add(retinaImage);
 
-    return {
-      tag: 'div',
-      attrs: {},
-      content: [
-        nonRetinaImage,
-        '<!--[if !mso]>-->',
-        retinaImage,
-        '<!--<![endif]-->',
-        {
-          tag: 'style',
-          attrs: {},
-          content: [
-            `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
+    return [
+      nonRetinaImage,
+      '<!--[if !mso]>-->',
+      retinaImage,
+      '<!--<![endif]-->',
+      {
+        tag: 'style',
+        attrs: {},
+        content: [
+          `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
                                       (max-resolution: 191dpi) {
                 #${id} {
                   width: 100% !important;
                   max-width: ${width}px !important;
                 }
               }`
-          ]
-        }
-      ]
-    };
+        ]
+      }
+    ];
   });
 };
 
