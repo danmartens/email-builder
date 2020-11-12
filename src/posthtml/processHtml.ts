@@ -13,6 +13,8 @@ import styleElement from './styleElement';
 import preprocessStyles from './preprocessStyles';
 import minifyStyles from './minifyStyles';
 import { Template } from './types';
+import removeClassAttributes from './removeClassAttributes';
+import moveDataClassAttributes from './moveDataClassAttributes';
 
 const processHtml = (
   template: Template,
@@ -33,6 +35,8 @@ const processHtml = (
       options.publish ? undefined : unsubscribeElement,
       styleElement(options),
       removeExtraElements,
+      removeClassAttributes,
+      moveDataClassAttributes,
       spaceless(),
       options.publish ? minifyStyles : undefined,
       options.publish ? uploadImages(template) : undefined

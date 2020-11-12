@@ -47,7 +47,10 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
       return nonRetinaImage;
     }
 
-    nonRetinaImage = addClass('non-retina-image')(nonRetinaImage);
+    nonRetinaImage = pipe(
+      addClass('non-retina-image'),
+      mergeAttrs({ 'data-class': 'non-retina-image' })
+    )(nonRetinaImage);
 
     const retinaImage = pipe(
       mergeStyle({
@@ -59,6 +62,7 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
         id,
         src: srcset.get('2x'),
         'data-original-src': node.attrs.src,
+        'data-class': 'retina-image',
         srcset: undefined
       }),
       addClass('retina-image')
