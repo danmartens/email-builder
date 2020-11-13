@@ -93,32 +93,26 @@ test('converts srcset to multiple images with media queries', async () => {
           tag: 'body',
           content: [
             {
-              tag: 'div',
-              content: [
-                {
-                  tag: 'img',
-                  attrs: {
-                    src: '/assets/test/small.jpg',
-                    width: '400',
-                    class: 'non-retina-image',
-                    style: 'width: 100%; max-width: 400px'
-                  }
-                },
-                '<!--[if !mso]>-->',
-                {
-                  tag: 'img',
-                  attrs: {
-                    id: 'i1',
-                    src: '/assets/test/large.jpg',
-                    width: '400',
-                    class: 'retina-image',
-                    style: 'display: none; width: 100%; max-width: 400px'
-                  }
-                },
-                '<!--<![endif]-->',
-                { tag: undefined }
-              ]
-            }
+              tag: 'img',
+              attrs: {
+                src: '/assets/test/small.jpg',
+                width: '400',
+                class: 'non-retina-image',
+                style: 'width: 100%; max-width: 400px'
+              }
+            },
+            '<!--[if !mso]>-->',
+            {
+              tag: 'img',
+              attrs: {
+                id: 'i1',
+                src: '/assets/test/large.jpg',
+                width: '400',
+                class: 'retina-image',
+                style: 'display: none; width: 100%; max-width: 400px'
+              }
+            },
+            '<!--<![endif]-->'
           ]
         }
       ],

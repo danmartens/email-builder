@@ -34,8 +34,6 @@ const styleElement = (options: { publish: boolean }): PostHTMLPlugin => (
     }
 
     elements.push(node);
-
-    return [];
   });
 
   tree.match({ tag: 'head' }, (node) => {
