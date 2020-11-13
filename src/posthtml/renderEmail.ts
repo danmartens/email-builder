@@ -7,8 +7,24 @@ import processHtml from './processHtml';
 
 interface Options {
   publish: boolean;
-  data?: object;
+  context?: object;
 }
+
+const generateHeadHtml = (template: Template, options: Options) => {
+  if (template.rootPath == null) {
+    return;
+  }
+
+  const headTemplatePath = path.join(template.rootPath, 'head.hbs');
+
+  if (!fs.existsSync(headTemplatePath)) {
+    return;
+  }
+
+  return Handlebars.compile(fs.readFileSync(headTemplatePath).toString())(
+    options.context
+  );
+};
 
 export const renderEmail = async (
   template: Template,
@@ -23,7 +39,7 @@ export const renderEmail = async (
       .toString()
   );
 
-  const handlebarsTemplate = Handlebars.compile(html);
+  const contentTemplate = Handlebars.compile(html);
 
   if (template.rootPath != null) {
     const partialsDirectoryPath = path.join(template.rootPath, 'partials');
@@ -48,7 +64,8 @@ export const renderEmail = async (
     options,
     emailTemplate({
       isDevelopment: true,
-      content: handlebarsTemplate(options.data)
+      content: contentTemplate(options.context),
+      head: generateHeadHtml(template, options)
     })
   );
 

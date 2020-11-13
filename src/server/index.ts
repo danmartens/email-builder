@@ -127,7 +127,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: false,
-      data: req.body.data
+      context: req.body.data
     }).then(
       (data) => {
         res.send(data);
@@ -155,7 +155,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: true,
-      data: req.body.data
+      context: req.body.data
     }).then(
       (data) => {
         res.send(data);
