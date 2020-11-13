@@ -48,7 +48,7 @@ class Section {
     return this.node?.attrs?.background;
   }
 
-  toNode(): PostHTMLNode {
+  toNode(): PostHTMLNode[] {
     const { align, colspan } = this;
 
     const padding = this.padding.defaultValue ?? {
@@ -58,109 +58,106 @@ class Section {
       right: 0
     };
 
-    return {
-      tag: undefined,
-      content: [
-        {
-          tag: 'style',
-          attrs: {},
-          content: this.padding.buildMediaQueries((value) =>
-            [
-              `#${this.id}-pt { height: ${value.top}px; }`,
-              `#${this.id}-pl { width: ${value.left}px; }`,
-              `#${this.id}-pb { height: ${value.bottom}px; }`,
-              `#${this.id}-pr { width: ${value.right}px; }`
-            ].join(' ')
-          )
-        },
-        {
-          tag: 'table',
-          attrs: buildAttrs({
-            id: this.id,
-            width: this.maxWidth,
-            bgcolor: this.background,
-            style:
-              this.maxWidth != null
-                ? `max-width: ${this.maxWidth}px`
-                : 'width: 100%'
-          }),
-          content: compact([
-            padding.top > 0
-              ? {
-                  tag: 'tr',
-                  attrs: {},
-                  content: [
-                    {
-                      tag: 'td',
-                      attrs: buildAttrs({
-                        id: `${this.id}-pt`,
-                        colspan,
-                        height: padding.top
-                      })
-                    }
-                  ]
-                }
-              : undefined,
-            {
-              tag: 'tr',
-              attrs: {},
-              content: compact([
-                padding.left > 0
-                  ? {
-                      tag: 'td',
-                      attrs: buildAttrs({
-                        id: `${this.id}-pl`,
-                        width: padding.left
-                      })
-                    }
-                  : undefined,
-                {
-                  tag: 'td',
-                  attrs: buildAttrs({ align }),
-                  content: [
-                    {
-                      ...this.node,
-                      attrs: buildAttrs({
-                        ...(this.node.attrs || {}),
-                        align: undefined,
-                        padding: undefined,
-                        'max-width': undefined,
-                        background: undefined
-                      })
-                    }
-                  ]
-                },
-                padding.right > 0
-                  ? {
-                      tag: 'td',
-                      attrs: buildAttrs({
-                        id: `${this.id}-pr`,
-                        width: padding.right
-                      })
-                    }
-                  : undefined
-              ])
-            },
-            padding.bottom > 0
-              ? {
-                  tag: 'tr',
-                  attrs: {},
-                  content: [
-                    {
-                      tag: 'td',
-                      attrs: buildAttrs({
-                        id: `${this.id}-pb`,
-                        colspan,
-                        height: padding.bottom
-                      })
-                    }
-                  ]
-                }
-              : undefined
-          ])
-        }
-      ]
-    };
+    return [
+      {
+        tag: 'style',
+        attrs: {},
+        content: this.padding.buildMediaQueries((value) =>
+          [
+            `#${this.id}-pt { height: ${value.top}px; }`,
+            `#${this.id}-pl { width: ${value.left}px; }`,
+            `#${this.id}-pb { height: ${value.bottom}px; }`,
+            `#${this.id}-pr { width: ${value.right}px; }`
+          ].join(' ')
+        )
+      },
+      {
+        tag: 'table',
+        attrs: buildAttrs({
+          id: this.id,
+          width: this.maxWidth,
+          bgcolor: this.background,
+          style:
+            this.maxWidth != null
+              ? `max-width: ${this.maxWidth}px`
+              : 'width: 100%'
+        }),
+        content: compact([
+          padding.top > 0
+            ? {
+                tag: 'tr',
+                attrs: {},
+                content: [
+                  {
+                    tag: 'td',
+                    attrs: buildAttrs({
+                      id: `${this.id}-pt`,
+                      colspan,
+                      height: padding.top
+                    })
+                  }
+                ]
+              }
+            : undefined,
+          {
+            tag: 'tr',
+            attrs: {},
+            content: compact([
+              padding.left > 0
+                ? {
+                    tag: 'td',
+                    attrs: buildAttrs({
+                      id: `${this.id}-pl`,
+                      width: padding.left
+                    })
+                  }
+                : undefined,
+              {
+                tag: 'td',
+                attrs: buildAttrs({ align }),
+                content: [
+                  {
+                    ...this.node,
+                    attrs: buildAttrs({
+                      ...(this.node.attrs || {}),
+                      align: undefined,
+                      padding: undefined,
+                      'max-width': undefined,
+                      background: undefined
+                    })
+                  }
+                ]
+              },
+              padding.right > 0
+                ? {
+                    tag: 'td',
+                    attrs: buildAttrs({
+                      id: `${this.id}-pr`,
+                      width: padding.right
+                    })
+                  }
+                : undefined
+            ])
+          },
+          padding.bottom > 0
+            ? {
+                tag: 'tr',
+                attrs: {},
+                content: [
+                  {
+                    tag: 'td',
+                    attrs: buildAttrs({
+                      id: `${this.id}-pb`,
+                      colspan,
+                      height: padding.bottom
+                    })
+                  }
+                ]
+              }
+            : undefined
+        ])
+      }
+    ];
   }
 }
 
