@@ -5,8 +5,10 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -14,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node: ['13', '12', '10']
+        node: ['16', '14', '12']
 
     name: Node ${{ matrix.node }}
 
@@ -38,9 +40,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-${{ matrix.node }}-
-
-      - name: Install Yarn
-        run: npm install -g yarn
 
       - name: Install Node Dependencies
         run: yarn install
