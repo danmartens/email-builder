@@ -120,3 +120,22 @@ test('converts srcset to multiple images with media queries', async () => {
     }
   ]);
 });
+
+test('removes regular classes and adds "data-class" classes', async () => {
+  const tree = await normalizeAndProcessHtml(`
+    <html>
+      <body>
+        <div class="remove-me" data-class="add-me" />
+      </body>
+    </html>
+  `);
+
+  expect(tree).toMatchObject([
+    {
+      content: [
+        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] }
+      ],
+      tag: 'html'
+    }
+  ]);
+});

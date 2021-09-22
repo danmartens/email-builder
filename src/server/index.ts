@@ -127,6 +127,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: false,
+      stripMediaQueries: req.body.stripMediaQueries ?? false,
       context: req.body.data
     }).then(
       (data) => {
@@ -155,6 +156,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: true,
+      stripMediaQueries: false,
       context: req.body.data
     }).then(
       (data) => {

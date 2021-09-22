@@ -15,14 +15,22 @@ import minifyStyles from './minifyStyles';
 import { Template } from './types';
 import removeClassAttributes from './removeClassAttributes';
 import moveDataClassAttributes from './moveDataClassAttributes';
+import development from './development';
 
 const processHtml = (
   template: Template,
   options: {
     publish: boolean;
+    stripMediaQueries: boolean;
   },
   html: string
 ) => {
+  if (options.publish && options.stripMediaQueries) {
+    throw new Error(
+      'The "stripMediaQueries" option should not be used when publishing'
+    );
+  }
+
   return posthtml(
     // @ts-ignore
     compact([
@@ -38,6 +46,7 @@ const processHtml = (
       moveDataClassAttributes,
       normalizeElements,
       spaceless(),
+      options.publish ? undefined : development(options),
       options.publish ? minifyStyles : undefined,
       options.publish ? uploadImages(template) : undefined
     ])

@@ -1,6 +1,6 @@
 {
-  "name": "email",
-  "version": "1.0.0",
+  "name": "@ftw/email-builder",
+  "version": "1.0.0-beta.1",
   "main": "./lib/index.js",
   "bin": "./lib/index.js",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 10.13.0"
+    "node": ">= 12.13.0"
   },
   "scripts": {
     "test": "jest",
@@ -49,8 +49,6 @@
     "babel-plugin-styled-components": "^1.10.7",
     "core-js": "^3.6.5",
     "downloadjs": "^1.4.7",
-    "eslint": "^6.8.0",
-    "eslint-plugin-jest": "^23.8.2",
     "immutable": "^4.0.0-rc.12",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
@@ -90,7 +88,7 @@
     "posthtml-parser": "^0.4.2",
     "posthtml-spaceless": "^0.0.3",
     "prettier": "^1.19.1",
-    "sharp": "^0.25.2",
+    "sharp": "^0.28.0",
     "strip-ansi": "^6.0.0",
     "ws": "^7.2.3"
   },

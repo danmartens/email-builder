@@ -7,8 +7,22 @@ import processHtml from './processHtml';
 
 interface Options {
   publish: boolean;
+  stripMediaQueries: boolean;
   context?: object;
 }
+
+Handlebars.registerHelper('preview-text', (text: string) => {
+  let whitespace = '';
+
+  for (let i = text.length; i <= 270; i += 2) {
+    whitespace += '&zwnj;&nbsp;';
+  }
+
+  return new Handlebars.SafeString(
+    `<div style="display: none; max-height: 0px; overflow: hidden;">${text}</div>\n` +
+      `<div style="display: none; max-height: 0px; overflow: hidden;">${whitespace}</div>`
+  );
+});
 
 const generateHeadHtml = (template: Template, options: Options) => {
   if (template.rootPath == null) {
@@ -30,7 +44,8 @@ export const renderEmail = async (
   template: Template,
   html: string,
   options: Options = {
-    publish: false
+    publish: false,
+    stripMediaQueries: false
   }
 ): Promise<string> => {
   const emailTemplate = Handlebars.compile(

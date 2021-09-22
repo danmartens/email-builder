@@ -79,7 +79,6 @@ const ValuesEditor: React.FC<Props> = (props) => {
                   onClick={() => {
                     onChange(
                       updateIn(values, [valueSchema.name], (value) => {
-                        console.log({ value });
                         return [
                           ...value,
                           mergeListItemDefaultValues(valueSchema.schema)

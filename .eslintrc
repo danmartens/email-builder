@@ -1,8 +1,0 @@
-{
-  "extends": ["@ftw/eslint-config-ts"],
-  "env": {
-    "node": true,
-    "browser": true,
-    "jest": true
-  }
-}

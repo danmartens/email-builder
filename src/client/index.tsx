@@ -49,9 +49,11 @@ const Email: React.FC = () => {
     enabled: location.hostname === 'localhost'
   });
 
+  const screenSize = SCREEN_SIZES[screenWidthIndex];
+
   useEffect(() => {
     setReloading(true);
-  }, [values, message]);
+  }, [values, message, screenSize.stripMediaQueries]);
 
   useDebouncedLayoutEffect(
     () => {
@@ -61,7 +63,10 @@ const Email: React.FC = () => {
       fetch(`${baseUrl}/emails/${EMAIL.name}`, {
         method: 'post',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ data: values.valueOf() }),
+        body: JSON.stringify({
+          data: values.valueOf(),
+          stripMediaQueries: screenSize.stripMediaQueries
+        }),
         signal
       })
         .then((response) => response.text())
@@ -77,7 +82,7 @@ const Email: React.FC = () => {
       };
     },
     500,
-    [values, message]
+    [values, message, screenSize.stripMediaQueries]
   );
 
   useEffect(() => {
@@ -142,7 +147,7 @@ const Email: React.FC = () => {
 
       <Frame
         editorVisible={editorVisible}
-        screenSize={SCREEN_SIZES[screenWidthIndex]}
+        screenSize={screenSize}
         source={source}
         reloading={reloading}
       />
