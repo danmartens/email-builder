@@ -1,9 +1,6 @@
 import 'core-js/es/array/flat-map';
 import postcss from 'postcss';
-import autoprefixer from 'autoprefixer';
-import { PostHTMLNode, PostHTMLPlugin } from './types';
-import compact from 'lodash/compact';
-import { notStrictEqual } from 'assert';
+import { PostHTMLPlugin } from './types';
 
 const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
   return (root) => {
