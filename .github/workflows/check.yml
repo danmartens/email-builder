@@ -46,6 +46,3 @@ jobs:
 
       - name: Run Prettier
         run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
-
-      - name: Run ESLint
-        run: yarn lint
