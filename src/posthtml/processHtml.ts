@@ -22,6 +22,8 @@ const processHtml = (
   options: {
     publish: boolean;
     uploadImages: boolean;
+    stripPadding: boolean;
+    stripCustomFonts: boolean;
     stripMediaQueries: boolean;
   },
   html: string
@@ -36,7 +38,7 @@ const processHtml = (
     // @ts-ignore
     compact([
       syntaxAttribute,
-      preprocessStyles,
+      preprocessStyles(options),
       inlineCSS(),
       section,
       imageElement(template.name, options),

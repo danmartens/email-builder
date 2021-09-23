@@ -15,11 +15,14 @@ class Section {
   }
 
   private get align() {
-    return this.node.attrs?.align;
+    return this.node.attrs?.['data-align'];
   }
 
   private get padding() {
-    return parseResponsiveValue(this.node.attrs?.padding, parseBoxValues);
+    return parseResponsiveValue(
+      this.getAttribute('data-padding'),
+      parseBoxValues
+    );
   }
 
   private get colspan() {
@@ -41,11 +44,17 @@ class Section {
   }
 
   private get maxWidth() {
-    return (this.node.attrs ?? {})['max-width'] ?? undefined;
+    return this.getAttribute('data-max-width');
   }
 
   private get background() {
-    return this.node?.attrs?.background;
+    return this.getAttribute('data-background');
+  }
+
+  private getAttribute(name: string) {
+    if (this.node.attrs != null) {
+      return this.node.attrs[name];
+    }
   }
 
   toNode(): PostHTMLNode[] {
@@ -120,10 +129,10 @@ class Section {
                     ...this.node,
                     attrs: buildAttrs({
                       ...(this.node.attrs || {}),
-                      align: undefined,
-                      padding: undefined,
-                      'max-width': undefined,
-                      background: undefined
+                      'data-align': undefined,
+                      'data-padding': undefined,
+                      'data-max-width': undefined,
+                      'data-background': undefined
                     })
                   }
                 ]
@@ -162,15 +171,15 @@ class Section {
 }
 
 const section: PostHTMLPlugin = (tree) => {
-  tree.match({ attrs: { padding: /\d+( \d+){0,3}/ } }, (node) => {
+  tree.match({ attrs: { 'data-padding': /\d+( \d+){0,3}/ } }, (node) => {
     return new Section(node).toNode();
   });
 
-  tree.match({ attrs: { 'max-width': /\d+/ } }, (node) => {
+  tree.match({ attrs: { 'data-max-width': /\d+/ } }, (node) => {
     return new Section(node).toNode();
   });
 
-  tree.match({ attrs: { align: /[a-z]+/ } }, (node) => {
+  tree.match({ attrs: { 'data-align': /[a-z]+/ } }, (node) => {
     if (node.tag === 'td') {
       return node;
     }
@@ -178,7 +187,7 @@ const section: PostHTMLPlugin = (tree) => {
     return new Section(node).toNode();
   });
 
-  tree.match({ attrs: { background: /#[0-9a-f]{3,6}/ } }, (node) => {
+  tree.match({ attrs: { 'data-background': /#[0-9a-f]{3,6}/ } }, (node) => {
     return new Section(node).toNode();
   });
 };

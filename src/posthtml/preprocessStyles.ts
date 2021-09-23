@@ -1,9 +1,14 @@
 import 'core-js/es/array/flat-map';
+import compact from 'lodash/compact';
 import postcss from 'postcss';
 import postcssCustomProperties from 'postcss-custom-properties';
 import { PostHTMLPlugin } from './types';
 
-const preprocessStyles: PostHTMLPlugin = (tree, callback) => {
+const preprocessStyles = (options: {
+  stripPadding: boolean;
+  stripCustomFonts: boolean;
+  stripMediaQueries: boolean;
+}): PostHTMLPlugin => (tree, callback) => {
   let tasks = 0;
 
   const done = () => {
@@ -23,7 +28,13 @@ const preprocessStyles: PostHTMLPlugin = (tree, callback) => {
 
     tasks++;
 
-    postcss([postcssCustomProperties({ preserve: false })])
+    postcss(
+      compact([
+        postcssCustomProperties({ preserve: false }),
+        options.stripPadding ? stripPadding : undefined,
+        options.stripCustomFonts ? stripCustomFonts : undefined
+      ])
+    )
       .process(node.content.join('\n'), { from: undefined })
       .then((result) => {
         node.content = [result.css];
@@ -36,5 +47,32 @@ const preprocessStyles: PostHTMLPlugin = (tree, callback) => {
 
   if (tasks === 0) callback(null, tree);
 };
+
+const stripPadding = postcss.plugin('strip-padding', () => {
+  return (root) => {
+    root.walkDecls('padding', (decl) => {
+      decl.remove();
+    });
+  };
+});
+
+const stripCustomFonts = postcss.plugin('strip-custom-fonts', () => {
+  return (root) => {
+    root.walkDecls('font-family', (decl) => {
+      decl.value = decl.value
+        .split(/\s*,\s*/)
+        .filter((family) =>
+          [
+            'Times New Roman',
+            'Arial',
+            'Verdana',
+            'serif',
+            'sans-serif'
+          ].includes(family)
+        )
+        .join(', ');
+    });
+  };
+});
 
 export default preprocessStyles;
