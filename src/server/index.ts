@@ -130,6 +130,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     renderEmail({ name, rootPath }, html, {
       publish: false,
       uploadImages: false,
+      stripPadding: req.body.stripPadding ?? false,
+      stripCustomFonts: req.body.stripCustomFonts ?? false,
       stripMediaQueries: req.body.stripMediaQueries ?? false,
       context: req.body.data
     }).then(
@@ -160,6 +162,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     renderEmail({ name, rootPath }, html, {
       publish: true,
       uploadImages: true,
+      stripPadding: false,
+      stripCustomFonts: false,
       stripMediaQueries: false,
       context: req.body.data
     }).then(
@@ -191,6 +195,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     const data = await renderEmail({ name, rootPath }, html, {
       publish: true,
       uploadImages,
+      stripPadding: false,
+      stripCustomFonts: false,
       stripMediaQueries: false,
       context: req.body.data
     });

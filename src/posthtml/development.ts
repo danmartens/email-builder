@@ -2,19 +2,20 @@ import 'core-js/es/array/flat-map';
 import postcss from 'postcss';
 import { PostHTMLPlugin } from './types';
 
-const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
-  return (root) => {
-    root.walkAtRules((rule) => {
-      if (rule.name === 'media') {
-        rule.remove();
-      }
-    });
-  };
-});
-
 const development = (options: {
   stripMediaQueries: boolean;
 }): PostHTMLPlugin => (tree, callback) => {
+  tree.match({ tag: 'a' }, (node) => {
+    return {
+      ...node,
+      attrs: {
+        ...node.attrs,
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }
+    };
+  });
+
   if (!options.stripMediaQueries) {
     callback(null, tree);
     return;
@@ -48,5 +49,15 @@ const development = (options: {
 
   if (tasks === 0) callback(null, tree);
 };
+
+const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
+  return (root) => {
+    root.walkAtRules((rule) => {
+      if (rule.name === 'media') {
+        rule.remove();
+      }
+    });
+  };
+});
 
 export default development;

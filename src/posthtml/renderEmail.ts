@@ -8,6 +8,8 @@ import processHtml from './processHtml';
 interface Options {
   publish: boolean;
   uploadImages: boolean;
+  stripPadding: boolean;
+  stripCustomFonts: boolean;
   stripMediaQueries: boolean;
   context?: object;
 }
@@ -47,6 +49,8 @@ export const renderEmail = async (
   options: Options = {
     publish: false,
     uploadImages: false,
+    stripPadding: false,
+    stripCustomFonts: false,
     stripMediaQueries: false
   }
 ): Promise<string> => {

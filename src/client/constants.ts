@@ -6,6 +6,8 @@ export interface ScreenSize {
   bezelWidth?: number;
   headerHeight?: number;
   footerHeight?: number;
+  stripPadding?: boolean;
+  stripCustomFonts?: boolean;
   stripMediaQueries?: boolean;
 }
 
@@ -37,6 +39,8 @@ export const SCREEN_SIZES: ScreenSize[] = [
     label: 'Responsive (Legacy)',
     width: null,
     height: null,
+    stripPadding: true,
+    stripCustomFonts: true,
     stripMediaQueries: true
   },
   {
@@ -45,6 +49,8 @@ export const SCREEN_SIZES: ScreenSize[] = [
     height: 731,
     cornerRadius: 8,
     bezelWidth: 10,
+    stripPadding: true,
+    stripCustomFonts: true,
     stripMediaQueries: true
   }
 ];

@@ -53,7 +53,13 @@ const Email: React.FC = () => {
 
   useEffect(() => {
     setReloading(true);
-  }, [values, message, screenSize.stripMediaQueries]);
+  }, [
+    values,
+    message,
+    screenSize.stripPadding,
+    screenSize.stripCustomFonts,
+    screenSize.stripMediaQueries
+  ]);
 
   useDebouncedLayoutEffect(
     () => {
@@ -65,6 +71,8 @@ const Email: React.FC = () => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           data: values.valueOf(),
+          stripPadding: screenSize.stripPadding,
+          stripCustomFonts: screenSize.stripCustomFonts,
           stripMediaQueries: screenSize.stripMediaQueries
         }),
         signal
