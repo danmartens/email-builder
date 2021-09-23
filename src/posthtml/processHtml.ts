@@ -21,6 +21,7 @@ const processHtml = (
   template: Template,
   options: {
     publish: boolean;
+    uploadImages: boolean;
     stripMediaQueries: boolean;
   },
   html: string
@@ -38,7 +39,7 @@ const processHtml = (
       preprocessStyles,
       inlineCSS(),
       section,
-      imageElement(template.name),
+      imageElement(template.name, options),
       options.publish ? undefined : unsubscribeElement,
       styleElement(options),
       removeExtraElements,
@@ -48,7 +49,7 @@ const processHtml = (
       spaceless(),
       options.publish ? undefined : development(options),
       options.publish ? minifyStyles : undefined,
-      options.publish ? uploadImages(template) : undefined
+      options.uploadImages ? uploadImages(template) : undefined
     ])
   ).process(html);
 };

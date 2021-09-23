@@ -7,6 +7,7 @@ import processHtml from './processHtml';
 
 interface Options {
   publish: boolean;
+  uploadImages: boolean;
   stripMediaQueries: boolean;
   context?: object;
 }
@@ -45,6 +46,7 @@ export const renderEmail = async (
   html: string,
   options: Options = {
     publish: false,
+    uploadImages: false,
     stripMediaQueries: false
   }
 ): Promise<string> => {

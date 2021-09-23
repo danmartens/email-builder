@@ -6,7 +6,10 @@ import addClass from './utils/addClass';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 import parseResponsiveValue from './utils/parseResponsiveValue';
 
-const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
+const imageElement = (
+  emailName: string,
+  options: { publish: boolean; uploadImages: boolean }
+): PostHTMLPlugin => (tree) => {
   const transformedNodes = new WeakSet<PostHTMLNode>();
 
   tree.match({ tag: 'img' }, (node) => {
@@ -21,7 +24,11 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
       node.attrs.srcset ?? node.attrs.src,
       (src) => {
         if (src.startsWith('/')) {
-          return `/assets/${emailName}/${src.replace(/^\//, '')}`;
+          if (options.publish && !options.uploadImages) {
+            return `assets/${src.replace(/^\//, '')}`;
+          } else {
+            return `/assets/${emailName}/${src.replace(/^\//, '')}`;
+          }
         }
 
         return src;
