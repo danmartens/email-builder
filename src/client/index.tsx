@@ -110,14 +110,16 @@ const Email: React.FC = () => {
   const handleDownload = useCallback(() => {
     setDownloading(true);
 
-    fetch(`${baseUrl}/emails/${EMAIL.name}/publish`, {
+    fetch(`${baseUrl}/emails/${EMAIL.name}/download`, {
       method: 'post',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ data: values.valueOf() })
+      body: JSON.stringify({
+        data: values.valueOf()
+      })
     })
-      .then((response) => response.text())
+      .then((response) => response.blob())
       .then((source) => {
-        download(source, `${EMAIL.name}.html`, 'text/html');
+        download(source, `${EMAIL.name}.zip`, 'application/zip');
       })
       .finally(() => {
         setDownloading(false);

@@ -13,6 +13,8 @@ import stripAnsi from 'strip-ansi';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import chalk from 'chalk';
+import Zip from 'adm-zip';
+import glob from 'glob';
 // @ts-ignore
 import config from '../../webpack.config';
 import { renderEmail } from '../posthtml/renderEmail';
@@ -127,6 +129,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: false,
+      uploadImages: false,
       stripMediaQueries: req.body.stripMediaQueries ?? false,
       context: req.body.data
     }).then(
@@ -156,6 +159,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
     renderEmail({ name, rootPath }, html, {
       publish: true,
+      uploadImages: true,
       stripMediaQueries: false,
       context: req.body.data
     }).then(
@@ -173,6 +177,50 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         });
       }
     );
+  });
+
+  app.post('/emails/:name/download', async (req, res) => {
+    const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
+    const rootPath = path.resolve(emailsPath, name);
+    const uploadImages = req.body.uploadImages === true;
+
+    const html = fs
+      .readFileSync(path.join(rootPath, 'template.hbs'))
+      .toString();
+
+    const data = await renderEmail({ name, rootPath }, html, {
+      publish: true,
+      uploadImages,
+      stripMediaQueries: false,
+      context: req.body.data
+    });
+
+    glob(path.join(rootPath, 'assets/**/*'), (error, files) => {
+      if (error != null) {
+        console.error(error);
+
+        res.status(500);
+        res.end();
+      } else {
+        const archive = new Zip();
+
+        archive.addFile('index.html', Buffer.from(data, 'utf8'));
+
+        if (!uploadImages) {
+          for (const file of files) {
+            archive.addLocalFile(file, 'assets');
+          }
+        }
+
+        res.status(200);
+        res.setHeader('content-type', 'application/zip');
+        res.setHeader(
+          'content-disposition',
+          `attachment; filename="${name}.zip"`
+        );
+        res.end(archive.toBuffer());
+      }
+    });
   });
 
   app.get('/assets/:name/:asset', (req, res) => {

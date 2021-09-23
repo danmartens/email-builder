@@ -33,7 +33,7 @@ const syntaxAttribute: PostHTMLPlugin = (tree) => {
       };
     }
 
-    throw new Error(`Unkown syntax: ${node.attrs?.syntax}`);
+    throw new Error(`Unknown syntax: ${node.attrs?.syntax}`);
   });
 };
 
