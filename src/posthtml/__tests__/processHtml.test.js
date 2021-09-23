@@ -93,34 +93,47 @@ test('converts srcset to multiple images with media queries', async () => {
           tag: 'body',
           content: [
             {
-              tag: 'div',
-              content: [
-                {
-                  tag: 'img',
-                  attrs: {
-                    src: '/assets/test/small.jpg',
-                    width: '400',
-                    class: 'non-retina-image',
-                    style: 'width: 100%; max-width: 400px'
-                  }
-                },
-                '<!--[if !mso]>-->',
-                {
-                  tag: 'img',
-                  attrs: {
-                    id: 'i1',
-                    src: '/assets/test/large.jpg',
-                    width: '400',
-                    class: 'retina-image',
-                    style: 'display: none; width: 100%; max-width: 400px'
-                  }
-                },
-                '<!--<![endif]-->',
-                { tag: undefined }
-              ]
-            }
+              tag: 'img',
+              attrs: {
+                src: '/assets/test/small.jpg',
+                width: '400',
+                class: 'non-retina-image',
+                style: 'width: 100%; max-width: 400px'
+              }
+            },
+            '<!--[if !mso]>-->',
+            {
+              tag: 'img',
+              attrs: {
+                id: 'i1',
+                src: '/assets/test/large.jpg',
+                width: '400',
+                class: 'retina-image',
+                style: 'display: none; width: 100%; max-width: 400px'
+              }
+            },
+            '<!--<![endif]-->'
           ]
         }
+      ],
+      tag: 'html'
+    }
+  ]);
+});
+
+test('removes regular classes and adds "data-class" classes', async () => {
+  const tree = await normalizeAndProcessHtml(`
+    <html>
+      <body>
+        <div class="remove-me" data-class="add-me" />
+      </body>
+    </html>
+  `);
+
+  expect(tree).toMatchObject([
+    {
+      content: [
+        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] }
       ],
       tag: 'html'
     }

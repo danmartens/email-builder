@@ -47,7 +47,10 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
       return nonRetinaImage;
     }
 
-    nonRetinaImage = addClass('non-retina-image')(nonRetinaImage);
+    nonRetinaImage = pipe(
+      addClass('non-retina-image'),
+      mergeAttrs({ 'data-class': 'non-retina-image' })
+    )(nonRetinaImage);
 
     const retinaImage = pipe(
       mergeStyle({
@@ -59,6 +62,7 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
         id,
         src: srcset.get('2x'),
         'data-original-src': node.attrs.src,
+        'data-class': 'retina-image',
         srcset: undefined
       }),
       addClass('retina-image')
@@ -67,29 +71,25 @@ const imageElement = (emailName: string): PostHTMLPlugin => (tree) => {
     transformedNodes.add(nonRetinaImage);
     transformedNodes.add(retinaImage);
 
-    return {
-      tag: 'div',
-      attrs: {},
-      content: [
-        nonRetinaImage,
-        '<!--[if !mso]>-->',
-        retinaImage,
-        '<!--<![endif]-->',
-        {
-          tag: 'style',
-          attrs: {},
-          content: [
-            `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
+    return [
+      nonRetinaImage,
+      '<!--[if !mso]>-->',
+      retinaImage,
+      '<!--<![endif]-->',
+      {
+        tag: 'style',
+        attrs: {},
+        content: [
+          `@media only screen and (-webkit-max-device-pixel-ratio: 1.99),
                                       (max-resolution: 191dpi) {
                 #${id} {
                   width: 100% !important;
                   max-width: ${width}px !important;
                 }
               }`
-          ]
-        }
-      ]
-    };
+        ]
+      }
+    ];
   });
 };
 

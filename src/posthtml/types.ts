@@ -13,8 +13,13 @@ export interface PostHTMLNode {
 
 interface PostHTMLTree {
   match(
-    condition: { tag?: string; attrs?: { [name: string]: string | RegExp } },
-    predicate: (node: PostHTMLNode) => PostHTMLNode
+    condition: {
+      tag?: string | RegExp;
+      attrs?: { [name: string]: string | RegExp };
+    },
+    predicate: (
+      node: PostHTMLNode
+    ) => PostHTMLNode | Array<string | PostHTMLNode> | undefined
   ): void;
 }
 

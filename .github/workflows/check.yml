@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -46,6 +50,3 @@ jobs:
 
       - name: Run Prettier
         run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
-
-      - name: Run ESLint
-        run: yarn lint

@@ -4,7 +4,7 @@ import autoprefixer from 'autoprefixer';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 import compact from 'lodash/compact';
 
-const stripInlinableStyles = postcss.plugin('postcss-test', () => {
+const stripInlinableStyles = postcss.plugin('strip-inlinable-styles', () => {
   return (root) => {
     root.walkRules((rule) => {
       if (rule.parent.type !== 'atrule') {
@@ -14,10 +14,20 @@ const stripInlinableStyles = postcss.plugin('postcss-test', () => {
   };
 });
 
-const styleElement = (options: { publish: boolean }): PostHTMLPlugin => (
-  tree,
-  callback
-) => {
+const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
+  return (root) => {
+    root.walkAtRules((rule) => {
+      if (rule.name === 'media') {
+        rule.remove();
+      }
+    });
+  };
+});
+
+const styleElement = (options: {
+  publish: boolean;
+  stripMediaQueries: boolean;
+}): PostHTMLPlugin => (tree, callback) => {
   const elements: PostHTMLNode[] = [];
 
   let tasks = 0;
@@ -34,10 +44,6 @@ const styleElement = (options: { publish: boolean }): PostHTMLPlugin => (
     }
 
     elements.push(node);
-
-    return {
-      tag: undefined
-    };
   });
 
   tree.match({ tag: 'head' }, (node) => {
@@ -55,6 +61,7 @@ const styleElement = (options: { publish: boolean }): PostHTMLPlugin => (
     postcss(
       compact([
         stripInlinableStyles,
+        options.stripMediaQueries ? stripMediaQueries : undefined,
         options.publish ? autoprefixer : undefined
       ])
     )
