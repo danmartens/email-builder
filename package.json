@@ -83,7 +83,7 @@
     "lodash": "^4.17.15",
     "marked": "^0.8.2",
     "multer": "^1.4.2",
-    "postcss": "^7.0.27",
+    "postcss": "^7.0.36",
     "postcss-custom-properties": "^9.1.1",
     "posthtml": "^0.12.0",
     "posthtml-attrs-parser": "^0.1.1",
