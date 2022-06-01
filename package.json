@@ -91,7 +91,7 @@
     "posthtml-parser": "^0.4.2",
     "posthtml-spaceless": "^0.0.3",
     "prettier": "^1.19.1",
-    "sharp": "^0.28.0",
+    "sharp": "^0.30.5",
     "strip-ansi": "^6.0.0",
     "ws": "^7.2.3"
   },
