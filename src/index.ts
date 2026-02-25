@@ -17,7 +17,10 @@ program
   .alias('s')
   .description('starts production server')
   .action(() => {
-    server('production');
+    server('production').catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   });
 
 program
@@ -25,7 +28,10 @@ program
   .alias('d')
   .description('starts development server')
   .action(() => {
-    server('development');
+    server('development').catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   });
 
 program

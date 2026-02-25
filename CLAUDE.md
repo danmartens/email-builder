@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-yarn build          # Compile TypeScript to lib/ and bundle client code with Webpack
+yarn build          # Compile TypeScript to lib/ and bundle client code with Vite
 yarn start          # Run development server with nodemon (ts-node, auto-restarts on changes)
 yarn test           # Run Jest tests
 yarn test -- --testPathPattern=<pattern>  # Run a specific test file
@@ -21,7 +21,7 @@ This is a CLI tool and Express server for building and editing responsive HTML e
 ### CLI Entry Point (`src/index.ts`)
 
 Three CLI commands via `commander`:
-- `develop` / `d` — starts Express + Webpack dev server
+- `develop` / `d` — starts Express + Vite middleware dev server
 - `server` / `s` — starts Express in production mode
 - `new <name>` — scaffolds a new email template directory under `emails/<name>/`
 
@@ -43,7 +43,7 @@ Express server with routes for:
 - Publishing to S3
 - Downloading a zip archive
 
-Two modes: `development` (with Webpack dev server at port 8080 and WebSocket file watcher at port 8081) and `production`.
+Two modes: `development` (with Vite middleware integrated into Express and WebSocket file watcher at port 8081) and `production`.
 
 ### Email Rendering Pipeline (`src/posthtml/`)
 
@@ -66,7 +66,7 @@ The outer Handlebars template (`src/templates/email.hbs`) wraps all content in a
 
 ### React Client (`src/client/`)
 
-Single-page app bundled by Webpack, served at the root. Key components:
+Single-page app bundled by Vite, served at the root. Key components:
 - `ValuesEditor` — dynamic form generated from `schema.json`; supports `string`, `text`, `image`, and `list` field types
 - `Frame` — renders the email preview inside a device-sized iframe
 - `ImageUploader` — handles image uploads to the server
@@ -86,14 +86,13 @@ Single-page app bundled by Webpack, served at the root. Key components:
 Environment variables (loaded via dotenv):
 - `HOST` (default: `localhost`)
 - `PORT` (default: `5000`)
-- `ASSETS_PORT` (default: `8080`) — Webpack dev server
 - `AWS_REGION`, `S3_BUCKET_NAME` — S3 publishing
 - `BASIC_AUTH_PASSWORD` — enables basic auth on all routes
 
 ### Build (`scripts/build`)
 
 1. `tsc` compiles `src/` → `lib/`
-2. Webpack bundles `src/client/index.tsx` → `lib/server/public/main.js`
+2. Vite bundles `src/client/index.tsx` → `lib/server/public/main.js`
 3. Template files from `src/templates/` are copied to `lib/templates/`
 
 ### Testing

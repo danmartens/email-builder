@@ -10,20 +10,17 @@ import WebSocket from 'ws';
 import debounce from 'lodash/debounce';
 import chokidar from 'chokidar';
 import stripAnsi from 'strip-ansi';
-import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
+import { createServer as createViteServer, ViteDevServer } from 'vite';
 import chalk from 'chalk';
 import Zip from 'adm-zip';
 import glob from 'glob';
-// @ts-ignore
-import config from '../../webpack.config';
 import { renderEmail } from '../posthtml/renderEmail';
 import parseSchema from './utils/parseSchema';
 import Configuration from '../Configuration';
 import resizeAndUploadImages from './utils/resizeAndUploadImages';
 import renderTemplate from '../renderTemplate';
 
-export const server = (mode: 'development' | 'production' = 'production') => {
+export const server = async (mode: 'development' | 'production' = 'production') => {
   const {
     projectPath,
     emailsPath,
@@ -37,6 +34,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
   const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
 
   const app = express();
+
+  let vite: ViteDevServer | null = null;
 
   if (process.env.NODE_ENV === 'production') {
     app.use((req, res, next) => {
@@ -59,7 +58,13 @@ export const server = (mode: 'development' | 'production' = 'production') => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
 
-  if (mode === 'production') {
+  if (mode === 'development') {
+    vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom'
+    });
+    app.use(vite.middlewares);
+  } else {
     app.use(express.static(path.join(__dirname, 'public')));
   }
 
@@ -101,10 +106,13 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       renderTemplate('show', {
         name,
         schema: JSON.stringify(parseSchema(schema)),
-        scriptUrl: `${mode === 'production' ? 'https' : 'http'}://${host}:${
-          mode === 'production' ? port : assetsPort
-        }/main.js`
-      }).then((html) => {
+        scriptUrl: mode === 'production'
+          ? `https://${host}:${port}/main.js`
+          : '/src/client/index.tsx'
+      }).then(async (html) => {
+        if (vite != null) {
+          html = await vite.transformIndexHtml(req.url, html);
+        }
         res.send(html);
       });
     } catch (error) {
@@ -241,7 +249,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     '/images',
     upload.single('image'),
     (
-      req: Request<ParamsDictionary> & {
+      req: Request<ParamsDictionary, any, any, any, any> & {
         file: { path: string; originalname: string };
       },
       res
@@ -341,32 +349,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     }
 
     if (mode === 'development') {
-      const options = {
-        host,
-        port: assetsPort,
-        noInfo: true,
-        overlay: true
-      };
-
-      WebpackDevServer.addDevServerEntrypoints(config, options);
-
-      const compiler = webpack(config);
-      const server = new WebpackDevServer(compiler, options);
-
-      server.listen(assetsPort, host, (error) => {
-        if (error) {
-          return console.log(error);
-        }
-
-        console.log('\nWatching for changes...\n');
-
-        // ['SIGINT', 'SIGTERM'].forEach(signal => {
-        //   process.on(signal, () => {
-        //     server.close();
-        //     process.exit();
-        //   });
-        // });
-      });
+      console.log('\nWatching for changes...\n');
     }
   });
 };
