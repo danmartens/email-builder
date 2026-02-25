@@ -21,6 +21,7 @@ This is a CLI tool and Express server for building and editing responsive HTML e
 ### CLI Entry Point (`src/index.ts`)
 
 Three CLI commands via `commander`:
+
 - `develop` / `d` — starts Express + Vite middleware dev server
 - `server` / `s` — starts Express in production mode
 - `new <name>` — scaffolds a new email template directory under `emails/<name>/`
@@ -28,6 +29,7 @@ Three CLI commands via `commander`:
 ### Template Structure
 
 Email templates live in `emails/<name>/` (relative to the consuming project's `cwd`):
+
 - `template.hbs` — Handlebars template for the email body
 - `schema.json` — array of field definitions for the variable editor UI
 - `head.hbs` (optional) — injected into `<head>`
@@ -37,6 +39,7 @@ Email templates live in `emails/<name>/` (relative to the consuming project's `c
 ### Server (`src/server/`)
 
 Express server with routes for:
+
 - Serving the React editor UI
 - Rendering email previews (GET/POST `/emails/:name`)
 - Image upload (via multer + sharp for resizing)
@@ -67,6 +70,7 @@ The outer Handlebars template (`src/templates/email.hbs`) wraps all content in a
 ### React Client (`src/client/`)
 
 Single-page app bundled by Vite, served at the root. Key components:
+
 - `ValuesEditor` — dynamic form generated from `schema.json`; supports `string`, `text`, `image`, and `list` field types
 - `Frame` — renders the email preview inside a device-sized iframe
 - `ImageUploader` — handles image uploads to the server
@@ -76,6 +80,7 @@ Single-page app bundled by Vite, served at the root. Key components:
 ### Schema System (`src/server/parseSchema.ts`)
 
 `schema.json` is validated with io-ts. Field types:
+
 - `string` — single-line text input
 - `text` — multi-line textarea (supports markdown via `marked`)
 - `image` — image upload with URL field
@@ -84,8 +89,9 @@ Single-page app bundled by Vite, served at the root. Key components:
 ### Configuration (`src/Configuration.ts`)
 
 Environment variables (loaded via dotenv):
+
 - `HOST` (default: `localhost`)
-- `PORT` (default: `5000`)
+- `PORT` (default: `4000`)
 - `AWS_REGION`, `S3_BUCKET_NAME` — S3 publishing
 - `BASIC_AUTH_PASSWORD` — enables basic auth on all routes
 
