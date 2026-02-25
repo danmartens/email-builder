@@ -8,7 +8,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 12.13.0"
+    "node": ">= 22"
   },
   "scripts": {
     "test": "jest",
@@ -97,5 +97,6 @@
   },
   "resolutions": {
     "@types/react": "^16.9.32"
-  }
+  },
+  "packageManager": "yarn@4.12.0"
 }
