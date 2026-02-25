@@ -1235,7 +1235,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.20.13":
+  version: 7.28.6
+  resolution: "@babel/runtime@npm:7.28.6"
+  checksum: 10c0/358cf2429992ac1c466df1a21c1601d595c46930a13c1d4662fde908d44ee78ec3c183aaff513ecb01ef8c55c3624afe0309eeeb34715672dbfadb7feedb2c0d
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.8.4":
   version: 7.9.2
   resolution: "@babel/runtime@npm:7.9.2"
   dependencies:
@@ -1570,9 +1577,8 @@ __metadata:
     "@types/multer": "npm:^2.0.0"
     "@types/node": "npm:^22"
     "@types/postcss-custom-properties": "npm:^9.1.0"
-    "@types/react": "npm:^16.9.32"
-    "@types/react-dom": "npm:^16.9.6"
-    "@types/react-textarea-autosize": "npm:^4.3.5"
+    "@types/react": "npm:^17.0.0"
+    "@types/react-dom": "npm:^17.0.0"
     "@types/sharp": "npm:^0.24.0"
     "@types/styled-components": "npm:^5.1.0"
     "@types/ws": "npm:^7.2.3"
@@ -1608,10 +1614,10 @@ __metadata:
     posthtml-parser: "npm:^0.4.2"
     posthtml-spaceless: "npm:^0.0.3"
     prettier: "npm:^1.19.1"
-    react: "npm:^16.13.1"
-    react-dom: "npm:^16.13.1"
-    react-is: "npm:^16.13.1"
-    react-textarea-autosize: "npm:^7.1.2"
+    react: "npm:^17.0.0"
+    react-dom: "npm:^17.0.0"
+    react-is: "npm:^17.0.0"
+    react-textarea-autosize: "npm:^8.0.0"
     sharp: "npm:^0.28.0"
     strip-ansi: "npm:^6.0.0"
     styled-components: "npm:^5.1.0"
@@ -2478,12 +2484,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^16.9.6":
-  version: 16.9.6
-  resolution: "@types/react-dom@npm:16.9.6"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/58809c9c60d5456967e7d419b0e0372bbdd9a46324b491e545b22dbb3f177468df8cb66bd61048add46310b2138e7da17643768104be6d8f4b899ac03a416052
+"@types/react-dom@npm:^17.0.0":
+  version: 17.0.26
+  resolution: "@types/react-dom@npm:17.0.26"
+  peerDependencies:
+    "@types/react": ^17.0.0
+  checksum: 10c0/8363921f08afe3f2ef82fe293301a0809ec646975fe9f5bfeb2e823f7237b97e47d27e1c6c2ffff27d15c12ab3cad1de6c77a737e37499fcc52793b0fd674f3f
   languageName: node
   linkType: hard
 
@@ -2496,22 +2502,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-textarea-autosize@npm:^4.3.5":
-  version: 4.3.5
-  resolution: "@types/react-textarea-autosize@npm:4.3.5"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/d31cb58f0af254089d232aa602acf55f6fdbf3f7bc8bd6799debb91ef96795158753f1803716af91766c556f1c5151e07d63e38f95f5cbce00e3139fe1f3b4a9
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^16.9.32":
-  version: 16.9.34
-  resolution: "@types/react@npm:16.9.34"
+"@types/react@npm:^17.0.0":
+  version: 17.0.91
+  resolution: "@types/react@npm:17.0.91"
   dependencies:
     "@types/prop-types": "npm:*"
-    csstype: "npm:^2.2.0"
-  checksum: 10c0/579195296ca30bab7245a8e33c45619b5dcbe789285537d25c9a6396df7391d163f6b7d8d61ed56fcfc240b9a54541ce39180a1edf2e02271fcdbc9056ad336b
+    "@types/scheduler": "npm:^0.16"
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/f1a5f77dbe6d62c04bfa2692d1204fd537e5fb15461a10673fa116a4b211f8ebaf426a4b1b95da04d38cea47dfc77c4d403f0850db7d9853298248a54478cc60
   languageName: node
   linkType: hard
 
@@ -2521,6 +2519,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/a58ba341cb9e7d74f71810a88862da7b2a6fa42e2a1fc0ce40498f6ea1d44382f0640117057da779f74c47039f7166bf48fad02dc876f94e005c7afa50f5e129
+  languageName: node
+  linkType: hard
+
+"@types/scheduler@npm:^0.16":
+  version: 0.16.8
+  resolution: "@types/scheduler@npm:0.16.8"
+  checksum: 10c0/f86de504945b8fc41b1f391f847444d542e2e4067cf7e5d9bfeb5d2d2393d3203b1161bc0ef3b1e104d828dabfb60baf06e8d2c27e27ff7e8258e6e618d8c4ec
   languageName: node
   linkType: hard
 
@@ -4258,6 +4263,13 @@ __metadata:
   version: 2.6.10
   resolution: "csstype@npm:2.6.10"
   checksum: 10c0/84eed70d83e8adc5ba76e4919aae35f8ca5c066bba2d2bbe07f6f9c2bdcddc5184f16f0afb1998964e43a64a3fe1e80184988094974e7807521ed734bd21d6de
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.2.2":
+  version: 3.2.3
+  resolution: "csstype@npm:3.2.3"
+  checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
   languageName: node
   linkType: hard
 
@@ -9233,7 +9245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -9362,24 +9374,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.13.1":
-  version: 16.13.1
-  resolution: "react-dom@npm:16.13.1"
+"react-dom@npm:^17.0.0":
+  version: 17.0.2
+  resolution: "react-dom@npm:17.0.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-    scheduler: "npm:^0.19.1"
+    scheduler: "npm:^0.20.2"
   peerDependencies:
-    react: ^16.13.1
-  checksum: 10c0/2408bf4a022f5386da72f2eb7f8cc3e68d2cfd76d338d1cc77afcc6b11fc40d94fd8ebe43e39aec7ef1122f0c08992f9aba50ce4195fc2fc69fe0b515e12b273
+    react: 17.0.2
+  checksum: 10c0/51abbcb72450fe527ebf978c3bc989ba266630faaa53f47a2fae5392369729e8de62b2e4683598cbe651ea7873cd34ec7d5127e2f50bf4bfe6bd0c3ad9bddcb0
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.12.0, react-is@npm:^16.13.1, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
+"react-is@npm:^16.12.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 10c0/33977da7a5f1a287936a0c85639fec6ca74f4f15ef1e59a6bc20338fc73dc69555381e211f7a3529b8150a1f71e4225525b41b60b52965bda53ce7d47377ada1
+  languageName: node
+  linkType: hard
+
+"react-is@npm:^17.0.0":
+  version: 17.0.2
+  resolution: "react-is@npm:17.0.2"
+  checksum: 10c0/2bdb6b93fbb1820b024b496042cce405c57e2f85e777c9aabd55f9b26d145408f9f74f5934676ffdc46f3dcff656d78413a6e43968e7b3f92eea35b3052e9053
   languageName: node
   linkType: hard
 
@@ -9390,26 +9408,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-textarea-autosize@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "react-textarea-autosize@npm:7.1.2"
+"react-textarea-autosize@npm:^8.0.0":
+  version: 8.5.9
+  resolution: "react-textarea-autosize@npm:8.5.9"
   dependencies:
-    "@babel/runtime": "npm:^7.1.2"
-    prop-types: "npm:^15.6.0"
+    "@babel/runtime": "npm:^7.20.13"
+    use-composed-ref: "npm:^1.3.0"
+    use-latest: "npm:^1.2.1"
   peerDependencies:
-    react: ">=0.14.0 <17.0.0"
-  checksum: 10c0/05d90e0770775935a98d40ab404f050f694a3b24cea7f31790e47569c43d7573d73803f0cbbba85937ed8f445f845f255ac550bc87c51c298a813b2b42246e66
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/3a924db59259a6e3b834dcddc12a8661b43dcdaa1b43c41c732e0548bb2761e9a53dbc6db4e0d9e237728b4869e42c25e5417408b0391aec290c90874733a09f
   languageName: node
   linkType: hard
 
-"react@npm:^16.13.1":
-  version: 16.13.1
-  resolution: "react@npm:16.13.1"
+"react@npm:^17.0.0":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-  checksum: 10c0/4d6ad44cd5c12511218ad179df94919b5c1c328d078160a9f39ae7d31738c427a9b6bbcf9fb4745f4c4f534ddab8529acc24e7cd9dce086c76e3478422256fb3
+  checksum: 10c0/07ae8959acf1596f0550685102fd6097d461a54a4fd46a50f88a0cd7daaa97fdd6415de1dcb4bfe0da6aa43221a6746ce380410fa848acc60f8ac41f6649c148
   languageName: node
   linkType: hard
 
@@ -10019,13 +10037,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.19.1":
-  version: 0.19.1
-  resolution: "scheduler@npm:0.19.1"
+"scheduler@npm:^0.20.2":
+  version: 0.20.2
+  resolution: "scheduler@npm:0.20.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-  checksum: 10c0/9658932a73148a93d791c064b331d9690ddfecc4de25bcd6c9b89f5f1166e3d23d9c31c1595d66565e5ffbb34d47035cb14841aba6444bc266bfcd215cefe9c0
+  checksum: 10c0/b0982e4b0f34f4ffa4f2f486161c0fd9ce9b88680b045dccbf250eb1aa4fd27413570645455187a83535e2370f5c667a251045547765408492bd883cbe95fcdb
   languageName: node
   linkType: hard
 
@@ -11488,6 +11506,44 @@ __metadata:
     punycode: "npm:1.3.2"
     querystring: "npm:0.2.0"
   checksum: 10c0/f0a1c7d99ac35dd68a8962bc7b3dd38f08d457387fc686f0669ff881b00a68eabd9cb3aded09dfbe25401d7b632fc4a9c074cb373f6a4bd1d8b5324d1d442a0d
+  languageName: node
+  linkType: hard
+
+"use-composed-ref@npm:^1.3.0":
+  version: 1.4.0
+  resolution: "use-composed-ref@npm:1.4.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/c77e0cba9579b7746d52feaf3ce77d8c345f266c9c1ef46584ae68f54646537c87b2ad97f5219a4b1db52f97ec2905e88e5b146add1f28f7e457bd52ca1b93cf
+  languageName: node
+  linkType: hard
+
+"use-isomorphic-layout-effect@npm:^1.1.1":
+  version: 1.2.1
+  resolution: "use-isomorphic-layout-effect@npm:1.2.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/4d3c1124d630fbe09c1d2a16af0cd78ac2fe1d22eb24a178363e3d84a897659cc04e8e8cd71f66ff78ff75ef8287fa72e746cb213b96c1097e70e4b4ed69f63f
+  languageName: node
+  linkType: hard
+
+"use-latest@npm:^1.2.1":
+  version: 1.3.0
+  resolution: "use-latest@npm:1.3.0"
+  dependencies:
+    use-isomorphic-layout-effect: "npm:^1.1.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/067c648814ad0c1f1e89d2d0e496254b05c4bed6a34e23045b4413824222aab08fd803c59a42852acc16830c17567d03f8c90af0a62be2f4e4b931454d079798
   languageName: node
   linkType: hard
 
