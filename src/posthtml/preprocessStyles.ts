@@ -48,16 +48,18 @@ const preprocessStyles = (options: {
   if (tasks === 0) callback(null, tree);
 };
 
-const stripPadding = postcss.plugin('strip-padding', () => {
-  return (root) => {
+const stripPadding: postcss.Plugin = {
+  postcssPlugin: 'strip-padding',
+  Once(root) {
     root.walkDecls('padding', (decl) => {
       decl.remove();
     });
-  };
-});
+  }
+};
 
-const stripCustomFonts = postcss.plugin('strip-custom-fonts', () => {
-  return (root) => {
+const stripCustomFonts: postcss.Plugin = {
+  postcssPlugin: 'strip-custom-fonts',
+  Once(root) {
     root.walkDecls('font-family', (decl) => {
       decl.value = decl.value
         .split(/\s*,\s*/)
@@ -72,7 +74,7 @@ const stripCustomFonts = postcss.plugin('strip-custom-fonts', () => {
         )
         .join(', ');
     });
-  };
-});
+  }
+};
 
 export default preprocessStyles;

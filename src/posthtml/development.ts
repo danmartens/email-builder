@@ -50,14 +50,15 @@ const development = (options: {
   if (tasks === 0) callback(null, tree);
 };
 
-const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
-  return (root) => {
+const stripMediaQueries: postcss.Plugin = {
+  postcssPlugin: 'strip-media-queries',
+  Once(root) {
     root.walkAtRules((rule) => {
       if (rule.name === 'media') {
         rule.remove();
       }
     });
-  };
-});
+  }
+};
 
 export default development;

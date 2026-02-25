@@ -4,25 +4,27 @@ import autoprefixer from 'autoprefixer';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 import compact from 'lodash/compact';
 
-const stripInlinableStyles = postcss.plugin('strip-inlinable-styles', () => {
-  return (root) => {
+const stripInlinableStyles: postcss.Plugin = {
+  postcssPlugin: 'strip-inlinable-styles',
+  Once(root) {
     root.walkRules((rule) => {
-      if (rule.parent.type !== 'atrule') {
+      if (rule.parent?.type !== 'atrule') {
         rule.remove();
       }
     });
-  };
-});
+  }
+};
 
-const stripMediaQueries = postcss.plugin('strip-media-queries', () => {
-  return (root) => {
+const stripMediaQueries: postcss.Plugin = {
+  postcssPlugin: 'strip-media-queries',
+  Once(root) {
     root.walkAtRules((rule) => {
       if (rule.name === 'media') {
         rule.remove();
       }
     });
-  };
-});
+  }
+};
 
 const styleElement = (options: {
   publish: boolean;
@@ -62,7 +64,7 @@ const styleElement = (options: {
       compact([
         stripInlinableStyles,
         options.stripMediaQueries ? stripMediaQueries : undefined,
-        options.publish ? autoprefixer : undefined
+        options.publish ? autoprefixer() : undefined
       ])
     )
       .process(styles, { from: undefined })
