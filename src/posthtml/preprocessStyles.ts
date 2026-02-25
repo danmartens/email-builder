@@ -1,4 +1,3 @@
-import 'core-js/es/array/flat-map';
 import compact from 'lodash/compact';
 import postcss from 'postcss';
 import postcssCustomProperties from 'postcss-custom-properties';

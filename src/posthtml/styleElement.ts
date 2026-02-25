@@ -1,4 +1,3 @@
-import 'core-js/es/array/flat-map';
 import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
 import { PostHTMLNode, PostHTMLPlugin } from './types';

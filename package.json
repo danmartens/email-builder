@@ -40,7 +40,6 @@
     "@types/ws": "^7.2.3",
     "@vitejs/plugin-react": "^5.1.4",
     "babel-jest": "^30.2.0",
-    "core-js": "^3.6.5",
     "downloadjs": "^1.4.7",
     "immutable": "^4.0.0-rc.12",
     "jest": "^30.2.0",
