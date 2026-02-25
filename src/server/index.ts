@@ -1,6 +1,7 @@
-import path from 'path';
-import fs from 'fs';
-import url from 'url';
+import path from 'node:path';
+import fs from 'node:fs';
+import url from 'node:url';
+
 import express, { Request } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import basicAuth from 'express-basic-auth';
@@ -20,7 +21,9 @@ import Configuration from '../Configuration';
 import resizeAndUploadImages from './utils/resizeAndUploadImages';
 import renderTemplate from '../renderTemplate';
 
-export const server = async (mode: 'development' | 'production' = 'production') => {
+export const server = async (
+  mode: 'development' | 'production' = 'production'
+) => {
   const {
     projectPath,
     emailsPath,
@@ -106,9 +109,10 @@ export const server = async (mode: 'development' | 'production' = 'production') 
       renderTemplate('show', {
         name,
         schema: JSON.stringify(parseSchema(schema)),
-        scriptUrl: mode === 'production'
-          ? `https://${host}:${port}/main.js`
-          : '/src/client/index.tsx'
+        scriptUrl:
+          mode === 'production'
+            ? `https://${host}:${port}/main.js`
+            : '/src/client/index.tsx'
       }).then(async (html) => {
         if (vite != null) {
           html = await vite.transformIndexHtml(req.url, html);

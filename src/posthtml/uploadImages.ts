@@ -1,4 +1,5 @@
-import path from 'path';
+import path from 'node:path';
+
 import resizeAndUploadImages from '../server/utils/resizeAndUploadImages';
 import Configuration from '../Configuration';
 import { PostHTMLNode, Template, PostHTMLPlugin } from './types';

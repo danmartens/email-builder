@@ -1,5 +1,6 @@
-import path from 'path';
-import crypto from 'crypto';
+import path from 'node:path';
+import crypto from 'node:crypto';
+
 import resizeImage from './resizeImage';
 import putObject from './putObject';
 import Configuration from '../../Configuration';
