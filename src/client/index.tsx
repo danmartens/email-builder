@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import download from 'downloadjs';
 import ValuesEditor, { editorWidth } from './ValuesEditor';
@@ -197,4 +197,4 @@ const Select = styled.select`
   }
 `;
 
-ReactDOM.render(<Email />, document.getElementById('container'));
+createRoot(document.getElementById('container')!).render(<Email />);
