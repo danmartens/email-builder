@@ -1,5 +1,5 @@
 import marked from 'marked';
-import parse from 'posthtml-parser';
+import { parser } from 'posthtml-parser';
 import { buildAttrs } from './utils/buildAttrs';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 
@@ -22,7 +22,7 @@ export const syntaxAttribute: PostHTMLPlugin = (tree) => {
           ...node.attrs,
           syntax: undefined,
         }),
-        content: parse(
+        content: parser(
           marked(
             content
               .split('\n')
