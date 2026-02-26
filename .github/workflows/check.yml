@@ -14,9 +14,9 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-
     name: Check
+
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -25,7 +25,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: .nvmrc
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install Node Dependencies
@@ -34,5 +34,8 @@ jobs:
       - name: Run TypeScript
         run: yarn types:check
 
+      - name: Run ESLint
+        run: yarn lint
+
       - name: Run Prettier
-        run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
+        run: yarn format:check
