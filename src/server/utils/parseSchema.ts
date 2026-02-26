@@ -1,70 +1,68 @@
-import * as t from 'io-ts';
-import { pipe } from 'fp-ts/lib/pipeable';
-import { fold } from 'fp-ts/lib/Either';
+import { z } from 'zod/v4';
 
-const StringValueCodec = t.type({
-  type: t.literal('string'),
-  name: t.string,
-  label: t.string,
-  defaultValue: t.union([t.string, t.void])
+const StringFieldSchema = z.object({
+  type: z.literal('string'),
+  name: z.string(),
+  label: z.string(),
+  defaultValue: z.string().optional()
 });
 
-const TextValueCodec = t.type({
-  type: t.literal('text'),
-  name: t.string,
-  label: t.string,
-  defaultValue: t.union([t.string, t.void])
+const TextFieldSchema = z.object({
+  type: z.literal('text'),
+  name: z.string(),
+  label: z.string(),
+  defaultValue: z.string().optional()
 });
 
-const ImageValueCodec = t.type({
-  type: t.literal('image'),
-  name: t.string,
-  label: t.string,
-  defaultValue: t.union([
-    t.type({ src: t.string, srcset: t.union([t.string, t.undefined]) }),
-    t.undefined
-  ]),
-  dimensions: t.union([
-    t.type({
-      maxWidth: t.union([t.number, t.undefined]),
-      maxHeight: t.union([t.number, t.undefined])
-    }),
-    t.undefined
-  ])
+const ImageFieldSchema = z.object({
+  type: z.literal('image'),
+  name: z.string(),
+  label: z.string(),
+  defaultValue: z
+    .object({
+      src: z.string(),
+      srcset: z.string().optional()
+    })
+    .optional(),
+  dimensions: z
+    .object({
+      maxWidth: z.number().optional(),
+      maxHeight: z.number().optional()
+    })
+    .optional()
 });
 
-const ListValueSchemaCodec = t.union([
-  StringValueCodec,
-  TextValueCodec,
-  ImageValueCodec
+const ListFieldSchemaCodec = z.union([
+  StringFieldSchema,
+  TextFieldSchema,
+  ImageFieldSchema
 ]);
 
-const ListValueCodec = t.type({
-  type: t.literal('list'),
-  name: t.string,
-  label: t.string,
-  schema: t.array(ListValueSchemaCodec)
+const ListFieldSchema = z.object({
+  type: z.literal('list'),
+  name: z.string(),
+  label: z.string(),
+  schema: z.array(ListFieldSchemaCodec)
 });
 
-const SchemaCodec = t.array(
-  t.union([StringValueCodec, TextValueCodec, ImageValueCodec, ListValueCodec])
+const SchemaCodec = z.array(
+  z.union([
+    StringFieldSchema,
+    TextFieldSchema,
+    ImageFieldSchema,
+    ListFieldSchema
+  ])
 );
 
-export type Schema = t.TypeOf<typeof SchemaCodec>;
-export type ListValueSchema = t.TypeOf<typeof ListValueSchemaCodec>;
+export type Schema = z.infer<typeof SchemaCodec>;
+export type ListValueSchema = z.infer<typeof ListFieldSchemaCodec>;
 
-const parseSchema = (schema: string): Schema => {
-  const result = SchemaCodec.decode(JSON.parse(schema));
+export function parseSchema(schema: string): Schema {
+  const result = SchemaCodec.safeParse(JSON.parse(schema));
 
-  return pipe(
-    result,
-    fold(
-      () => {
-        throw new Error(`Invalid schema`);
-      },
-      (decodedSchema) => decodedSchema
-    )
-  );
-};
+  if (!result.success) {
+    throw new Error('Invalid schema');
+  }
 
-export default parseSchema;
+  return result.data;
+}

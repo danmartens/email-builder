@@ -1,4 +1,4 @@
-import parseSchema from '../parseSchema';
+import { parseSchema } from '../parseSchema';
 
 test('parses an empty schema', () => {
   expect(parseSchema('[]')).toEqual([]);
@@ -10,7 +10,12 @@ test('parses a string field', () => {
   );
 
   expect(schema).toEqual([
-    { type: 'string', name: 'headline', label: 'Headline', defaultValue: undefined }
+    {
+      type: 'string',
+      name: 'headline',
+      label: 'Headline',
+      defaultValue: undefined
+    }
   ]);
 });
 
@@ -44,7 +49,11 @@ test('parses an image field', () => {
     JSON.stringify([{ type: 'image', name: 'hero', label: 'Hero Image' }])
   );
 
-  expect(schema[0]).toMatchObject({ type: 'image', name: 'hero', label: 'Hero Image' });
+  expect(schema[0]).toMatchObject({
+    type: 'image',
+    name: 'hero',
+    label: 'Hero Image'
+  });
 });
 
 test('parses an image field with a default value', () => {
@@ -59,7 +68,10 @@ test('parses an image field with a default value', () => {
     ])
   );
 
-  expect(schema[0].defaultValue).toEqual({ src: '/hero.jpg', srcset: undefined });
+  expect(schema[0].defaultValue).toEqual({
+    src: '/hero.jpg',
+    srcset: undefined
+  });
 });
 
 test('parses an image field with srcset in the default value', () => {
