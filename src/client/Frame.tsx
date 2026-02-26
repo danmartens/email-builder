@@ -23,14 +23,14 @@ export const Frame: React.FC<Props> = (props) => {
   }, [source]);
 
   return (
-    <Container editorVisible={editorVisible}>
+    <Container $editorVisible={editorVisible}>
       <Device
-        width={screenSize.width}
-        height={screenSize.height}
-        cornerRadius={screenSize.cornerRadius}
-        bezelWidth={screenSize.bezelWidth}
+        $width={screenSize.width}
+        $height={screenSize.height}
+        $cornerRadius={screenSize.cornerRadius}
+        $bezelWidth={screenSize.bezelWidth}
       >
-        <Overlay visible={reloading}>
+        <Overlay $visible={reloading}>
           <Loader />
         </Overlay>
 
@@ -38,8 +38,8 @@ export const Frame: React.FC<Props> = (props) => {
 
         {screenSize.headerHeight != null && (
           <Header
-            height={screenSize.headerHeight}
-            cornerRadius={screenSize.cornerRadius}
+            $height={screenSize.headerHeight}
+            $cornerRadius={screenSize.cornerRadius}
           />
         )}
       </Device>
@@ -47,33 +47,33 @@ export const Frame: React.FC<Props> = (props) => {
   );
 };
 
-const Container = styled.div<{ editorVisible: boolean }>`
+const Container = styled.div<{ $editorVisible: boolean }>`
   position: fixed;
-  left: ${({ editorVisible }) => (editorVisible ? editorWidth : 0)};
+  left: ${({ $editorVisible }) => ($editorVisible ? editorWidth : 0)};
   height: 100%;
-  width: ${({ editorVisible }) =>
-    editorVisible ? `calc(100% - ${editorWidth}px)` : '100%'};
+  width: ${({ $editorVisible }) =>
+    $editorVisible ? `calc(100% - ${editorWidth}px)` : '100%'};
   background-color: #f4f4f4;
 `;
 
 const Device = styled.div<{
-  width: number | null;
-  height: number | null;
-  cornerRadius?: number;
-  bezelWidth?: number;
+  $width: number | null;
+  $height: number | null;
+  $cornerRadius?: number;
+  $bezelWidth?: number;
 }>`
   position: absolute;
-  height: ${({ height }) => (height != null ? `${height}px` : '100%')};
-  width: ${({ width }) => (width != null ? `${width}px` : '100%')};
+  height: ${({ $height }) => ($height != null ? `${$height}px` : '100%')};
+  width: ${({ $width }) => ($width != null ? `${$width}px` : '100%')};
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 0px 20px 0px;
-  ${({ cornerRadius }) =>
-    cornerRadius != null ? `border-radius: ${cornerRadius}px` : undefined};
-  ${({ bezelWidth }) =>
-    bezelWidth != null ? `border: ${bezelWidth}px solid #999999` : undefined};
+  ${({ $cornerRadius }) =>
+    $cornerRadius != null ? `border-radius: ${$cornerRadius}px` : undefined};
+  ${({ $bezelWidth }) =>
+    $bezelWidth != null ? `border: ${$bezelWidth}px solid #999999` : undefined};
 `;
 
 const Screen = styled.iframe`
@@ -84,20 +84,20 @@ const Screen = styled.iframe`
   left: 0;
 `;
 
-const Header = styled.div<{ height: number; cornerRadius?: number }>`
+const Header = styled.div<{ $height: number; $cornerRadius?: number }>`
   position: absolute;
-  height: ${({ height }) => `${height}px`};
+  height: ${({ $height }) => `${$height}px`};
   width: 100%;
   top: 0;
   left: 0;
   backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.7);
-  ${({ cornerRadius }) => `border-top-left-radius: ${cornerRadius}px`};
-  ${({ cornerRadius }) => `border-top-right-radius: ${cornerRadius}px`};
+  ${({ $cornerRadius }) => `border-top-left-radius: ${$cornerRadius}px`};
+  ${({ $cornerRadius }) => `border-top-right-radius: ${$cornerRadius}px`};
 `;
 
-const Overlay = styled.div<{ visible: boolean }>`
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
+const Overlay = styled.div<{ $visible: boolean }>`
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   z-index: 1;
   position: fixed;
   height: 100%;

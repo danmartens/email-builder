@@ -22,12 +22,12 @@ export const Button: React.FC<Props> = (props) => {
 
   return (
     <Container {...buttonProps} disabled={disabled || acting}>
-      {acting ? <Loader size={24} width={3} /> : children}
+      {acting ? <Loader $size={24} $width={3} /> : children}
     </Container>
   );
 };
 
-const Container = styled.button<{ fontSize?: number }>`
+const Container = styled.button<{ $fontSize?: number }>`
   position: relative;
   transition: background-color 0.15s;
   background-color: rgba(47, 224, 200, 0.3);
@@ -37,7 +37,7 @@ const Container = styled.button<{ fontSize?: number }>`
   margin: ${size / 6}px;
   padding: 0;
   font-family: 'Source Code Pro', Menlo, monospace;
-  font-size: ${({ fontSize }) => fontSize ?? 16}px;
+  font-size: ${({ $fontSize }) => $fontSize ?? 16}px;
   font-weight: bold;
   border: none;
   cursor: pointer;

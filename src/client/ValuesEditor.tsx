@@ -26,7 +26,7 @@ export const ValuesEditor: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Editor visible={visible}>
+      <Editor $visible={visible}>
         {schema.map((valueSchema) => (
           <FormGroup key={valueSchema.name}>
             <Label>{valueSchema.label}</Label>
@@ -102,15 +102,15 @@ export const ValuesEditor: React.FC<Props> = (props) => {
           </FormGroup>
         ))}
 
-        <EditorActions visible={visible}>
+        <EditorActions $visible={visible}>
           <ExportFile values={values} />
           <ImportFile values={values} onImport={onChange} />
         </EditorActions>
       </Editor>
 
       <EditorToggle
-        editorWidth={editorWidth}
-        visible={visible}
+        $editorWidth={editorWidth}
+        $visible={visible}
         onClick={onToggle}
       >
         {props.visible ? '❮' : '❯'}
@@ -162,10 +162,10 @@ const ValueEditor: React.FC<{
   );
 };
 
-const Editor = styled.div<{ visible: boolean }>`
+const Editor = styled.div<{ $visible: boolean }>`
   position: fixed;
   box-sizing: border-box;
-  left: ${(props) => (props.visible ? 0 : `-${editorWidth}px`)};
+  left: ${(props) => (props.$visible ? 0 : `-${editorWidth}px`)};
   top: 0;
   bottom: ${editorActionsHeight}px;
   width: ${editorWidth}px;
@@ -200,11 +200,11 @@ const TextArea = styled(AutosizeTextArea)`
   resize: none;
 `;
 
-const EditorActions = styled.div<{ visible: boolean }>`
+const EditorActions = styled.div<{ $visible: boolean }>`
   box-sizing: border-box;
   position: fixed;
   bottom: 0;
-  left: ${({ visible }) => (visible ? 0 : `-${editorWidth}px`)};
+  left: ${({ $visible: visible }) => (visible ? 0 : `-${editorWidth}px`)};
   width: ${editorWidth}px;
   height: ${editorActionsHeight}px;
   display: flex;

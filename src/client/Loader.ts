@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Loader = styled.div<{ size?: number; width?: number }>`
+export const Loader = styled.div<{ $size?: number; $width?: number }>`
   @keyframes rotation {
     0% {
       transform: rotate(0deg);
@@ -11,8 +11,8 @@ export const Loader = styled.div<{ size?: number; width?: number }>`
     }
   }
 
-  font-size: ${({ size }) => size ?? 32}px;
-  border-width: ${({ width }) => width ?? 4}px;
+  font-size: ${({ $size: size }) => size ?? 32}px;
+  border-width: ${({ $width: width }) => width ?? 4}px;
 
   position: absolute;
   top: 50%;
