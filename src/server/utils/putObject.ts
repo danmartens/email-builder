@@ -1,27 +1,18 @@
-import AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand, PutObjectCommandOutput } from '@aws-sdk/client-s3';
 
-const s3 = new AWS.S3();
+const s3 = new S3Client({});
 
 export function putObject(
   bucketName: string,
   objectKey: string,
   fileBuffer: Buffer,
-): Promise<AWS.S3.PutObjectOutput> {
-  return new Promise((resolve, reject) => {
-    s3.putObject(
-      {
-        Bucket: bucketName,
-        Key: objectKey,
-        Body: fileBuffer,
-        ACL: 'public-read',
-      },
-      (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      },
-    );
-  });
+): Promise<PutObjectCommandOutput> {
+  return s3.send(
+    new PutObjectCommand({
+      Bucket: bucketName,
+      Key: objectKey,
+      Body: fileBuffer,
+      ACL: 'public-read',
+    }),
+  );
 }
