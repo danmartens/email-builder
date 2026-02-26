@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import prettier from 'prettier';
 import Handlebars from 'handlebars';
-import { Template } from './types';
-import processHtml from './processHtml';
+import prettier from 'prettier';
+
+import { processHtml } from './processHtml';
+import type { Template } from './types';
 
 interface Options {
   publish: boolean;
@@ -28,7 +29,7 @@ Handlebars.registerHelper('preview-text', (text: string) => {
   );
 });
 
-const generateHeadHtml = (template: Template, options: Options) => {
+function generateHeadHtml(template: Template, options: Options) {
   if (template.rootPath == null) {
     return;
   }
@@ -42,9 +43,9 @@ const generateHeadHtml = (template: Template, options: Options) => {
   return Handlebars.compile(fs.readFileSync(headTemplatePath).toString())(
     options.context
   );
-};
+}
 
-export const renderEmail = async (
+export async function renderEmail(
   template: Template,
   html: string,
   options: Options = {
@@ -54,7 +55,7 @@ export const renderEmail = async (
     stripCustomFonts: false,
     stripMediaQueries: false
   }
-): Promise<string> => {
+): Promise<string> {
   const emailTemplate = Handlebars.compile(
     fs
       .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
@@ -96,4 +97,4 @@ export const renderEmail = async (
   }
 
   return prettier.format(result.html, { parser: 'html' });
-};
+}

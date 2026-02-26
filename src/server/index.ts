@@ -17,9 +17,9 @@ import Zip from 'adm-zip';
 import glob from 'glob';
 import { renderEmail } from '../posthtml/renderEmail';
 import { parseSchema } from './utils/parseSchema';
-import Configuration from '../Configuration';
-import resizeAndUploadImages from './utils/resizeAndUploadImages';
-import renderTemplate from '../renderTemplate';
+import { Configuration } from '../Configuration';
+import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
+import { renderTemplate } from '../renderTemplate';
 
 export const server = async (
   mode: 'development' | 'production' = 'production'

@@ -8,8 +8,8 @@ import fs from 'node:fs';
 import program from 'commander';
 import { server } from './server';
 import chalk from 'chalk';
-import Configuration from './Configuration';
-import logStatus from './logStatus';
+import { Configuration } from './Configuration';
+import { logStatus } from './logStatus';
 
 program.version(require('../package.json')['version']);
 

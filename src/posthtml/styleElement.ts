@@ -1,9 +1,10 @@
 import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
-import { PostHTMLNode, PostHTMLPlugin } from './types';
 import compact from 'lodash/compact';
 
-const stripInlinableStyles: postcss.Plugin = {
+import { PostHTMLNode, PostHTMLPlugin } from './types';
+
+export const stripInlinableStyles: postcss.Plugin = {
   postcssPlugin: 'strip-inlinable-styles',
   Once(root) {
     root.walkRules((rule) => {
@@ -25,7 +26,7 @@ const stripMediaQueries: postcss.Plugin = {
   }
 };
 
-const styleElement = (options: {
+export const styleElement = (options: {
   publish: boolean;
   stripMediaQueries: boolean;
 }): PostHTMLPlugin => (tree, callback) => {
@@ -81,5 +82,3 @@ const styleElement = (options: {
 
   if (tasks === 0) callback(null, tree);
 };
-
-export default styleElement;

@@ -1,4 +1,4 @@
-const buildAttrs = (attrs: { [key: string]: string | number | undefined }) => {
+export const buildAttrs = (attrs: { [key: string]: string | number | undefined }) => {
   return Object.fromEntries(
     Object.entries(attrs)
       .filter(([, value]) => value != null)
@@ -6,4 +6,3 @@ const buildAttrs = (attrs: { [key: string]: string | number | undefined }) => {
   );
 };
 
-export default buildAttrs;

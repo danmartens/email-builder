@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Loader from './Loader';
+import { Loader } from './Loader';
 
 const size = 36;
 
@@ -17,7 +17,7 @@ interface Props extends HTMLButtonElementProps {
   acting?: boolean;
 }
 
-const Button: React.FC<Props> = (props) => {
+export const Button: React.FC<Props> =(props) => {
   const { disabled = false, acting = false, children, ...buttonProps } = props;
 
   return (
@@ -57,4 +57,3 @@ const Container = styled.button<{ fontSize?: number }>`
   }
 `;
 
-export default Button;

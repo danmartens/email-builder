@@ -19,19 +19,19 @@ interface ErrorData {
   message: string;
 }
 
-function renderTemplate(
+export function renderTemplate(
   templateName: 'index',
   data: IndexData
 ): Promise<string>;
 
-function renderTemplate(templateName: 'show', data: ShowData): Promise<string>;
+export function renderTemplate(templateName: 'show', data: ShowData): Promise<string>;
 
-function renderTemplate(
+export function renderTemplate(
   templateName: 'error',
   data: ErrorData
 ): Promise<string>;
 
-function renderTemplate(
+export function renderTemplate(
   templateName: 'index' | 'show' | 'error',
   data: IndexData | ShowData | ErrorData
 ): Promise<string> {
@@ -46,4 +46,3 @@ function renderTemplate(
   });
 }
 
-export default renderTemplate;

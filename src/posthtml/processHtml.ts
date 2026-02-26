@@ -1,23 +1,24 @@
-import posthtml from 'posthtml';
-import spaceless from 'posthtml-spaceless';
-import inlineCSS from 'posthtml-inline-css';
 import compact from 'lodash/compact';
-import normalizeElements from './normalizeElements';
-import imageElement from './imageElement';
-import section from './section';
-import syntaxAttribute from './syntaxAttribute';
-import removeExtraElements from './removeExtraElements';
-import uploadImages from './uploadImages';
-import unsubscribeElement from './unsubscribeElement';
-import styleElement from './styleElement';
-import preprocessStyles from './preprocessStyles';
-import minifyStyles from './minifyStyles';
-import { Template } from './types';
-import removeClassAttributes from './removeClassAttributes';
-import moveDataClassAttributes from './moveDataClassAttributes';
-import development from './development';
+import posthtml from 'posthtml';
+import inlineCSS from 'posthtml-inline-css';
+import spaceless from 'posthtml-spaceless';
 
-const processHtml = (
+import { development } from './development';
+import { imageElement } from './imageElement';
+import { minifyStyles } from './minifyStyles';
+import { moveDataClassAttributes } from './moveDataClassAttributes';
+import { normalizeElements } from './normalizeElements';
+import { preprocessStyles } from './preprocessStyles';
+import { removeClassAttributes } from './removeClassAttributes';
+import { removeExtraElements } from './removeExtraElements';
+import { section } from './section';
+import { styleElement } from './styleElement';
+import { syntaxAttribute } from './syntaxAttribute';
+import type { Template } from './types';
+import { unsubscribeElement } from './unsubscribeElement';
+import { uploadImages } from './uploadImages';
+
+export function processHtml(
   template: Template,
   options: {
     publish: boolean;
@@ -27,7 +28,7 @@ const processHtml = (
     stripMediaQueries: boolean;
   },
   html: string
-) => {
+) {
   if (options.publish && options.stripMediaQueries) {
     throw new Error(
       'The "stripMediaQueries" option should not be used when publishing'
@@ -54,6 +55,4 @@ const processHtml = (
       options.uploadImages ? uploadImages(template) : undefined
     ])
   ).process(html);
-};
-
-export default processHtml;
+}

@@ -1,6 +1,6 @@
 import { PostHTMLNode } from '../types';
 
-const pipe = (
+export const pipe = (
   ...transforms: Array<(node: PostHTMLNode) => PostHTMLNode>
 ): ((node: PostHTMLNode) => PostHTMLNode) => (node) =>
   transforms.reduce(
@@ -8,4 +8,3 @@ const pipe = (
     node
   );
 
-export default pipe;

@@ -1,7 +1,7 @@
 import parseAttrs from 'posthtml-attrs-parser';
 import { PostHTMLNode } from '../types';
 
-const addClass = (className: string) => (node: PostHTMLNode): PostHTMLNode => {
+export const addClass =(className: string) => (node: PostHTMLNode): PostHTMLNode => {
   const attrs = parseAttrs(node.attrs || {});
 
   if (attrs.class == null) {
@@ -16,4 +16,3 @@ const addClass = (className: string) => (node: PostHTMLNode): PostHTMLNode => {
   };
 };
 
-export default addClass;

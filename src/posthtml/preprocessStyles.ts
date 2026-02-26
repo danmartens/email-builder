@@ -3,7 +3,7 @@ import postcss from 'postcss';
 import postcssCustomProperties from 'postcss-custom-properties';
 import { PostHTMLPlugin } from './types';
 
-const preprocessStyles = (options: {
+export const preprocessStyles = (options: {
   stripPadding: boolean;
   stripCustomFonts: boolean;
   stripMediaQueries: boolean;
@@ -75,5 +75,3 @@ const stripCustomFonts: postcss.Plugin = {
     });
   }
 };
-
-export default preprocessStyles;

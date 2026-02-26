@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useWebSocket = (
+export const useWebSocket = (
   url: string,
   options: { enabled: boolean } = { enabled: true }
 ) => {
@@ -23,4 +23,3 @@ const useWebSocket = (
   return message;
 };
 
-export default useWebSocket;

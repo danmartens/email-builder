@@ -1,5 +1,5 @@
 import React from 'react';
-import Loader from './Loader';
+import { Loader } from './Loader';
 
 interface Props {
   value?: { src: string; srcset: string };
@@ -14,7 +14,7 @@ type State = {
   imageDataUrl: string | null;
 };
 
-export default class ImageUploader extends React.PureComponent<Props, State> {
+export class ImageUploader extends React.PureComponent<Props, State> {
   state: State = { status: null, file: null, imageDataUrl: null };
 
   componentDidUpdate(prevProps: Props, prevState: State) {

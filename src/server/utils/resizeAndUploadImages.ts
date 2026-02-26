@@ -1,12 +1,12 @@
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-import resizeImage from './resizeImage';
-import putObject from './putObject';
-import Configuration from '../../Configuration';
+import { resizeImage } from './resizeImage';
+import { putObject } from './putObject';
+import { Configuration } from '../../Configuration';
 import { Dimensions } from '../types';
 
-const resizeAndUploadImages = (
+export const resizeAndUploadImages = (
   imageFile: { originalname: string; path: string },
   imageDimensions: Dimensions[]
 ) =>
@@ -72,4 +72,3 @@ const dimensionsString = (dimensions: Dimensions): string | undefined => {
   }
 };
 
-export default resizeAndUploadImages;

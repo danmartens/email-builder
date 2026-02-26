@@ -8,6 +8,6 @@ const STATUS_TEXT = {
 
 type Status = 'SUCCESS' | 'WARNING' | 'ERROR';
 
-export default function logStatus(status: Status, message: string) {
+export function logStatus(status: Status, message: string) {
   console.log(`\n${STATUS_TEXT[status]} ${message}`);
 }

@@ -1,4 +1,4 @@
-import deserializeValues from '../deserializeValues';
+import { deserializeValues } from '../deserializeValues';
 
 const schema = [
   { name: 'name', type: 'string', defaultValue: 'Unamed' },

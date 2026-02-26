@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import styled from 'styled-components';
-import Loader from './Loader';
+import { Loader } from './Loader';
 import { ScreenSize } from './constants';
 import { editorWidth } from './ValuesEditor';
 
@@ -11,7 +11,7 @@ interface Props {
   reloading: boolean;
 }
 
-const Frame: React.FC<Props> = (props) => {
+export const Frame: React.FC<Props> =(props) => {
   const { editorVisible, screenSize, source, reloading } = props;
   const frameRef = useRef<HTMLIFrameElement>(null);
 
@@ -109,4 +109,3 @@ const Overlay = styled.div<{ visible: boolean }>`
   transition: opacity 150ms;
 `;
 
-export default Frame;

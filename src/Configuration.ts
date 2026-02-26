@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-class Configuration {
+export class Configuration {
   get projectPath(): string {
     return process.cwd();
   }
@@ -40,4 +40,3 @@ class Configuration {
   }
 }
 
-export default Configuration;

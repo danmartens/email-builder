@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const ButtonGroup = styled.div<{
+export const ButtonGroup = styled.div<{
   top?: number;
   bottom?: 'auto' | number;
   right?: number;
@@ -21,4 +21,3 @@ ButtonGroup.defaultProps = {
   right: 0
 };
 
-export default ButtonGroup;

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 
-export default function getFingerprint(inputPath: string) {
+export function getFingerprint(inputPath: string) {
   return new Promise((resolve, reject) => {
     fs.readFile(inputPath, (err, data) => {
       if (err) {

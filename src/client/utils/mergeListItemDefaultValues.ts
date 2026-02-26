@@ -1,6 +1,6 @@
 import { ListValueSchema } from '../../types';
 
-const mergeListItemDefaultValues = (
+export const mergeListItemDefaultValues = (
   schema: ListValueSchema[],
   data: { [key: string]: any } = {}
 ) =>
@@ -11,4 +11,3 @@ const mergeListItemDefaultValues = (
     };
   }, {});
 
-export default mergeListItemDefaultValues;

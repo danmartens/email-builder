@@ -1,7 +1,7 @@
 import { Schema } from '../../types';
-import mergeListItemDefaultValues from './mergeListItemDefaultValues';
+import { mergeListItemDefaultValues } from './mergeListItemDefaultValues';
 
-const deserializeValues = (
+export const deserializeValues = (
   schema: Schema,
   serializedData: string | null
 ): { [key: string]: string | undefined } => {
@@ -45,4 +45,3 @@ const deserializeValues = (
   return data;
 };
 
-export default deserializeValues;

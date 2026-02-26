@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const EditorToggle = styled.button<{ visible: boolean; editorWidth: number }>`
+export const EditorToggle =styled.button<{ visible: boolean; editorWidth: number }>`
   transition: background-color 0.15s;
   position: fixed;
   padding: 0;
@@ -35,4 +35,3 @@ const EditorToggle = styled.button<{ visible: boolean; editorWidth: number }>`
   }
 `;
 
-export default EditorToggle;

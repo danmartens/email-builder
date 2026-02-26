@@ -1,10 +1,10 @@
 import path from 'node:path';
 
-import resizeAndUploadImages from '../server/utils/resizeAndUploadImages';
-import Configuration from '../Configuration';
+import { resizeAndUploadImages } from '../server/utils/resizeAndUploadImages';
+import { Configuration } from '../Configuration';
 import { PostHTMLNode, Template, PostHTMLPlugin } from './types';
 
-const uploadImages = (template: Template): PostHTMLPlugin => (
+export const uploadImages = (template: Template): PostHTMLPlugin => (
   tree,
   callback
 ) => {
@@ -55,5 +55,3 @@ const uploadImages = (template: Template): PostHTMLPlugin => (
 
   if (tasks === 0) callback(null, tree);
 };
-
-export default uploadImages;

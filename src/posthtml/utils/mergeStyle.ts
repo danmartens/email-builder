@@ -1,7 +1,7 @@
 import parseAttrs from 'posthtml-attrs-parser';
 import { PostHTMLNode } from '../types';
 
-const mergeStyle = (style: object) => (node: PostHTMLNode): PostHTMLNode => {
+export const mergeStyle =(style: object) => (node: PostHTMLNode): PostHTMLNode => {
   const attrs = parseAttrs(node.attrs ?? {});
 
   attrs.style = { ...style, ...(attrs.style ?? {}) };
@@ -12,4 +12,3 @@ const mergeStyle = (style: object) => (node: PostHTMLNode): PostHTMLNode => {
   };
 };
 
-export default mergeStyle;

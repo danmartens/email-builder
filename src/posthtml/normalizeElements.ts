@@ -1,10 +1,11 @@
 import { compact, flattenDeep } from 'lodash';
-import pipe from './utils/pipe';
-import mergeStyle from './utils/mergeStyle';
-import defaultAttrs from './utils/defaultAttrs';
+
+import { pipe } from './utils/pipe';
+import { mergeStyle } from './utils/mergeStyle';
+import { defaultAttrs } from './utils/defaultAttrs';
 import { PostHTMLPlugin } from './types';
 
-const normalizeElements: PostHTMLPlugin = (tree) => {
+export const normalizeElements: PostHTMLPlugin = (tree) => {
   tree.match({ tag: 'table' }, (node) => {
     return pipe(
       defaultAttrs({
@@ -25,5 +26,3 @@ const normalizeElements: PostHTMLPlugin = (tree) => {
     return { ...node, content: compact(flattenDeep(node.content)) };
   });
 };
-
-export default normalizeElements;

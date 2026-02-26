@@ -2,7 +2,7 @@ import postcss from 'postcss';
 import cssnano from 'cssnano';
 import { PostHTMLPlugin } from './types';
 
-const minifyStyles: PostHTMLPlugin = (tree, callback) => {
+export const minifyStyles: PostHTMLPlugin = (tree, callback) => {
   let tasks = 0;
 
   const done = () => {
@@ -31,5 +31,3 @@ const minifyStyles: PostHTMLPlugin = (tree, callback) => {
 
   if (tasks === 0) callback(null, tree);
 };
-
-export default minifyStyles;

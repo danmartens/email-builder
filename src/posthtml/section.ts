@@ -1,9 +1,10 @@
-import parseBoxValues from './utils/parseBoxValues';
-import buildAttrs from './utils/buildAttrs';
-import parseResponsiveValue from './utils/parseResponsiveValue';
-import { PostHTMLNode, PostHTMLPlugin } from './types';
 import uniqueId from 'lodash/uniqueId';
 import compact from 'lodash/compact';
+
+import { parseBoxValues } from './utils/parseBoxValues';
+import { buildAttrs } from './utils/buildAttrs';
+import { parseResponsiveValue } from './utils/parseResponsiveValue';
+import { PostHTMLNode, PostHTMLPlugin } from './types';
 
 class Section {
   private readonly id: string;
@@ -170,7 +171,7 @@ class Section {
   }
 }
 
-const section: PostHTMLPlugin = (tree) => {
+export const section: PostHTMLPlugin = (tree) => {
   tree.match({ attrs: { 'data-padding': /\d+( \d+){0,3}/ } }, (node) => {
     return new Section(node).toNode();
   });
@@ -191,5 +192,3 @@ const section: PostHTMLPlugin = (tree) => {
     return new Section(node).toNode();
   });
 };
-
-export default section;

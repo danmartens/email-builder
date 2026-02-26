@@ -1,4 +1,4 @@
-const parseResponsiveValue = <
+export const parseResponsiveValue =<
   TParsed extends (value: string) => any = (value: string) => any
 >(
   rawValue: string | undefined,
@@ -71,4 +71,3 @@ class ResponsiveValue<T> {
   }
 }
 
-export default parseResponsiveValue;

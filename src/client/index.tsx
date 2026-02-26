@@ -2,15 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import download from 'downloadjs';
-import ValuesEditor, { editorWidth } from './ValuesEditor';
-import Frame from './Frame';
-import ButtonGroup from './ButtonGroup';
-import storeValues from './utils/storeValues';
-import deserializeValues from './utils/deserializeValues';
+import { ValuesEditor, editorWidth } from './ValuesEditor';
+import { Frame } from './Frame';
+import { ButtonGroup } from './ButtonGroup';
+import { storeValues } from './utils/storeValues';
+import { deserializeValues } from './utils/deserializeValues';
 import { Schema } from '../types';
-import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
-import useWebSocket from './utils/useWebSocket';
-import Button from './Button';
+import { useDebouncedLayoutEffect } from './utils/useDebouncedLayoutEffect';
+import { useWebSocket } from './utils/useWebSocket';
+import { Button } from './Button';
 import { SCREEN_SIZES } from './constants';
 
 declare global {

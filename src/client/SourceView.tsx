@@ -2,7 +2,7 @@ import React from 'react';
 
 type Props = { children: string };
 
-function SourceView(props: Props) {
+export function SourceView(props: Props) {
   return (
     <div
       style={{
@@ -44,4 +44,3 @@ function SourceView(props: Props) {
   );
 }
 
-export default SourceView;

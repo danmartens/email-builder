@@ -1,7 +1,7 @@
 import { PostHTMLNode } from '../types';
-import buildAttrs from './buildAttrs';
+import { buildAttrs } from './buildAttrs';
 
-const defaultAttrs = (attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
+export const defaultAttrs =(attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
   return {
     ...node,
     attrs: buildAttrs({
@@ -11,4 +11,3 @@ const defaultAttrs = (attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
   };
 };
 
-export default defaultAttrs;

@@ -1,7 +1,7 @@
 import postcss from 'postcss';
 import { PostHTMLPlugin } from './types';
 
-const development = (options: {
+export const development = (options: {
   stripMediaQueries: boolean;
 }): PostHTMLPlugin => (tree, callback) => {
   tree.match({ tag: 'a' }, (node) => {
@@ -59,5 +59,3 @@ const stripMediaQueries: postcss.Plugin = {
     });
   }
 };
-
-export default development;

@@ -1,12 +1,12 @@
 import uniqueId from 'lodash/uniqueId';
-import pipe from './utils/pipe';
-import mergeStyle from './utils/mergeStyle';
-import mergeAttrs from './utils/mergeAttrs';
-import addClass from './utils/addClass';
+import { pipe } from './utils/pipe';
+import { mergeStyle } from './utils/mergeStyle';
+import { mergeAttrs } from './utils/mergeAttrs';
+import { addClass } from './utils/addClass';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
-import parseResponsiveValue from './utils/parseResponsiveValue';
+import { parseResponsiveValue } from './utils/parseResponsiveValue';
 
-const imageElement = (
+export const imageElement = (
   emailName: string,
   options: { publish: boolean; uploadImages: boolean }
 ): PostHTMLPlugin => (tree) => {
@@ -99,5 +99,3 @@ const imageElement = (
     ];
   });
 };
-
-export default imageElement;

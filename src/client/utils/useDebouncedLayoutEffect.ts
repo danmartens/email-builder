@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, EffectCallback, DependencyList } from 'react';
 
-const useDebouncedLayoutEffect = (
+export const useDebouncedLayoutEffect = (
   effect: EffectCallback,
   delay: number,
   deps?: DependencyList
@@ -25,4 +25,3 @@ const useDebouncedLayoutEffect = (
   }, [delay, ...(deps || [])]);
 };
 
-export default useDebouncedLayoutEffect;

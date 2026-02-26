@@ -1,7 +1,7 @@
 import { PostHTMLNode } from '../types';
-import buildAttrs from './buildAttrs';
+import { buildAttrs } from './buildAttrs';
 
-const mergeAttrs = (attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
+export const mergeAttrs =(attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
   return {
     ...node,
     attrs: buildAttrs({
@@ -11,4 +11,3 @@ const mergeAttrs = (attrs: object) => (node: PostHTMLNode): PostHTMLNode => {
   };
 };
 
-export default mergeAttrs;

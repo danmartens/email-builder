@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import AutosizeTextArea from 'react-textarea-autosize';
 import { getIn, setIn, updateIn, removeIn } from 'immutable';
-import ImageUploader from './ImageUploader';
-import ExportFile from './ExportFile';
-import ImportFile from './ImportFile';
-import EditorToggle from './EditorToggle';
+import { ImageUploader } from './ImageUploader';
+import { ExportFile } from './ExportFile';
+import { ImportFile } from './ImportFile';
+import { EditorToggle } from './EditorToggle';
 import { Schema } from '../types';
-import mergeListItemDefaultValues from './utils/mergeListItemDefaultValues';
+import { mergeListItemDefaultValues } from './utils/mergeListItemDefaultValues';
 import { ListValueSchema } from '../server/utils/parseSchema';
 
 interface Props<TValues extends {} = {}> {
@@ -21,7 +21,7 @@ interface Props<TValues extends {} = {}> {
 export const editorWidth = 350;
 export const editorActionsHeight = 48;
 
-const ValuesEditor: React.FC<Props> = (props) => {
+export const ValuesEditor: React.FC<Props> =(props) => {
   const { values, visible, schema, onChange, onToggle } = props;
 
   return (
@@ -241,4 +241,3 @@ const Button = styled.button`
   }
 `;
 
-export default ValuesEditor;

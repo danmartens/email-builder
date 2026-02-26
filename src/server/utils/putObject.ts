@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 
-export default function putObject(
+export function putObject(
   bucketName: string,
   objectKey: string,
   fileBuffer: Buffer

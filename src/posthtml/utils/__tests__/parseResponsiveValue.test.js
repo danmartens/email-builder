@@ -1,4 +1,4 @@
-import parseResponsiveValue from '../parseResponsiveValue';
+import { parseResponsiveValue } from '../parseResponsiveValue';
 
 test('parses srcset values', () => {
   const parsed = parseResponsiveValue(

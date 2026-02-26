@@ -1,4 +1,4 @@
-import processHtml from '../processHtml';
+import { processHtml } from '../processHtml';
 
 const normalizeAndProcessHtml = async (html) => {
   const { tree } = await processHtml(
