@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import download from 'downloadjs';
-import ValuesEditor, { editorWidth } from './ValuesEditor';
-import Frame from './Frame';
-import ButtonGroup from './ButtonGroup';
-import storeValues from './utils/storeValues';
-import deserializeValues from './utils/deserializeValues';
+import { ValuesEditor, editorWidth } from './ValuesEditor';
+import { Frame } from './Frame';
+import { ButtonGroup } from './ButtonGroup';
+import { storeValues } from './utils/storeValues';
+import { deserializeValues } from './utils/deserializeValues';
 import { Schema } from '../types';
-import useDebouncedLayoutEffect from './utils/useDebouncedLayoutEffect';
-import useWebSocket from './utils/useWebSocket';
-import Button from './Button';
+import { useDebouncedLayoutEffect } from './utils/useDebouncedLayoutEffect';
+import { useWebSocket } from './utils/useWebSocket';
+import { Button } from './Button';
 import { SCREEN_SIZES } from './constants';
 
 declare global {
@@ -24,7 +24,7 @@ const { EMAIL } = window;
 const baseUrl = `${location.protocol}//${location.host}`;
 
 const Email: React.FC = () => {
-  const [schema, setSchema] = useState(EMAIL.schema);
+  const [schema] = useState(EMAIL.schema);
   const [screenWidthIndex, setScreenWidthIndex] = useState(0);
   const [reloading, setReloading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -34,19 +34,19 @@ const Email: React.FC = () => {
 
     try {
       return JSON.parse(sessionStorage.getItem('editorVisible') || 'false');
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   });
 
   const [values, setValues] = useState(
-    deserializeValues(schema, localStorage.getItem(EMAIL.name))
+    deserializeValues(schema, localStorage.getItem(EMAIL.name)),
   );
 
   const [source, setSource] = useState<string>();
 
   const message = useWebSocket('ws://localhost:8081', {
-    enabled: location.hostname === 'localhost'
+    enabled: location.hostname === 'localhost',
   });
 
   const screenSize = SCREEN_SIZES[screenWidthIndex];
@@ -58,7 +58,7 @@ const Email: React.FC = () => {
     message,
     screenSize.stripPadding,
     screenSize.stripCustomFonts,
-    screenSize.stripMediaQueries
+    screenSize.stripMediaQueries,
   ]);
 
   useDebouncedLayoutEffect(
@@ -73,9 +73,9 @@ const Email: React.FC = () => {
           data: values.valueOf(),
           stripPadding: screenSize.stripPadding,
           stripCustomFonts: screenSize.stripCustomFonts,
-          stripMediaQueries: screenSize.stripMediaQueries
+          stripMediaQueries: screenSize.stripMediaQueries,
         }),
-        signal
+        signal,
       })
         .then((response) => response.text())
         .then((source) => {
@@ -90,13 +90,13 @@ const Email: React.FC = () => {
       };
     },
     500,
-    [values, message, screenSize.stripMediaQueries]
+    [values, message, screenSize.stripMediaQueries],
   );
 
   useEffect(() => {
     try {
       sessionStorage.setItem('editorVisible', JSON.stringify(editorVisible));
-    } catch (error) {
+    } catch (_error) {
       // Ignore error setting item
     }
 
@@ -122,8 +122,8 @@ const Email: React.FC = () => {
       method: 'post',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        data: values.valueOf()
-      })
+        data: values.valueOf(),
+      }),
     })
       .then((response) => response.blob())
       .then((source) => {
@@ -197,4 +197,4 @@ const Select = styled.select`
   }
 `;
 
-ReactDOM.render(<Email />, document.getElementById('container'));
+createRoot(document.getElementById('container')!).render(<Email />);

@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef, EffectCallback, DependencyList } from 'react';
 
-const useDebouncedLayoutEffect = (
+export const useDebouncedLayoutEffect = (
   effect: EffectCallback,
   delay: number,
-  deps?: DependencyList
+  deps?: DependencyList,
 ) => {
   const timeoutHandle = useRef<ReturnType<typeof setTimeout>>();
   const cleanup = useRef<ReturnType<EffectCallback> | null>(null);
@@ -24,5 +24,3 @@ const useDebouncedLayoutEffect = (
     };
   }, [delay, ...(deps || [])]);
 };
-
-export default useDebouncedLayoutEffect;

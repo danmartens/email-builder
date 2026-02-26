@@ -1,14 +1,17 @@
 #! /usr/bin/env node
 
-require('dotenv').config();
+require('dotenv').config({
+  quiet: true,
+});
 
-import path from 'path';
-import fs from 'fs';
-import program from 'commander';
+import path from 'node:path';
+import fs from 'node:fs';
+
+import { program } from 'commander';
 import { server } from './server';
-import chalk from 'chalk';
-import Configuration from './Configuration';
-import logStatus from './logStatus';
+import { styleText } from 'node:util';
+import { Configuration } from './Configuration';
+import { logStatus } from './logStatus';
 
 program.version(require('../package.json')['version']);
 
@@ -17,7 +20,10 @@ program
   .alias('s')
   .description('starts production server')
   .action(() => {
-    server('production');
+    server('production').catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   });
 
 program
@@ -25,7 +31,10 @@ program
   .alias('d')
   .description('starts development server')
   .action(() => {
-    server('development');
+    server('development').catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   });
 
 program
@@ -50,7 +59,7 @@ program
     if (fs.existsSync(emailPath)) {
       logStatus(
         'ERROR',
-        `An email template with the name "${name}" already exists.\n`
+        `An email template with the name "${name}" already exists.\n`,
       );
     } else {
       const emailTemplatePath = path.join(emailPath, 'template.hbs');
@@ -64,7 +73,7 @@ program
 
       fs.writeFileSync(
         emailTemplatePath,
-        '<div padding="80 40" max-width="600">Hello, world!</div>'
+        '<div padding="80 40" max-width="600">Hello, world!</div>',
       );
 
       fs.writeFileSync(emailSchemaPath, '[]');
@@ -73,15 +82,11 @@ program
     }
 
     console.log(
-      `If the server is running, you can view the template here: ${chalk.cyan(
-        `http://localhost:${port}/emails/${name}`
-      )}\n`
+      `If the server is running, you can view the template here: ${styleText('cyan', `http://localhost:${port}/emails/${name}`)}\n`,
     );
 
     console.log(
-      `If the server isn't running, you can start it with: ${chalk.cyan(
-        `yarn run email-builder develop`
-      )}`
+      `If the server isn't running, you can start it with: ${styleText('cyan', 'yarn run email-builder develop')}`,
     );
   });
 

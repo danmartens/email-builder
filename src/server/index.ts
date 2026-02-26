@@ -1,48 +1,47 @@
-import path from 'path';
-import fs from 'fs';
-import url from 'url';
-import express, { Request } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
-import basicAuth from 'express-basic-auth';
-import bodyParser from 'body-parser';
-import multer from 'multer';
-import WebSocket from 'ws';
-import debounce from 'lodash/debounce';
-import chokidar from 'chokidar';
-import stripAnsi from 'strip-ansi';
-import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
-import chalk from 'chalk';
+import fs from 'node:fs';
+import path from 'node:path';
+import url from 'node:url';
+import { styleText } from 'node:util';
+
 import Zip from 'adm-zip';
+import bodyParser from 'body-parser';
+import chokidar from 'chokidar';
+import express, { Request } from 'express';
+import basicAuth from 'express-basic-auth';
+import { ParamsDictionary } from 'express-serve-static-core';
 import glob from 'glob';
-// @ts-ignore
-import config from '../../webpack.config';
+import { debounce } from 'lodash-es';
+import multer from 'multer';
+import stripAnsi from 'strip-ansi';
+import { createServer as createViteServer, ViteDevServer } from 'vite';
+import { WebSocket, WebSocketServer } from 'ws';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+import { Configuration } from '../Configuration';
 import { renderEmail } from '../posthtml/renderEmail';
-import parseSchema from './utils/parseSchema';
-import Configuration from '../Configuration';
-import resizeAndUploadImages from './utils/resizeAndUploadImages';
-import renderTemplate from '../renderTemplate';
+import { renderTemplate } from '../renderTemplate';
+import { parseSchema } from './utils/parseSchema';
+import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
 
-export const server = (mode: 'development' | 'production' = 'production') => {
-  const {
-    projectPath,
-    emailsPath,
-    port,
-    host,
-    assetsPort,
-    s3BucketName,
-    basicAuthPassword
-  } = new Configuration();
+export const server = async (
+  mode: 'development' | 'production' = 'production',
+) => {
+  const configuration = new Configuration();
 
-  const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
+  const upload = multer({
+    dest: path.join(configuration.projectPath, 'tmp/uploads'),
+  });
 
   const app = express();
+
+  let vite: ViteDevServer | null = null;
 
   if (process.env.NODE_ENV === 'production') {
     app.use((req, res, next) => {
       if (req.headers['x-forwarded-proto'] !== 'https') {
         const fullUrl = url.parse(
-          `${req.protocol}://${req.headers.host}${req.originalUrl}`
+          `${req.protocol}://${req.headers.host}${req.originalUrl}`,
         );
 
         res.redirect(`https://${fullUrl.hostname}${req.originalUrl}`);
@@ -52,30 +51,39 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     });
   }
 
-  if (basicAuthPassword != null) {
-    app.use(basicAuth({ users: { user: basicAuthPassword } }));
+  if (configuration.basicAuthPassword != null) {
+    app.use(basicAuth({ users: { user: configuration.basicAuthPassword } }));
   }
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
 
-  if (mode === 'production') {
-    app.use(express.static(path.join(__dirname, 'public')));
+  if (mode === 'development') {
+    vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'custom',
+    });
+
+    app.use(vite.middlewares);
+  } else {
+    app.use(express.static(path.join(__dirname, 'server/public')));
   }
 
   app.get('/', (_req, res) => {
-    if (fs.existsSync(emailsPath)) {
+    if (fs.existsSync(configuration.emailsPath)) {
       renderTemplate('index', {
         emails: fs
-          .readdirSync(emailsPath)
+          .readdirSync(configuration.emailsPath)
           .filter((item) =>
-            fs.statSync(path.join(emailsPath, item)).isDirectory()
+            fs
+              .statSync(path.join(configuration.emailsPath, item))
+              .isDirectory(),
           )
           .map((item) => {
             return {
-              name: item
+              name: item,
             };
-          })
+          }),
       }).then((html) => {
         res.send(html);
       });
@@ -88,7 +96,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
   app.get('/emails/:name', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     try {
       let schema = '[]';
@@ -101,17 +109,21 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       renderTemplate('show', {
         name,
         schema: JSON.stringify(parseSchema(schema)),
-        scriptUrl: `${mode === 'production' ? 'https' : 'http'}://${host}:${
-          mode === 'production' ? port : assetsPort
-        }/main.js`
-      }).then((html) => {
+        scriptUrl:
+          mode === 'production'
+            ? `https://${configuration.host}:${configuration.port}/main.js`
+            : '/src/client/index.tsx',
+      }).then(async (html) => {
+        if (vite != null) {
+          html = await vite.transformIndexHtml(req.url, html);
+        }
         res.send(html);
       });
     } catch (error) {
       console.error(error);
 
       renderTemplate('error', {
-        message: stripAnsi(error.message)
+        message: stripAnsi(error.message),
       }).then((html) => {
         res.status(500);
         res.send(html);
@@ -121,7 +133,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
   app.post('/emails/:name', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     const html = fs
       .readFileSync(path.join(rootPath, 'template.hbs'))
@@ -133,7 +145,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       stripPadding: req.body.stripPadding ?? false,
       stripCustomFonts: req.body.stripCustomFonts ?? false,
       stripMediaQueries: req.body.stripMediaQueries ?? false,
-      context: req.body.data
+      context: req.body.data,
     }).then(
       (data) => {
         res.send(data);
@@ -142,18 +154,18 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         console.error(error);
 
         renderTemplate('error', {
-          message: stripAnsi(error.message)
+          message: stripAnsi(error.message),
         }).then((html) => {
           res.status(500);
           res.send(html);
         });
-      }
+      },
     );
   });
 
   app.post('/emails/:name/publish', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     const html = fs
       .readFileSync(path.join(rootPath, 'template.hbs'))
@@ -165,7 +177,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       stripPadding: false,
       stripCustomFonts: false,
       stripMediaQueries: false,
-      context: req.body.data
+      context: req.body.data,
     }).then(
       (data) => {
         res.send(data);
@@ -174,18 +186,18 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         console.error(error);
 
         renderTemplate('error', {
-          message: stripAnsi(error.message)
+          message: stripAnsi(error.message),
         }).then((html) => {
           res.status(500);
           res.send(html);
         });
-      }
+      },
     );
   });
 
   app.post('/emails/:name/download', async (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
     const uploadImages = req.body.uploadImages === true;
 
     const html = fs
@@ -198,7 +210,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
       stripPadding: false,
       stripCustomFonts: false,
       stripMediaQueries: false,
-      context: req.body.data
+      context: req.body.data,
     });
 
     glob(path.join(rootPath, 'assets/**/*'), (error, files) => {
@@ -222,7 +234,7 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         res.setHeader('content-type', 'application/zip');
         res.setHeader(
           'content-disposition',
-          `attachment; filename="${name}.zip"`
+          `attachment; filename="${name}.zip"`,
         );
         res.end(archive.toBuffer());
       }
@@ -231,7 +243,10 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
   app.get('/assets/:name/:asset', (req, res) => {
     const file = fs.readFileSync(
-      path.join(emailsPath, `${req.params.name}/assets/${req.params.asset}`)
+      path.join(
+        configuration.emailsPath,
+        `${req.params.name}/assets/${req.params.asset}`,
+      ),
     );
 
     res.send(file);
@@ -241,10 +256,10 @@ export const server = (mode: 'development' | 'production' = 'production') => {
     '/images',
     upload.single('image'),
     (
-      req: Request<ParamsDictionary> & {
+      req: Request<ParamsDictionary, any, any, any, any> & {
         file: { path: string; originalname: string };
       },
-      res
+      res,
     ) => {
       const maxWidth =
         req.body.maxWidth != null ? parseInt(req.body.maxWidth) : undefined;
@@ -256,8 +271,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
         { width: maxWidth, height: maxHeight },
         {
           width: maxWidth != null ? maxWidth * 1.5 : undefined,
-          height: maxHeight != null ? maxHeight * 1.5 : undefined
-        }
+          height: maxHeight != null ? maxHeight * 1.5 : undefined,
+        },
       ])
         .then(([image, retinaImage]) => {
           res.setHeader('Content-Type', 'application/json');
@@ -265,8 +280,8 @@ export const server = (mode: 'development' | 'production' = 'production') => {
           res.send(
             JSON.stringify({
               src: image.objectUrl,
-              srcset: `${retinaImage.objectUrl} 2x, ${image.objectUrl}`
-            })
+              srcset: `${retinaImage.objectUrl} 2x, ${image.objectUrl}`,
+            }),
           );
         })
         .catch((error) => {
@@ -276,23 +291,15 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
           res.send(
             JSON.stringify({
-              error: error.message
-            })
+              error: error.message,
+            }),
           );
         });
-    }
+    },
   );
 
-  const watcher = chokidar.watch(
-    path.resolve(projectPath, '**/*.{hbs,json,png,jpg,jpeg,gif}'),
-    {
-      ignored: path.resolve(projectPath, 'node_modules'),
-      ignoreInitial: true
-    }
-  );
-
-  const server = new WebSocket.Server({
-    port: 8081
+  const server = new WebSocketServer({
+    port: 8081,
   });
 
   const connections = new Set<WebSocket>();
@@ -307,14 +314,33 @@ export const server = (mode: 'development' | 'production' = 'production') => {
 
       connection.send(
         JSON.stringify({
-          path: relativeChangedPath
-        })
+          path: relativeChangedPath,
+        }),
       );
     }
   }, 50);
 
+  const watcher = chokidar.watch('.', {
+    ignored(path, stats) {
+      if (stats == null) {
+        return false;
+      }
+
+      if (stats.isDirectory()) {
+        return false;
+      }
+
+      return !/\.(hbs|json|png|jpe?g|gif)$/.test(path);
+    },
+    ignoreInitial: true,
+    cwd: configuration.emailsPath,
+  });
+
   watcher.on('change', (changedPath) => {
-    const relativeChangedPath = changedPath.replace(projectPath, '');
+    const relativeChangedPath = changedPath.replace(
+      configuration.projectPath,
+      '',
+    );
 
     console.log(`File changed: ${relativeChangedPath}`);
 
@@ -322,51 +348,33 @@ export const server = (mode: 'development' | 'production' = 'production') => {
   });
 
   watcher.on('add', (changedPath) => {
-    const relativeChangedPath = changedPath.replace(projectPath, '');
+    const relativeChangedPath = changedPath.replace(
+      configuration.projectPath,
+      '',
+    );
 
     console.log(`File added: ${relativeChangedPath}`);
 
     notify(relativeChangedPath);
   });
 
-  app.listen(port, () => {
+  app.listen(configuration.port, () => {
     console.log(
-      `📧 Server is now listening at ${chalk.cyan(`http://${host}:${port}`)}\n`
+      `📧 Server is now listening at ${styleText('cyan', `http://${configuration.host}:${configuration.port}`)}\n`,
     );
 
-    console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);
+    console.log(
+      `Emails path: \t${styleText('cyan', configuration.emailsPath)}`,
+    );
 
-    if (s3BucketName != null) {
-      console.log(`S3 Bucket: \t${chalk.cyan(s3BucketName)}`);
+    if (configuration.s3BucketName != null) {
+      console.log(
+        `S3 Bucket: \t${styleText('cyan', configuration.s3BucketName)}`,
+      );
     }
 
     if (mode === 'development') {
-      const options = {
-        host,
-        port: assetsPort,
-        noInfo: true,
-        overlay: true
-      };
-
-      WebpackDevServer.addDevServerEntrypoints(config, options);
-
-      const compiler = webpack(config);
-      const server = new WebpackDevServer(compiler, options);
-
-      server.listen(assetsPort, host, (error) => {
-        if (error) {
-          return console.log(error);
-        }
-
-        console.log('\nWatching for changes...\n');
-
-        // ['SIGINT', 'SIGTERM'].forEach(signal => {
-        //   process.on(signal, () => {
-        //     server.close();
-        //     process.exit();
-        //   });
-        // });
-      });
+      console.log('\nWatching for changes...\n');
     }
   });
 };

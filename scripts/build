@@ -2,14 +2,12 @@
 
 set -ex
 
-rm -rf lib
+rm -rf dist
 
-yarn run tsc
+yarn tsdown
 
-chmod +x lib/index.js
+rm -rf dist/client
 
-rm -rf lib/client
+yarn vite build
 
-NODE_ENV=production yarn run webpack
-
-cp -R src/templates lib/templates
+cp -R src/templates dist/templates

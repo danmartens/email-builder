@@ -1,7 +1,7 @@
-import fs from 'fs';
-import crypto from 'crypto';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
 
-export default function getFingerprint(inputPath: string) {
+export function getFingerprint(inputPath: string) {
   return new Promise((resolve, reject) => {
     fs.readFile(inputPath, (err, data) => {
       if (err) {
@@ -11,7 +11,7 @@ export default function getFingerprint(inputPath: string) {
           crypto
             .createHash('md5')
             .update(data.toString(), 'utf8')
-            .digest('hex')
+            .digest('hex'),
         );
       }
     });

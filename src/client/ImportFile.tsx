@@ -6,7 +6,7 @@ interface Props<TValues extends {} = {}> {
   onImport(values: TValues): void;
 }
 
-const ImportFile: React.FC<Props> = (props) => {
+export const ImportFile: React.FC<Props> = (props) => {
   const { values, onImport } = props;
 
   return (
@@ -26,12 +26,12 @@ const ImportFile: React.FC<Props> = (props) => {
 
               const nextValues = {
                 ...values,
-                ...data
+                ...data,
               };
 
               onImport(nextValues);
             },
-            false
+            false,
           );
 
           reader.readAsText(file);
@@ -70,5 +70,3 @@ const Input = styled.input`
   width: 100%;
   cursor: pointer;
 `;
-
-export default ImportFile;

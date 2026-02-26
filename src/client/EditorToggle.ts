@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 
-const EditorToggle = styled.button<{ visible: boolean; editorWidth: number }>`
+export const EditorToggle = styled.button<{
+  $visible: boolean;
+  $editorWidth: number;
+}>`
   transition: background-color 0.15s;
   position: fixed;
   padding: 0;
   top: 0;
-  left: ${({ visible, editorWidth }) => (visible ? `${editorWidth}px` : 0)};
+  left: ${({ $visible, $editorWidth }) => ($visible ? `${$editorWidth}px` : 0)};
   bottom: 0;
   width: 18px;
   font-size: 14px;
@@ -21,7 +24,7 @@ const EditorToggle = styled.button<{ visible: boolean; editorWidth: number }>`
 
   ::after {
     content: 'Edit Template';
-    display: ${({ visible }) => (visible ? 'none' : 'initial')};
+    display: ${({ $visible }) => ($visible ? 'none' : 'initial')};
     position: absolute;
     left: -24px;
     text-transform: uppercase;
@@ -34,5 +37,3 @@ const EditorToggle = styled.button<{ visible: boolean; editorWidth: number }>`
     pointer-events: none;
   }
 `;
-
-export default EditorToggle;

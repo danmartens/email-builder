@@ -1,7 +1,9 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+
 import Handlebars from 'handlebars';
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const templatesPath = path.resolve(__dirname, './templates');
 
 interface IndexData {
@@ -18,31 +20,30 @@ interface ErrorData {
   message: string;
 }
 
-function renderTemplate(
+export function renderTemplate(
   templateName: 'index',
-  data: IndexData
+  data: IndexData,
 ): Promise<string>;
 
-function renderTemplate(templateName: 'show', data: ShowData): Promise<string>;
+export function renderTemplate(
+  templateName: 'show',
+  data: ShowData,
+): Promise<string>;
 
-function renderTemplate(
+export function renderTemplate(
   templateName: 'error',
-  data: ErrorData
+  data: ErrorData,
 ): Promise<string>;
 
-function renderTemplate(
+export async function renderTemplate(
   templateName: 'index' | 'show' | 'error',
-  data: IndexData | ShowData | ErrorData
+  data: IndexData | ShowData | ErrorData,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    const template = Handlebars.compile(
-      fs
-        .readFileSync(path.join(templatesPath, `${templateName}.hbs`))
-        .toString()
-    );
+  const templatePath = path.join(templatesPath, `${templateName}.hbs`);
 
-    resolve(template(data));
-  });
+  const template = Handlebars.compile(
+    await fs.readFile(templatePath).then((buffer) => buffer.toString()),
+  );
+
+  return template(data);
 }
-
-export default renderTemplate;

@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import AutosizeTextArea from 'react-textarea-autosize';
 import { getIn, setIn, updateIn, removeIn } from 'immutable';
-import ImageUploader from './ImageUploader';
-import ExportFile from './ExportFile';
-import ImportFile from './ImportFile';
-import EditorToggle from './EditorToggle';
+import { ImageUploader } from './ImageUploader';
+import { ExportFile } from './ExportFile';
+import { ImportFile } from './ImportFile';
+import { EditorToggle } from './EditorToggle';
 import { Schema } from '../types';
-import mergeListItemDefaultValues from './utils/mergeListItemDefaultValues';
+import { mergeListItemDefaultValues } from './utils/mergeListItemDefaultValues';
 import { ListValueSchema } from '../server/utils/parseSchema';
 
 interface Props<TValues extends {} = {}> {
@@ -21,12 +21,12 @@ interface Props<TValues extends {} = {}> {
 export const editorWidth = 350;
 export const editorActionsHeight = 48;
 
-const ValuesEditor: React.FC<Props> = (props) => {
+export const ValuesEditor: React.FC<Props> = (props) => {
   const { values, visible, schema, onChange, onToggle } = props;
 
   return (
     <>
-      <Editor visible={visible}>
+      <Editor $visible={visible}>
         {schema.map((valueSchema) => (
           <FormGroup key={valueSchema.name}>
             <Label>{valueSchema.label}</Label>
@@ -45,7 +45,7 @@ const ValuesEditor: React.FC<Props> = (props) => {
                             value={getIn(
                               values,
                               [valueSchema.name, index, nestedValueSchema.name],
-                              ''
+                              '',
                             )}
                             onChange={(value) => {
                               onChange(
@@ -54,10 +54,10 @@ const ValuesEditor: React.FC<Props> = (props) => {
                                   [
                                     valueSchema.name,
                                     index,
-                                    nestedValueSchema.name
+                                    nestedValueSchema.name,
                                   ],
-                                  value
-                                )
+                                  value,
+                                ),
                               );
                             }}
                           />
@@ -72,7 +72,7 @@ const ValuesEditor: React.FC<Props> = (props) => {
                         × Remove
                       </Button>
                     </ListItem>
-                  )
+                  ),
                 )}
 
                 <Button
@@ -81,9 +81,9 @@ const ValuesEditor: React.FC<Props> = (props) => {
                       updateIn(values, [valueSchema.name], (value) => {
                         return [
                           ...value,
-                          mergeListItemDefaultValues(valueSchema.schema)
+                          mergeListItemDefaultValues(valueSchema.schema),
                         ];
-                      })
+                      }),
                     );
                   }}
                 >
@@ -102,15 +102,15 @@ const ValuesEditor: React.FC<Props> = (props) => {
           </FormGroup>
         ))}
 
-        <EditorActions visible={visible}>
+        <EditorActions $visible={visible}>
           <ExportFile values={values} />
           <ImportFile values={values} onImport={onChange} />
         </EditorActions>
       </Editor>
 
       <EditorToggle
-        editorWidth={editorWidth}
-        visible={visible}
+        $editorWidth={editorWidth}
+        $visible={visible}
         onClick={onToggle}
       >
         {props.visible ? '❮' : '❯'}
@@ -162,10 +162,10 @@ const ValueEditor: React.FC<{
   );
 };
 
-const Editor = styled.div<{ visible: boolean }>`
+const Editor = styled.div<{ $visible: boolean }>`
   position: fixed;
   box-sizing: border-box;
-  left: ${(props) => (props.visible ? 0 : `-${editorWidth}px`)};
+  left: ${(props) => (props.$visible ? 0 : `-${editorWidth}px`)};
   top: 0;
   bottom: ${editorActionsHeight}px;
   width: ${editorWidth}px;
@@ -200,11 +200,11 @@ const TextArea = styled(AutosizeTextArea)`
   resize: none;
 `;
 
-const EditorActions = styled.div<{ visible: boolean }>`
+const EditorActions = styled.div<{ $visible: boolean }>`
   box-sizing: border-box;
   position: fixed;
   bottom: 0;
-  left: ${({ visible }) => (visible ? 0 : `-${editorWidth}px`)};
+  left: ${({ $visible: visible }) => (visible ? 0 : `-${editorWidth}px`)};
   width: ${editorWidth}px;
   height: ${editorActionsHeight}px;
   display: flex;
@@ -240,5 +240,3 @@ const Button = styled.button`
     background-color: rgb(47, 224, 200, 0.7);
   }
 `;
-
-export default ValuesEditor;

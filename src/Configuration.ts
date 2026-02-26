@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 
-class Configuration {
+export class Configuration {
   get projectPath(): string {
     return process.cwd();
   }
@@ -14,7 +14,7 @@ class Configuration {
   }
 
   get port(): number {
-    return parseInt(process.env.PORT ?? '5000');
+    return parseInt(process.env.PORT ?? '4000');
   }
 
   get assetsPort(): number {
@@ -39,5 +39,3 @@ class Configuration {
     return process.env.BASIC_AUTH_PASSWORD;
   }
 }
-
-export default Configuration;

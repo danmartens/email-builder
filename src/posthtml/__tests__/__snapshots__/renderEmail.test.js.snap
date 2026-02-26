@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`renders content inside the standard email HTML structure 1`] = `
+"<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="x-apple-disable-message-reformatting">
+
+    <style type="text/css" data-ignore="">
+      /* Reset for Windows Mail 10 */
+      a { text-decoration: none; }
+
+      /* Reset for MS Office */
+      p { margin: 0; }
+
+      @media only screen and (-webkit-min-device-pixel-ratio: 2),
+                             (min-resolution: 192dpi) {
+        .non-retina-image {
+          display: none !important;
+        }
+
+        .retina-image {
+          display: block !important;
+        }
+      }
+    </style>
+
+    <!--[if (!IE)&(!mso)]>-->
+      <style type="text/css" data-ignore="">
+        table {
+          width: 100% !important;
+        }
+      </style>
+    <!--<![endif]-->
+
+    
+  <style></style></head>
+
+  <body style="margin: 0; padding: 0;">
+    <p style="margin: 0">Hello</p>
+  </body>
+</html>
+"
+`;

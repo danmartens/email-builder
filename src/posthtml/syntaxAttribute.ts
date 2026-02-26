@@ -1,9 +1,9 @@
 import marked from 'marked';
-import parse from 'posthtml-parser';
-import buildAttrs from './utils/buildAttrs';
+import { parser } from 'posthtml-parser';
+import { buildAttrs } from './utils/buildAttrs';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 
-const syntaxAttribute: PostHTMLPlugin = (tree) => {
+export const syntaxAttribute: PostHTMLPlugin = (tree) => {
   tree.match({ attrs: { syntax: /[a-z]+/ } }, (node) => {
     if (node.content == null) {
       return node;
@@ -20,21 +20,19 @@ const syntaxAttribute: PostHTMLPlugin = (tree) => {
         ...node,
         attrs: buildAttrs({
           ...node.attrs,
-          syntax: undefined
+          syntax: undefined,
         }),
-        content: parse(
+        content: parser(
           marked(
             content
               .split('\n')
               .map((line) => line.replace(/^\s+/, ''))
-              .join('\n')
-          )
-        ) as PostHTMLNode[]
+              .join('\n'),
+          ),
+        ) as PostHTMLNode[],
       };
     }
 
     throw new Error(`Unknown syntax: ${node.attrs?.syntax}`);
   });
 };
-
-export default syntaxAttribute;

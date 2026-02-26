@@ -1,7 +1,7 @@
 import { PostHTMLPlugin } from './types';
-import mergeAttrs from './utils/mergeAttrs';
+import { mergeAttrs } from './utils/mergeAttrs';
 
-const moveDataClassAttributes: PostHTMLPlugin = (tree) => {
+export const moveDataClassAttributes: PostHTMLPlugin = (tree) => {
   tree.match({ attrs: { 'data-class': /.+/ } }, (node) => {
     if (node.attrs == null) {
       return node;
@@ -9,9 +9,7 @@ const moveDataClassAttributes: PostHTMLPlugin = (tree) => {
 
     return mergeAttrs({
       class: node.attrs['data-class'],
-      'data-class': undefined
+      'data-class': undefined,
     })(node);
   });
 };
-
-export default moveDataClassAttributes;

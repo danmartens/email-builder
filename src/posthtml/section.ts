@@ -1,9 +1,9 @@
-import parseBoxValues from './utils/parseBoxValues';
-import buildAttrs from './utils/buildAttrs';
-import parseResponsiveValue from './utils/parseResponsiveValue';
+import { compact, uniqueId } from 'lodash-es';
+
 import { PostHTMLNode, PostHTMLPlugin } from './types';
-import uniqueId from 'lodash/uniqueId';
-import compact from 'lodash/compact';
+import { buildAttrs } from './utils/buildAttrs';
+import { parseBoxValues } from './utils/parseBoxValues';
+import { parseResponsiveValue } from './utils/parseResponsiveValue';
 
 class Section {
   private readonly id: string;
@@ -21,7 +21,7 @@ class Section {
   private get padding() {
     return parseResponsiveValue(
       this.getAttribute('data-padding'),
-      parseBoxValues
+      parseBoxValues,
     );
   }
 
@@ -64,7 +64,7 @@ class Section {
       top: 0,
       left: 0,
       bottom: 0,
-      right: 0
+      right: 0,
     };
 
     return [
@@ -76,9 +76,9 @@ class Section {
             `#${this.id}-pt { height: ${value.top}px; }`,
             `#${this.id}-pl { width: ${value.left}px; }`,
             `#${this.id}-pb { height: ${value.bottom}px; }`,
-            `#${this.id}-pr { width: ${value.right}px; }`
-          ].join(' ')
-        )
+            `#${this.id}-pr { width: ${value.right}px; }`,
+          ].join(' '),
+        ),
       },
       {
         tag: 'table',
@@ -89,7 +89,7 @@ class Section {
           style:
             this.maxWidth != null
               ? `max-width: ${this.maxWidth}px`
-              : 'width: 100%'
+              : 'width: 100%',
         }),
         content: compact([
           padding.top > 0
@@ -102,10 +102,10 @@ class Section {
                     attrs: buildAttrs({
                       id: `${this.id}-pt`,
                       colspan,
-                      height: padding.top
-                    })
-                  }
-                ]
+                      height: padding.top,
+                    }),
+                  },
+                ],
               }
             : undefined,
           {
@@ -117,8 +117,8 @@ class Section {
                     tag: 'td',
                     attrs: buildAttrs({
                       id: `${this.id}-pl`,
-                      width: padding.left
-                    })
+                      width: padding.left,
+                    }),
                   }
                 : undefined,
               {
@@ -132,21 +132,21 @@ class Section {
                       'data-align': undefined,
                       'data-padding': undefined,
                       'data-max-width': undefined,
-                      'data-background': undefined
-                    })
-                  }
-                ]
+                      'data-background': undefined,
+                    }),
+                  },
+                ],
               },
               padding.right > 0
                 ? {
                     tag: 'td',
                     attrs: buildAttrs({
                       id: `${this.id}-pr`,
-                      width: padding.right
-                    })
+                      width: padding.right,
+                    }),
                   }
-                : undefined
-            ])
+                : undefined,
+            ]),
           },
           padding.bottom > 0
             ? {
@@ -158,19 +158,19 @@ class Section {
                     attrs: buildAttrs({
                       id: `${this.id}-pb`,
                       colspan,
-                      height: padding.bottom
-                    })
-                  }
-                ]
+                      height: padding.bottom,
+                    }),
+                  },
+                ],
               }
-            : undefined
-        ])
-      }
+            : undefined,
+        ]),
+      },
     ];
   }
 }
 
-const section: PostHTMLPlugin = (tree) => {
+export const section: PostHTMLPlugin = (tree) => {
   tree.match({ attrs: { 'data-padding': /\d+( \d+){0,3}/ } }, (node) => {
     return new Section(node).toNode();
   });
@@ -191,5 +191,3 @@ const section: PostHTMLPlugin = (tree) => {
     return new Section(node).toNode();
   });
 };
-
-export default section;

@@ -14,39 +14,28 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-
     name: Check
+
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Install Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v6
         with:
-          node-version: '12'
-
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Restore Yarn Cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-12-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-12-
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
 
       - name: Install Node Dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Run TypeScript
         run: yarn types:check
 
+      - name: Run ESLint
+        run: yarn lint
+
       - name: Run Prettier
-        run: yarn run prettier --list-different "src/**/*.{js,ts,tsx}"
+        run: yarn format:check

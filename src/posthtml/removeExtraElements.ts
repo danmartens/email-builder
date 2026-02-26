@@ -1,6 +1,6 @@
 import { PostHTMLPlugin } from './types';
 
-const removeExtraElements: PostHTMLPlugin = (tree) => {
+export const removeExtraElements: PostHTMLPlugin = (tree) => {
   tree.match({ tag: 'td' }, (node) => {
     if (
       node.content?.length === 1 &&
@@ -15,5 +15,3 @@ const removeExtraElements: PostHTMLPlugin = (tree) => {
     return node;
   });
 };
-
-export default removeExtraElements;

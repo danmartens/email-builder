@@ -1,9 +1,9 @@
 import { Schema } from '../../types';
-import mergeListItemDefaultValues from './mergeListItemDefaultValues';
+import { mergeListItemDefaultValues } from './mergeListItemDefaultValues';
 
-const deserializeValues = (
+export const deserializeValues = (
   schema: Schema,
-  serializedData: string | null
+  serializedData: string | null,
 ): { [key: string]: string | undefined } => {
   const schemaKeys = schema.map(({ name }) => name);
 
@@ -34,15 +34,13 @@ const deserializeValues = (
 
     if (value?.type === 'list') {
       data[key] = (data[key] || []).map((itemData: { [key: string]: any }) =>
-        mergeListItemDefaultValues(value.schema, itemData)
+        mergeListItemDefaultValues(value.schema, itemData),
       );
     } else if (!dataKeys.includes(key)) {
-      // @ts-ignore
+      // @ts-expect-error
       data[key] = value.defaultValue;
     }
   }
 
   return data;
 };
-
-export default deserializeValues;

@@ -1,9 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import prettier from 'prettier';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import Handlebars from 'handlebars';
-import { Template } from './types';
-import processHtml from './processHtml';
+import { compact } from 'lodash-es';
+import prettier from 'prettier';
+
+import { processHtml } from './processHtml';
+import type { Template } from './types';
 
 interface Options {
   publish: boolean;
@@ -14,6 +17,8 @@ interface Options {
   context?: object;
 }
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 Handlebars.registerHelper('preview-text', (text: string) => {
   let whitespace = '';
 
@@ -23,27 +28,11 @@ Handlebars.registerHelper('preview-text', (text: string) => {
 
   return new Handlebars.SafeString(
     `<div style="display: none; max-height: 0px; overflow: hidden;">${text}</div>\n` +
-      `<div style="display: none; max-height: 0px; overflow: hidden;">${whitespace}</div>`
+      `<div style="display: none; max-height: 0px; overflow: hidden;">${whitespace}</div>`,
   );
 });
 
-const generateHeadHtml = (template: Template, options: Options) => {
-  if (template.rootPath == null) {
-    return;
-  }
-
-  const headTemplatePath = path.join(template.rootPath, 'head.hbs');
-
-  if (!fs.existsSync(headTemplatePath)) {
-    return;
-  }
-
-  return Handlebars.compile(fs.readFileSync(headTemplatePath).toString())(
-    options.context
-  );
-};
-
-export const renderEmail = async (
+export async function renderEmail(
   template: Template,
   html: string,
   options: Options = {
@@ -51,13 +40,11 @@ export const renderEmail = async (
     uploadImages: false,
     stripPadding: false,
     stripCustomFonts: false,
-    stripMediaQueries: false
-  }
-): Promise<string> => {
+    stripMediaQueries: false,
+  },
+): Promise<string> {
   const emailTemplate = Handlebars.compile(
-    fs
-      .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
-      .toString()
+    await fs.readFile(path.resolve(__dirname, './templates/email.hbs'), 'utf8'),
   );
 
   const contentTemplate = Handlebars.compile(html);
@@ -65,18 +52,29 @@ export const renderEmail = async (
   if (template.rootPath != null) {
     const partialsDirectoryPath = path.join(template.rootPath, 'partials');
 
-    if (fs.existsSync(partialsDirectoryPath)) {
-      const handlebarsPartialPaths = fs
-        .readdirSync(partialsDirectoryPath)
-        .map((item) => path.join(partialsDirectoryPath, item))
-        .filter((item) => fs.statSync(item).isFile());
+    let partialFilenames: string[];
 
-      for (const partialPath of handlebarsPartialPaths) {
-        Handlebars.registerPartial(
-          path.basename(partialPath.replace(/\.hbs$/, '')),
-          Handlebars.compile(fs.readFileSync(partialPath).toString())
-        );
-      }
+    try {
+      partialFilenames = await fs.readdir(partialsDirectoryPath);
+    } catch {
+      partialFilenames = [];
+    }
+
+    const handlebarsPartialPaths = compact(
+      await Promise.all(
+        partialFilenames.map(async (item) => {
+          const fullPath = path.join(partialsDirectoryPath, item);
+
+          return (await fs.stat(fullPath)).isFile() ? fullPath : null;
+        }),
+      ),
+    );
+
+    for (const partialPath of handlebarsPartialPaths) {
+      Handlebars.registerPartial(
+        path.basename(partialPath.replace(/\.hbs$/, '')),
+        Handlebars.compile(await fs.readFile(partialPath, 'utf8')),
+      );
     }
   }
 
@@ -86,8 +84,8 @@ export const renderEmail = async (
     emailTemplate({
       isDevelopment: true,
       content: contentTemplate(options.context),
-      head: generateHeadHtml(template, options)
-    })
+      head: await generateHeadHtml(template, options),
+    }),
   );
 
   if (options.publish) {
@@ -95,4 +93,21 @@ export const renderEmail = async (
   }
 
   return prettier.format(result.html, { parser: 'html' });
-};
+}
+
+async function generateHeadHtml(template: Template, options: Options) {
+  if (template.rootPath == null) {
+    return;
+  }
+
+  const headTemplatePath = path.join(template.rootPath, 'head.hbs');
+
+  let headContent: string;
+  try {
+    headContent = await fs.readFile(headTemplatePath, 'utf8');
+  } catch {
+    return;
+  }
+
+  return Handlebars.compile(headContent)(options.context);
+}

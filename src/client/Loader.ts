@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Loader = styled.div<{ size?: number; width?: number }>`
+export const Loader = styled.div<{ $size?: number; $width?: number }>`
   @keyframes rotation {
     0% {
       transform: rotate(0deg);
@@ -11,8 +11,8 @@ const Loader = styled.div<{ size?: number; width?: number }>`
     }
   }
 
-  font-size: ${({ size }) => size ?? 32}px;
-  border-width: ${({ width }) => width ?? 4}px;
+  font-size: ${({ $size: size }) => size ?? 32}px;
+  border-width: ${({ $width: width }) => width ?? 4}px;
 
   position: absolute;
   top: 50%;
@@ -30,5 +30,3 @@ const Loader = styled.div<{ size?: number; width?: number }>`
   border-top-color: #cccccc;
   border-radius: 0.5em;
 `;
-
-export default Loader;

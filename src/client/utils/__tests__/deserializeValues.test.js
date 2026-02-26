@@ -1,4 +1,4 @@
-import deserializeValues from '../deserializeValues';
+import { deserializeValues } from '../deserializeValues';
 
 const schema = [
   { name: 'name', type: 'string', defaultValue: 'Unamed' },
@@ -6,15 +6,15 @@ const schema = [
     name: 'friends',
     type: 'list',
     schema: [
-      { name: 'name', label: 'Name', type: 'string', defaultValue: 'Unamed' }
-    ]
-  }
+      { name: 'name', label: 'Name', type: 'string', defaultValue: 'Unamed' },
+    ],
+  },
 ];
 
 test('deserializes string values', () => {
   const values = deserializeValues(
     schema,
-    JSON.stringify({ name: 'Bruce Wayne' })
+    JSON.stringify({ name: 'Bruce Wayne' }),
   );
 
   expect(values.name).toEqual('Bruce Wayne');
@@ -29,7 +29,7 @@ test('supports default string values', () => {
 test('deserializes list values', () => {
   const values = deserializeValues(
     schema,
-    JSON.stringify({ friends: [{ name: 'Alfred' }] })
+    JSON.stringify({ friends: [{ name: 'Alfred' }] }),
   );
 
   expect(values.friends[0].name).toEqual('Alfred');
