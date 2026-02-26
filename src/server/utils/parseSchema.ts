@@ -32,7 +32,7 @@ const ImageFieldSchema = z.object({
     .optional(),
 });
 
-const ListFieldSchemaCodec = z.union([
+const ListFieldSchemaType = z.union([
   StringFieldSchema,
   TextFieldSchema,
   ImageFieldSchema,
@@ -42,10 +42,10 @@ const ListFieldSchema = z.object({
   type: z.literal('list'),
   name: z.string(),
   label: z.string(),
-  schema: z.array(ListFieldSchemaCodec),
+  schema: z.array(ListFieldSchemaType),
 });
 
-const SchemaCodec = z.array(
+const SchemaType = z.array(
   z.union([
     StringFieldSchema,
     TextFieldSchema,
@@ -54,11 +54,11 @@ const SchemaCodec = z.array(
   ]),
 );
 
-export type Schema = z.infer<typeof SchemaCodec>;
-export type ListValueSchema = z.infer<typeof ListFieldSchemaCodec>;
+export type Schema = z.infer<typeof SchemaType>;
+export type ListValueSchema = z.infer<typeof ListFieldSchemaType>;
 
 export function parseSchema(schema: string): Schema {
-  const result = SchemaCodec.safeParse(JSON.parse(schema));
+  const result = SchemaType.safeParse(JSON.parse(schema));
 
   if (!result.success) {
     throw new Error('Invalid schema');
