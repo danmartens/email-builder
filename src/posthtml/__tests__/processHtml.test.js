@@ -8,7 +8,7 @@ async function normalizeAndProcessHtml(html, options = {}) {
       .replace(/^\s*/, '')
       .replace(/\s*$/, '')
       .replace(/>\s+/g, '>')
-      .replace(/\s+</g, '<')
+      .replace(/\s+</g, '<'),
   );
 
   return [...tree];
@@ -46,15 +46,15 @@ test('moves styles inline and moves @media rules to the head', async () => {
               content: [
                 `@media screen and (min-width: 600px) {
             body { background: green; }
-          }`
-              ]
-            }
-          ]
+          }`,
+              ],
+            },
+          ],
         },
-        { tag: 'body', attrs: { style: 'color: red; background: blue' } }
+        { tag: 'body', attrs: { style: 'color: red; background: blue' } },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });
 
@@ -84,10 +84,10 @@ test('converts srcset to multiple images with media queries', async () => {
                   width: 100% !important;
                   max-width: 400px !important;
                 }
-              }`
-              ]
-            }
-          ]
+              }`,
+              ],
+            },
+          ],
         },
         {
           tag: 'body',
@@ -98,8 +98,8 @@ test('converts srcset to multiple images with media queries', async () => {
                 src: '/assets/test/small.jpg',
                 width: '400',
                 class: 'non-retina-image',
-                style: 'width: 100%; max-width: 400px'
-              }
+                style: 'width: 100%; max-width: 400px',
+              },
             },
             '<!--[if !mso]>-->',
             {
@@ -109,15 +109,15 @@ test('converts srcset to multiple images with media queries', async () => {
                 src: '/assets/test/large.jpg',
                 width: '400',
                 class: 'retina-image',
-                style: 'display: none; width: 100%; max-width: 400px'
-              }
+                style: 'display: none; width: 100%; max-width: 400px',
+              },
             },
-            '<!--<![endif]-->'
-          ]
-        }
+            '<!--<![endif]-->',
+          ],
+        },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });
 
@@ -133,10 +133,10 @@ test('removes regular classes and adds "data-class" classes', async () => {
   expect(tree).toMatchObject([
     {
       content: [
-        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] }
+        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });
 
@@ -145,8 +145,8 @@ test('throws when publish and stripMediaQueries options are both set', () => {
     processHtml(
       { name: 'test' },
       { publish: true, stripMediaQueries: true },
-      '<html></html>'
-    )
+      '<html></html>',
+    ),
   ).toThrow('"stripMediaQueries" option should not be used when publishing');
 });
 
@@ -167,8 +167,8 @@ test('converts data-max-width to a max-width constrained table', async () => {
     tag: 'table',
     attrs: expect.objectContaining({
       width: '600',
-      style: expect.stringContaining('max-width: 600px')
-    })
+      style: expect.stringContaining('max-width: 600px'),
+    }),
   });
 });
 
@@ -188,7 +188,7 @@ test('converts data-padding to a table with top, side, and bottom padding cells'
   expect(table).toMatchObject({
     tag: 'table',
     attrs: expect.objectContaining({
-      style: expect.stringContaining('width: 100%')
+      style: expect.stringContaining('width: 100%'),
     }),
     content: expect.arrayContaining([
       // top padding row
@@ -197,9 +197,9 @@ test('converts data-padding to a table with top, side, and bottom padding cells'
         content: [
           expect.objectContaining({
             tag: 'td',
-            attrs: expect.objectContaining({ height: '20' })
-          })
-        ]
+            attrs: expect.objectContaining({ height: '20' }),
+          }),
+        ],
       }),
       // content row with left and right padding cells
       expect.objectContaining({
@@ -207,9 +207,9 @@ test('converts data-padding to a table with top, side, and bottom padding cells'
         content: expect.arrayContaining([
           expect.objectContaining({
             tag: 'td',
-            attrs: expect.objectContaining({ width: '20' })
-          })
-        ])
+            attrs: expect.objectContaining({ width: '20' }),
+          }),
+        ]),
       }),
       // bottom padding row
       expect.objectContaining({
@@ -217,11 +217,11 @@ test('converts data-padding to a table with top, side, and bottom padding cells'
         content: [
           expect.objectContaining({
             tag: 'td',
-            attrs: expect.objectContaining({ height: '20' })
-          })
-        ]
-      })
-    ])
+            attrs: expect.objectContaining({ height: '20' }),
+          }),
+        ],
+      }),
+    ]),
   });
 });
 
@@ -242,7 +242,7 @@ test('converts data-align to a table with an aligned content cell', async () => 
 
   expect(cell).toMatchObject({
     tag: 'td',
-    attrs: expect.objectContaining({ align: 'center' })
+    attrs: expect.objectContaining({ align: 'center' }),
   });
 });
 
@@ -261,7 +261,7 @@ test('converts data-background to a table with a background color', async () => 
 
   expect(table).toMatchObject({
     tag: 'table',
-    attrs: expect.objectContaining({ bgcolor: '#ff0000' })
+    attrs: expect.objectContaining({ bgcolor: '#ff0000' }),
   });
 });
 
@@ -283,10 +283,10 @@ test('converts markdown syntax attribute to HTML', async () => {
       expect.objectContaining({
         tag: 'p',
         content: expect.arrayContaining([
-          expect.objectContaining({ tag: 'strong', content: ['bold'] })
-        ])
-      })
-    ])
+          expect.objectContaining({ tag: 'strong', content: ['bold'] }),
+        ]),
+      }),
+    ]),
   );
 });
 
@@ -305,7 +305,7 @@ test('renders unsubscribe element as a link in development mode', async () => {
   expect(link).toMatchObject({
     tag: 'a',
     attrs: expect.objectContaining({ href: '#' }),
-    content: ['Unsubscribe']
+    content: ['Unsubscribe'],
   });
 });
 
@@ -318,7 +318,7 @@ test('does not convert unsubscribe element in publish mode', async () => {
       </body>
     </html>
   `,
-    { publish: true }
+    { publish: true },
   );
 
   const body = tree[0].content.find((n) => n.tag === 'body');
@@ -344,8 +344,8 @@ test('adds target and rel attributes to links in development mode', async () => 
     attrs: {
       href: 'https://example.com',
       target: '_blank',
-      rel: 'noopener noreferrer'
-    }
+      rel: 'noopener noreferrer',
+    },
   });
 });
 
@@ -362,7 +362,7 @@ test('strips padding declarations from styles when stripPadding is set', async (
       </body>
     </html>
   `,
-    { stripPadding: true }
+    { stripPadding: true },
   );
 
   const body = tree[0].content.find((n) => n.tag === 'body');
@@ -385,7 +385,7 @@ test('strips non-standard font families from styles when stripCustomFonts is set
       </body>
     </html>
   `,
-    { stripCustomFonts: true }
+    { stripCustomFonts: true },
   );
 
   const body = tree[0].content.find((n) => n.tag === 'body');
@@ -415,8 +415,8 @@ test('adds default border and spacing attributes to tables', async () => {
       border: '0',
       cellspacing: '0',
       cellpadding: '0',
-      style: expect.stringContaining('border-collapse: collapse')
-    }
+      style: expect.stringContaining('border-collapse: collapse'),
+    },
   });
 });
 

@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 require('dotenv').config({
-  quiet: true
+  quiet: true,
 });
 
 import path from 'node:path';
@@ -59,7 +59,7 @@ program
     if (fs.existsSync(emailPath)) {
       logStatus(
         'ERROR',
-        `An email template with the name "${name}" already exists.\n`
+        `An email template with the name "${name}" already exists.\n`,
       );
     } else {
       const emailTemplatePath = path.join(emailPath, 'template.hbs');
@@ -73,7 +73,7 @@ program
 
       fs.writeFileSync(
         emailTemplatePath,
-        '<div padding="80 40" max-width="600">Hello, world!</div>'
+        '<div padding="80 40" max-width="600">Hello, world!</div>',
       );
 
       fs.writeFileSync(emailSchemaPath, '[]');
@@ -82,11 +82,11 @@ program
     }
 
     console.log(
-      `If the server is running, you can view the template here: ${styleText('cyan', `http://localhost:${port}/emails/${name}`)}\n`
+      `If the server is running, you can view the template here: ${styleText('cyan', `http://localhost:${port}/emails/${name}`)}\n`,
     );
 
     console.log(
-      `If the server isn't running, you can start it with: ${styleText('cyan', 'yarn run email-builder develop')}`
+      `If the server isn't running, you can start it with: ${styleText('cyan', 'yarn run email-builder develop')}`,
     );
   });
 

@@ -18,7 +18,7 @@
     "types:check": "tsc --noEmit",
     "types:watch": "tsc --noEmit --watch",
     "lint": "eslint src",
-    "format": "yarn prettier --write \"**/*.{ts,tsx,js,jsx,json,css,yml}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,yml}\""
   },
   "devDependencies": {

@@ -65,6 +65,7 @@ export const server = async (
       server: { middlewareMode: true },
       appType: 'custom',
     });
+
     app.use(vite.middlewares);
   } else {
     app.use(express.static(path.join(__dirname, 'public')));
@@ -342,13 +343,13 @@ export const server = async (
 
   app.listen(port, () => {
     console.log(
-      `📧 Server is now listening at ${styleText('cyan',`http://${host}:${port}`)}\n`,
+      `📧 Server is now listening at ${styleText('cyan', `http://${host}:${port}`)}\n`,
     );
 
-    console.log(`Emails path: \t${styleText('cyan',emailsPath)}`);
+    console.log(`Emails path: \t${styleText('cyan', emailsPath)}`);
 
     if (s3BucketName != null) {
-      console.log(`S3 Bucket: \t${styleText('cyan',s3BucketName)}`);
+      console.log(`S3 Bucket: \t${styleText('cyan', s3BucketName)}`);
     }
 
     if (mode === 'development') {
