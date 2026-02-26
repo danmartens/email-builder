@@ -1,10 +1,11 @@
-import uniqueId from 'lodash/uniqueId';
-import { pipe } from './utils/pipe';
-import { mergeStyle } from './utils/mergeStyle';
-import { mergeAttrs } from './utils/mergeAttrs';
-import { addClass } from './utils/addClass';
+import { uniqueId } from 'lodash-es';
+
 import { PostHTMLNode, PostHTMLPlugin } from './types';
+import { addClass } from './utils/addClass';
+import { mergeAttrs } from './utils/mergeAttrs';
+import { mergeStyle } from './utils/mergeStyle';
 import { parseResponsiveValue } from './utils/parseResponsiveValue';
+import { pipe } from './utils/pipe';
 
 export const imageElement =
   (

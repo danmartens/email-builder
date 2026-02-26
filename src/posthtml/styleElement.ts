@@ -1,6 +1,6 @@
-import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
-import compact from 'lodash/compact';
+import { compact } from 'lodash-es';
+import postcss from 'postcss';
 
 import { PostHTMLNode, PostHTMLPlugin } from './types';
 

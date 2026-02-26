@@ -1,25 +1,26 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import url from 'node:url';
+import { styleText } from 'node:util';
 
-import express, { Request } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
-import basicAuth from 'express-basic-auth';
+import Zip from 'adm-zip';
 import bodyParser from 'body-parser';
-import multer from 'multer';
-import WebSocket from 'ws';
-import debounce from 'lodash/debounce';
 import chokidar from 'chokidar';
+import express, { Request } from 'express';
+import basicAuth from 'express-basic-auth';
+import { ParamsDictionary } from 'express-serve-static-core';
+import glob from 'glob';
+import { debounce } from 'lodash-es';
+import multer from 'multer';
 import stripAnsi from 'strip-ansi';
 import { createServer as createViteServer, ViteDevServer } from 'vite';
-import { styleText } from 'node:util';
-import Zip from 'adm-zip';
-import glob from 'glob';
-import { renderEmail } from '../posthtml/renderEmail';
-import { parseSchema } from './utils/parseSchema';
+import WebSocket from 'ws';
+
 import { Configuration } from '../Configuration';
-import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
+import { renderEmail } from '../posthtml/renderEmail';
 import { renderTemplate } from '../renderTemplate';
+import { parseSchema } from './utils/parseSchema';
+import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
 
 export const server = async (
   mode: 'development' | 'production' = 'production',

@@ -1,10 +1,9 @@
-import uniqueId from 'lodash/uniqueId';
-import compact from 'lodash/compact';
+import { compact, uniqueId } from 'lodash-es';
 
-import { parseBoxValues } from './utils/parseBoxValues';
-import { buildAttrs } from './utils/buildAttrs';
-import { parseResponsiveValue } from './utils/parseResponsiveValue';
 import { PostHTMLNode, PostHTMLPlugin } from './types';
+import { buildAttrs } from './utils/buildAttrs';
+import { parseBoxValues } from './utils/parseBoxValues';
+import { parseResponsiveValue } from './utils/parseResponsiveValue';
 
 class Section {
   private readonly id: string;

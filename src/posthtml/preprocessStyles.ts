@@ -1,6 +1,7 @@
-import compact from 'lodash/compact';
+import { compact } from 'lodash-es';
 import postcss from 'postcss';
 import postcssCustomProperties from 'postcss-custom-properties';
+
 import { PostHTMLPlugin } from './types';
 
 export const preprocessStyles =

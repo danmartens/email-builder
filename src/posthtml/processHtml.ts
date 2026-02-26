@@ -1,4 +1,4 @@
-import compact from 'lodash/compact';
+import { compact } from 'lodash-es';
 import posthtml from 'posthtml';
 import inlineCSS from 'posthtml-inline-css';
 import spaceless from 'posthtml-spaceless';
