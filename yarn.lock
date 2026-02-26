@@ -1822,7 +1822,7 @@ __metadata:
     typescript: "npm:^5"
     typescript-eslint: "npm:^8.56.1"
     vite: "npm:^7.3.1"
-    ws: "npm:^7.2.3"
+    ws: "npm:^8.19.0"
     zod: "npm:^4.3.6"
   bin:
     email-builder: ./lib/index.js
@@ -11423,18 +11423,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.2.3":
-  version: 7.2.3
-  resolution: "ws@npm:7.2.3"
+"ws@npm:^8.19.0":
+  version: 8.19.0
+  resolution: "ws@npm:8.19.0"
   peerDependencies:
     bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
+    utf-8-validate: ">=5.0.2"
   peerDependenciesMeta:
     bufferutil:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10c0/08919ea214afc86d95179ad085143e034a6a82ee3c0e11e7e0e5a38a7d235efe75aa6a54e927416987a7d35b49ad2dcb85d12daad6e9de88b744e931145f7ec9
+  checksum: 10c0/4741d9b9bc3f9c791880882414f96e36b8b254e34d4b503279d6400d9a4b87a033834856dbdd94ee4b637944df17ea8afc4bce0ff4a1560d2166be8855da5b04
   languageName: node
   linkType: hard
 
