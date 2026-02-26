@@ -5,22 +5,22 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 export default tseslint.config(
-  { ignores: ['lib/**'] },
+  { ignores: ['dist/**'] },
   eslint.configs.recommended,
   tseslint.configs.recommended,
   {
     plugins: {
       react: reactPlugin,
-      'react-hooks': reactHooksPlugin
+      'react-hooks': reactHooksPlugin,
     },
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node
-      }
+        ...globals.node,
+      },
     },
     settings: {
-      react: { version: 'detect' }
+      react: { version: 'detect' },
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
@@ -32,8 +32,8 @@ export default tseslint.config(
       '@typescript-eslint/ban-ts-comment': [
         'error',
         {
-          'ts-expect-error': false
-        }
+          'ts-expect-error': false,
+        },
       ],
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -42,15 +42,15 @@ export default tseslint.config(
         'error',
         {
           argsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_'
-        }
-      ]
-    }
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   {
     files: ['**/__tests__/**/*.js', '**/*.test.js'],
     languageOptions: {
-      globals: globals.jest
-    }
-  }
+      globals: globals.jest,
+    },
+  },
 );

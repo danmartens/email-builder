@@ -14,7 +14,9 @@ import { debounce } from 'lodash-es';
 import multer from 'multer';
 import stripAnsi from 'strip-ansi';
 import { createServer as createViteServer, ViteDevServer } from 'vite';
-import WebSocket from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 import { Configuration } from '../Configuration';
 import { renderEmail } from '../posthtml/renderEmail';
@@ -25,16 +27,11 @@ import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
 export const server = async (
   mode: 'development' | 'production' = 'production',
 ) => {
-  const {
-    projectPath,
-    emailsPath,
-    port,
-    host,
-    s3BucketName,
-    basicAuthPassword,
-  } = new Configuration();
+  const configuration = new Configuration();
 
-  const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
+  const upload = multer({
+    dest: path.join(configuration.projectPath, 'tmp/uploads'),
+  });
 
   const app = express();
 
@@ -54,8 +51,8 @@ export const server = async (
     });
   }
 
-  if (basicAuthPassword != null) {
-    app.use(basicAuth({ users: { user: basicAuthPassword } }));
+  if (configuration.basicAuthPassword != null) {
+    app.use(basicAuth({ users: { user: configuration.basicAuthPassword } }));
   }
 
   app.use(bodyParser.json());
@@ -69,16 +66,18 @@ export const server = async (
 
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'server/public')));
   }
 
   app.get('/', (_req, res) => {
-    if (fs.existsSync(emailsPath)) {
+    if (fs.existsSync(configuration.emailsPath)) {
       renderTemplate('index', {
         emails: fs
-          .readdirSync(emailsPath)
+          .readdirSync(configuration.emailsPath)
           .filter((item) =>
-            fs.statSync(path.join(emailsPath, item)).isDirectory(),
+            fs
+              .statSync(path.join(configuration.emailsPath, item))
+              .isDirectory(),
           )
           .map((item) => {
             return {
@@ -97,7 +96,7 @@ export const server = async (
 
   app.get('/emails/:name', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     try {
       let schema = '[]';
@@ -112,7 +111,7 @@ export const server = async (
         schema: JSON.stringify(parseSchema(schema)),
         scriptUrl:
           mode === 'production'
-            ? `https://${host}:${port}/main.js`
+            ? `https://${configuration.host}:${configuration.port}/main.js`
             : '/src/client/index.tsx',
       }).then(async (html) => {
         if (vite != null) {
@@ -134,7 +133,7 @@ export const server = async (
 
   app.post('/emails/:name', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     const html = fs
       .readFileSync(path.join(rootPath, 'template.hbs'))
@@ -166,7 +165,7 @@ export const server = async (
 
   app.post('/emails/:name/publish', (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
 
     const html = fs
       .readFileSync(path.join(rootPath, 'template.hbs'))
@@ -198,7 +197,7 @@ export const server = async (
 
   app.post('/emails/:name/download', async (req, res) => {
     const name = req.params.name.replace(/[^a-z0-9\-_]/gi, '');
-    const rootPath = path.resolve(emailsPath, name);
+    const rootPath = path.resolve(configuration.emailsPath, name);
     const uploadImages = req.body.uploadImages === true;
 
     const html = fs
@@ -244,7 +243,10 @@ export const server = async (
 
   app.get('/assets/:name/:asset', (req, res) => {
     const file = fs.readFileSync(
-      path.join(emailsPath, `${req.params.name}/assets/${req.params.asset}`),
+      path.join(
+        configuration.emailsPath,
+        `${req.params.name}/assets/${req.params.asset}`,
+      ),
     );
 
     res.send(file);
@@ -296,15 +298,7 @@ export const server = async (
     },
   );
 
-  const watcher = chokidar.watch(
-    path.resolve(projectPath, '**/*.{hbs,json,png,jpg,jpeg,gif}'),
-    {
-      ignored: path.resolve(projectPath, 'node_modules'),
-      ignoreInitial: true,
-    },
-  );
-
-  const server = new WebSocket.Server({
+  const server = new WebSocketServer({
     port: 8081,
   });
 
@@ -326,8 +320,27 @@ export const server = async (
     }
   }, 50);
 
+  const watcher = chokidar.watch('.', {
+    ignored(path, stats) {
+      if (stats == null) {
+        return false;
+      }
+
+      if (stats.isDirectory()) {
+        return false;
+      }
+
+      return !/\.(hbs|json|png|jpe?g|gif)$/.test(path);
+    },
+    ignoreInitial: true,
+    cwd: configuration.emailsPath,
+  });
+
   watcher.on('change', (changedPath) => {
-    const relativeChangedPath = changedPath.replace(projectPath, '');
+    const relativeChangedPath = changedPath.replace(
+      configuration.projectPath,
+      '',
+    );
 
     console.log(`File changed: ${relativeChangedPath}`);
 
@@ -335,22 +348,29 @@ export const server = async (
   });
 
   watcher.on('add', (changedPath) => {
-    const relativeChangedPath = changedPath.replace(projectPath, '');
+    const relativeChangedPath = changedPath.replace(
+      configuration.projectPath,
+      '',
+    );
 
     console.log(`File added: ${relativeChangedPath}`);
 
     notify(relativeChangedPath);
   });
 
-  app.listen(port, () => {
+  app.listen(configuration.port, () => {
     console.log(
-      `📧 Server is now listening at ${styleText('cyan', `http://${host}:${port}`)}\n`,
+      `📧 Server is now listening at ${styleText('cyan', `http://${configuration.host}:${configuration.port}`)}\n`,
     );
 
-    console.log(`Emails path: \t${styleText('cyan', emailsPath)}`);
+    console.log(
+      `Emails path: \t${styleText('cyan', configuration.emailsPath)}`,
+    );
 
-    if (s3BucketName != null) {
-      console.log(`S3 Bucket: \t${styleText('cyan', s3BucketName)}`);
+    if (configuration.s3BucketName != null) {
+      console.log(
+        `S3 Bucket: \t${styleText('cyan', configuration.s3BucketName)}`,
+      );
     }
 
     if (mode === 'development') {

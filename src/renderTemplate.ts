@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 
 import Handlebars from 'handlebars';
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const templatesPath = path.resolve(__dirname, './templates');
 
 interface IndexData {

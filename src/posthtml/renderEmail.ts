@@ -17,6 +17,8 @@ interface Options {
   context?: object;
 }
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 Handlebars.registerHelper('preview-text', (text: string) => {
   let whitespace = '';
 
@@ -42,10 +44,7 @@ export async function renderEmail(
   },
 ): Promise<string> {
   const emailTemplate = Handlebars.compile(
-    await fs.readFile(
-      path.resolve(__dirname, '../templates/email.hbs'),
-      'utf8',
-    ),
+    await fs.readFile(path.resolve(__dirname, './templates/email.hbs'), 'utf8'),
   );
 
   const contentTemplate = Handlebars.compile(html);

@@ -1,11 +1,11 @@
 {
   "name": "@ftw/email-builder",
   "version": "1.0.0-beta.1",
-  "main": "./lib/index.js",
-  "bin": "./lib/index.js",
+  "main": "./dist/index.mjs",
+  "bin": "./dist/index.mjs",
   "license": "MIT",
   "files": [
-    "lib"
+    "dist"
   ],
   "engines": {
     "node": ">= 22"
@@ -37,7 +37,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@types/sharp": "^0.24.0",
-    "@types/ws": "^7.2.3",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.1.4",
     "babel-jest": "^30.2.0",
     "downloadjs": "^1.4.7",
@@ -54,6 +54,7 @@
     "react-textarea-autosize": "^8.0.0",
     "styled-components": "^6.3.11",
     "ts-node": "^10.9.2",
+    "tsdown": "^0.21.0-beta.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"

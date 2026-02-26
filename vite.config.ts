@@ -5,11 +5,11 @@ export default defineConfig({
   appType: 'custom',
   plugins: [
     react({
-      jsxRuntime: 'classic',
+      jsxRuntime: 'automatic',
     }),
   ],
   build: {
-    outDir: 'lib/server/public',
+    outDir: 'dist/server/public',
     emptyOutDir: true,
     rollupOptions: {
       input: 'src/client/index.tsx',

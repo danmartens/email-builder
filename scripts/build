@@ -2,14 +2,12 @@
 
 set -ex
 
-rm -rf lib
+rm -rf dist
 
-yarn run tsc
+yarn tsdown
 
-chmod +x lib/index.js
-
-rm -rf lib/client
+rm -rf dist/client
 
 yarn vite build
 
-cp -R src/templates lib/templates
+cp -R src/templates dist/templates
