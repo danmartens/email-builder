@@ -1,7 +1,8 @@
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import Handlebars from 'handlebars';
+import { compact } from 'lodash-es';
 import prettier from 'prettier';
 
 import { processHtml } from './processHtml';
@@ -29,22 +30,6 @@ Handlebars.registerHelper('preview-text', (text: string) => {
   );
 });
 
-function generateHeadHtml(template: Template, options: Options) {
-  if (template.rootPath == null) {
-    return;
-  }
-
-  const headTemplatePath = path.join(template.rootPath, 'head.hbs');
-
-  if (!fs.existsSync(headTemplatePath)) {
-    return;
-  }
-
-  return Handlebars.compile(fs.readFileSync(headTemplatePath).toString())(
-    options.context,
-  );
-}
-
 export async function renderEmail(
   template: Template,
   html: string,
@@ -57,9 +42,10 @@ export async function renderEmail(
   },
 ): Promise<string> {
   const emailTemplate = Handlebars.compile(
-    fs
-      .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
-      .toString(),
+    await fs.readFile(
+      path.resolve(__dirname, '../templates/email.hbs'),
+      'utf8',
+    ),
   );
 
   const contentTemplate = Handlebars.compile(html);
@@ -67,18 +53,29 @@ export async function renderEmail(
   if (template.rootPath != null) {
     const partialsDirectoryPath = path.join(template.rootPath, 'partials');
 
-    if (fs.existsSync(partialsDirectoryPath)) {
-      const handlebarsPartialPaths = fs
-        .readdirSync(partialsDirectoryPath)
-        .map((item) => path.join(partialsDirectoryPath, item))
-        .filter((item) => fs.statSync(item).isFile());
+    let partialFilenames: string[];
 
-      for (const partialPath of handlebarsPartialPaths) {
-        Handlebars.registerPartial(
-          path.basename(partialPath.replace(/\.hbs$/, '')),
-          Handlebars.compile(fs.readFileSync(partialPath).toString()),
-        );
-      }
+    try {
+      partialFilenames = await fs.readdir(partialsDirectoryPath);
+    } catch {
+      partialFilenames = [];
+    }
+
+    const handlebarsPartialPaths = compact(
+      await Promise.all(
+        partialFilenames.map(async (item) => {
+          const fullPath = path.join(partialsDirectoryPath, item);
+
+          return (await fs.stat(fullPath)).isFile() ? fullPath : null;
+        }),
+      ),
+    );
+
+    for (const partialPath of handlebarsPartialPaths) {
+      Handlebars.registerPartial(
+        path.basename(partialPath.replace(/\.hbs$/, '')),
+        Handlebars.compile(await fs.readFile(partialPath, 'utf8')),
+      );
     }
   }
 
@@ -88,7 +85,7 @@ export async function renderEmail(
     emailTemplate({
       isDevelopment: true,
       content: contentTemplate(options.context),
-      head: generateHeadHtml(template, options),
+      head: await generateHeadHtml(template, options),
     }),
   );
 
@@ -97,4 +94,21 @@ export async function renderEmail(
   }
 
   return prettier.format(result.html, { parser: 'html' });
+}
+
+async function generateHeadHtml(template: Template, options: Options) {
+  if (template.rootPath == null) {
+    return;
+  }
+
+  const headTemplatePath = path.join(template.rootPath, 'head.hbs');
+
+  let headContent: string;
+  try {
+    headContent = await fs.readFile(headTemplatePath, 'utf8');
+  } catch {
+    return;
+  }
+
+  return Handlebars.compile(headContent)(options.context);
 }

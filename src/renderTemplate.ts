@@ -1,5 +1,5 @@
 import path from 'node:path';
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 
 import Handlebars from 'handlebars';
 
@@ -34,17 +34,15 @@ export function renderTemplate(
   data: ErrorData,
 ): Promise<string>;
 
-export function renderTemplate(
+export async function renderTemplate(
   templateName: 'index' | 'show' | 'error',
   data: IndexData | ShowData | ErrorData,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    const template = Handlebars.compile(
-      fs
-        .readFileSync(path.join(templatesPath, `${templateName}.hbs`))
-        .toString(),
-    );
+  const templatePath = path.join(templatesPath, `${templateName}.hbs`);
 
-    resolve(template(data));
-  });
+  const template = Handlebars.compile(
+    await fs.readFile(templatePath).then((buffer) => buffer.toString()),
+  );
+
+  return template(data);
 }
