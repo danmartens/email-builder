@@ -5,7 +5,7 @@ require('dotenv').config();
 import path from 'node:path';
 import fs from 'node:fs';
 
-import program from 'commander';
+import { program } from 'commander';
 import { server } from './server';
 import chalk from 'chalk';
 import { Configuration } from './Configuration';
