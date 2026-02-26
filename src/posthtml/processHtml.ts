@@ -27,11 +27,11 @@ export function processHtml(
     stripCustomFonts: boolean;
     stripMediaQueries: boolean;
   },
-  html: string
+  html: string,
 ) {
   if (options.publish && options.stripMediaQueries) {
     throw new Error(
-      'The "stripMediaQueries" option should not be used when publishing'
+      'The "stripMediaQueries" option should not be used when publishing',
     );
   }
 
@@ -52,7 +52,7 @@ export function processHtml(
       spaceless(),
       options.publish ? undefined : development(options),
       options.publish ? minifyStyles : undefined,
-      options.uploadImages ? uploadImages(template) : undefined
-    ])
+      options.uploadImages ? uploadImages(template) : undefined,
+    ]),
   ).process(html);
 }

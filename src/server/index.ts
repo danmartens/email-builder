@@ -22,7 +22,7 @@ import { resizeAndUploadImages } from './utils/resizeAndUploadImages';
 import { renderTemplate } from '../renderTemplate';
 
 export const server = async (
-  mode: 'development' | 'production' = 'production'
+  mode: 'development' | 'production' = 'production',
 ) => {
   const {
     projectPath,
@@ -30,7 +30,7 @@ export const server = async (
     port,
     host,
     s3BucketName,
-    basicAuthPassword
+    basicAuthPassword,
   } = new Configuration();
 
   const upload = multer({ dest: path.join(projectPath, 'tmp/uploads') });
@@ -43,7 +43,7 @@ export const server = async (
     app.use((req, res, next) => {
       if (req.headers['x-forwarded-proto'] !== 'https') {
         const fullUrl = url.parse(
-          `${req.protocol}://${req.headers.host}${req.originalUrl}`
+          `${req.protocol}://${req.headers.host}${req.originalUrl}`,
         );
 
         res.redirect(`https://${fullUrl.hostname}${req.originalUrl}`);
@@ -63,7 +63,7 @@ export const server = async (
   if (mode === 'development') {
     vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'custom'
+      appType: 'custom',
     });
     app.use(vite.middlewares);
   } else {
@@ -76,13 +76,13 @@ export const server = async (
         emails: fs
           .readdirSync(emailsPath)
           .filter((item) =>
-            fs.statSync(path.join(emailsPath, item)).isDirectory()
+            fs.statSync(path.join(emailsPath, item)).isDirectory(),
           )
           .map((item) => {
             return {
-              name: item
+              name: item,
             };
-          })
+          }),
       }).then((html) => {
         res.send(html);
       });
@@ -111,7 +111,7 @@ export const server = async (
         scriptUrl:
           mode === 'production'
             ? `https://${host}:${port}/main.js`
-            : '/src/client/index.tsx'
+            : '/src/client/index.tsx',
       }).then(async (html) => {
         if (vite != null) {
           html = await vite.transformIndexHtml(req.url, html);
@@ -122,7 +122,7 @@ export const server = async (
       console.error(error);
 
       renderTemplate('error', {
-        message: stripAnsi(error.message)
+        message: stripAnsi(error.message),
       }).then((html) => {
         res.status(500);
         res.send(html);
@@ -144,7 +144,7 @@ export const server = async (
       stripPadding: req.body.stripPadding ?? false,
       stripCustomFonts: req.body.stripCustomFonts ?? false,
       stripMediaQueries: req.body.stripMediaQueries ?? false,
-      context: req.body.data
+      context: req.body.data,
     }).then(
       (data) => {
         res.send(data);
@@ -153,12 +153,12 @@ export const server = async (
         console.error(error);
 
         renderTemplate('error', {
-          message: stripAnsi(error.message)
+          message: stripAnsi(error.message),
         }).then((html) => {
           res.status(500);
           res.send(html);
         });
-      }
+      },
     );
   });
 
@@ -176,7 +176,7 @@ export const server = async (
       stripPadding: false,
       stripCustomFonts: false,
       stripMediaQueries: false,
-      context: req.body.data
+      context: req.body.data,
     }).then(
       (data) => {
         res.send(data);
@@ -185,12 +185,12 @@ export const server = async (
         console.error(error);
 
         renderTemplate('error', {
-          message: stripAnsi(error.message)
+          message: stripAnsi(error.message),
         }).then((html) => {
           res.status(500);
           res.send(html);
         });
-      }
+      },
     );
   });
 
@@ -209,7 +209,7 @@ export const server = async (
       stripPadding: false,
       stripCustomFonts: false,
       stripMediaQueries: false,
-      context: req.body.data
+      context: req.body.data,
     });
 
     glob(path.join(rootPath, 'assets/**/*'), (error, files) => {
@@ -233,7 +233,7 @@ export const server = async (
         res.setHeader('content-type', 'application/zip');
         res.setHeader(
           'content-disposition',
-          `attachment; filename="${name}.zip"`
+          `attachment; filename="${name}.zip"`,
         );
         res.end(archive.toBuffer());
       }
@@ -242,7 +242,7 @@ export const server = async (
 
   app.get('/assets/:name/:asset', (req, res) => {
     const file = fs.readFileSync(
-      path.join(emailsPath, `${req.params.name}/assets/${req.params.asset}`)
+      path.join(emailsPath, `${req.params.name}/assets/${req.params.asset}`),
     );
 
     res.send(file);
@@ -255,7 +255,7 @@ export const server = async (
       req: Request<ParamsDictionary, any, any, any, any> & {
         file: { path: string; originalname: string };
       },
-      res
+      res,
     ) => {
       const maxWidth =
         req.body.maxWidth != null ? parseInt(req.body.maxWidth) : undefined;
@@ -267,8 +267,8 @@ export const server = async (
         { width: maxWidth, height: maxHeight },
         {
           width: maxWidth != null ? maxWidth * 1.5 : undefined,
-          height: maxHeight != null ? maxHeight * 1.5 : undefined
-        }
+          height: maxHeight != null ? maxHeight * 1.5 : undefined,
+        },
       ])
         .then(([image, retinaImage]) => {
           res.setHeader('Content-Type', 'application/json');
@@ -276,8 +276,8 @@ export const server = async (
           res.send(
             JSON.stringify({
               src: image.objectUrl,
-              srcset: `${retinaImage.objectUrl} 2x, ${image.objectUrl}`
-            })
+              srcset: `${retinaImage.objectUrl} 2x, ${image.objectUrl}`,
+            }),
           );
         })
         .catch((error) => {
@@ -287,23 +287,23 @@ export const server = async (
 
           res.send(
             JSON.stringify({
-              error: error.message
-            })
+              error: error.message,
+            }),
           );
         });
-    }
+    },
   );
 
   const watcher = chokidar.watch(
     path.resolve(projectPath, '**/*.{hbs,json,png,jpg,jpeg,gif}'),
     {
       ignored: path.resolve(projectPath, 'node_modules'),
-      ignoreInitial: true
-    }
+      ignoreInitial: true,
+    },
   );
 
   const server = new WebSocket.Server({
-    port: 8081
+    port: 8081,
   });
 
   const connections = new Set<WebSocket>();
@@ -318,8 +318,8 @@ export const server = async (
 
       connection.send(
         JSON.stringify({
-          path: relativeChangedPath
-        })
+          path: relativeChangedPath,
+        }),
       );
     }
   }, 50);
@@ -342,7 +342,7 @@ export const server = async (
 
   app.listen(port, () => {
     console.log(
-      `📧 Server is now listening at ${chalk.cyan(`http://${host}:${port}`)}\n`
+      `📧 Server is now listening at ${chalk.cyan(`http://${host}:${port}`)}\n`,
     );
 
     console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);

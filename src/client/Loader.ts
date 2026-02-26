@@ -30,4 +30,3 @@ export const Loader = styled.div<{ size?: number; width?: number }>`
   border-top-color: #cccccc;
   border-radius: 0.5em;
 `;
-

@@ -8,7 +8,7 @@ const normalizeAndProcessHtml = async (html) => {
       .replace(/^\s*/, '')
       .replace(/\s*$/, '')
       .replace(/>\s+/g, '>')
-      .replace(/\s+</g, '<')
+      .replace(/\s+</g, '<'),
   );
 
   return [...tree];
@@ -46,15 +46,15 @@ test('inlines styles and moves @media rules to the head', async () => {
               content: [
                 `@media screen and (min-width: 600px) {
             body { background: green; }
-          }`
-              ]
-            }
-          ]
+          }`,
+              ],
+            },
+          ],
         },
-        { tag: 'body', attrs: { style: 'color: red; background: blue' } }
+        { tag: 'body', attrs: { style: 'color: red; background: blue' } },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });
 
@@ -84,10 +84,10 @@ test('converts srcset to multiple images with media queries', async () => {
                   width: 100% !important;
                   max-width: 400px !important;
                 }
-              }`
-              ]
-            }
-          ]
+              }`,
+              ],
+            },
+          ],
         },
         {
           tag: 'body',
@@ -98,8 +98,8 @@ test('converts srcset to multiple images with media queries', async () => {
                 src: '/assets/test/small.jpg',
                 width: '400',
                 class: 'non-retina-image',
-                style: 'width: 100%; max-width: 400px'
-              }
+                style: 'width: 100%; max-width: 400px',
+              },
             },
             '<!--[if !mso]>-->',
             {
@@ -109,15 +109,15 @@ test('converts srcset to multiple images with media queries', async () => {
                 src: '/assets/test/large.jpg',
                 width: '400',
                 class: 'retina-image',
-                style: 'display: none; width: 100%; max-width: 400px'
-              }
+                style: 'display: none; width: 100%; max-width: 400px',
+              },
             },
-            '<!--<![endif]-->'
-          ]
-        }
+            '<!--<![endif]-->',
+          ],
+        },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });
 
@@ -133,9 +133,9 @@ test('removes regular classes and adds "data-class" classes', async () => {
   expect(tree).toMatchObject([
     {
       content: [
-        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] }
+        { tag: 'body', content: [{ tag: 'div', attrs: { class: 'add-me' } }] },
       ],
-      tag: 'html'
-    }
+      tag: 'html',
+    },
   ]);
 });

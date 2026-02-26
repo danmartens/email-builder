@@ -17,7 +17,7 @@ interface Props extends HTMLButtonElementProps {
   acting?: boolean;
 }
 
-export const Button: React.FC<Props> =(props) => {
+export const Button: React.FC<Props> = (props) => {
   const { disabled = false, acting = false, children, ...buttonProps } = props;
 
   return (
@@ -56,4 +56,3 @@ const Container = styled.button<{ fontSize?: number }>`
     color: rgba(100, 100, 100, 0.8);
   }
 `;
-

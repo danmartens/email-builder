@@ -9,7 +9,7 @@ export const moveDataClassAttributes: PostHTMLPlugin = (tree) => {
 
     return mergeAttrs({
       class: node.attrs['data-class'],
-      'data-class': undefined
+      'data-class': undefined,
     })(node);
   });
 };

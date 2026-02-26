@@ -8,17 +8,17 @@ import { Dimensions } from '../types';
 
 export const resizeAndUploadImages = (
   imageFile: { originalname: string; path: string },
-  imageDimensions: Dimensions[]
+  imageDimensions: Dimensions[],
 ) =>
   Promise.all(
     imageDimensions.map((dimensions) =>
-      resizeAndUploadImage(imageFile, dimensions)
-    )
+      resizeAndUploadImage(imageFile, dimensions),
+    ),
   );
 
 const resizeAndUploadImage = async (
   imageFile: { originalname: string; path: string },
-  dimensions: Dimensions
+  dimensions: Dimensions,
 ) => {
   const { s3BucketName, s3Subdomain } = new Configuration();
 
@@ -38,7 +38,7 @@ const resizeAndUploadImage = async (
   const objectKey = [
     name.replace(/[^a-z0-9]+/gi, '-'),
     dimensionsString(dimensions),
-    `${fingerprint}${ext}`
+    `${fingerprint}${ext}`,
   ]
     .filter((part) => part != null)
     .join('-');
@@ -50,9 +50,9 @@ const resizeAndUploadImage = async (
       return {
         objectKey,
         objectUrl: `https://${s3Subdomain}.amazonaws.com/${s3BucketName}/${objectKey}`,
-        result
+        result,
       };
-    }
+    },
   );
 };
 
@@ -71,4 +71,3 @@ const dimensionsString = (dimensions: Dimensions): string | undefined => {
     return `${height}h`;
   }
 };
-

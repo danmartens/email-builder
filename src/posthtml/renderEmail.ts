@@ -25,7 +25,7 @@ Handlebars.registerHelper('preview-text', (text: string) => {
 
   return new Handlebars.SafeString(
     `<div style="display: none; max-height: 0px; overflow: hidden;">${text}</div>\n` +
-      `<div style="display: none; max-height: 0px; overflow: hidden;">${whitespace}</div>`
+      `<div style="display: none; max-height: 0px; overflow: hidden;">${whitespace}</div>`,
   );
 });
 
@@ -41,7 +41,7 @@ function generateHeadHtml(template: Template, options: Options) {
   }
 
   return Handlebars.compile(fs.readFileSync(headTemplatePath).toString())(
-    options.context
+    options.context,
   );
 }
 
@@ -53,13 +53,13 @@ export async function renderEmail(
     uploadImages: false,
     stripPadding: false,
     stripCustomFonts: false,
-    stripMediaQueries: false
-  }
+    stripMediaQueries: false,
+  },
 ): Promise<string> {
   const emailTemplate = Handlebars.compile(
     fs
       .readFileSync(path.resolve(__dirname, '../templates/email.hbs'))
-      .toString()
+      .toString(),
   );
 
   const contentTemplate = Handlebars.compile(html);
@@ -76,7 +76,7 @@ export async function renderEmail(
       for (const partialPath of handlebarsPartialPaths) {
         Handlebars.registerPartial(
           path.basename(partialPath.replace(/\.hbs$/, '')),
-          Handlebars.compile(fs.readFileSync(partialPath).toString())
+          Handlebars.compile(fs.readFileSync(partialPath).toString()),
         );
       }
     }
@@ -88,8 +88,8 @@ export async function renderEmail(
     emailTemplate({
       isDevelopment: true,
       content: contentTemplate(options.context),
-      head: generateHeadHtml(template, options)
-    })
+      head: generateHeadHtml(template, options),
+    }),
   );
 
   if (options.publish) {

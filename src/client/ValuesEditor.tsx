@@ -45,7 +45,7 @@ export const ValuesEditor: React.FC<Props> = (props) => {
                             value={getIn(
                               values,
                               [valueSchema.name, index, nestedValueSchema.name],
-                              ''
+                              '',
                             )}
                             onChange={(value) => {
                               onChange(
@@ -54,10 +54,10 @@ export const ValuesEditor: React.FC<Props> = (props) => {
                                   [
                                     valueSchema.name,
                                     index,
-                                    nestedValueSchema.name
+                                    nestedValueSchema.name,
                                   ],
-                                  value
-                                )
+                                  value,
+                                ),
                               );
                             }}
                           />
@@ -72,7 +72,7 @@ export const ValuesEditor: React.FC<Props> = (props) => {
                         × Remove
                       </Button>
                     </ListItem>
-                  )
+                  ),
                 )}
 
                 <Button
@@ -81,9 +81,9 @@ export const ValuesEditor: React.FC<Props> = (props) => {
                       updateIn(values, [valueSchema.name], (value) => {
                         return [
                           ...value,
-                          mergeListItemDefaultValues(valueSchema.schema)
+                          mergeListItemDefaultValues(valueSchema.schema),
                         ];
-                      })
+                      }),
                     );
                   }}
                 >

@@ -39,4 +39,3 @@ export class Configuration {
     return process.env.BASIC_AUTH_PASSWORD;
   }
 }
-

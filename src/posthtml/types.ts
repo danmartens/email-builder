@@ -18,12 +18,12 @@ interface PostHTMLTree {
       attrs?: { [name: string]: string | RegExp };
     },
     predicate: (
-      node: PostHTMLNode
-    ) => PostHTMLNode | Array<string | PostHTMLNode> | undefined
+      node: PostHTMLNode,
+    ) => PostHTMLNode | Array<string | PostHTMLNode> | undefined,
   ): void;
 }
 
 export type PostHTMLPlugin = (
   tree: PostHTMLTree,
-  callback: (arg1: null, tree: PostHTMLTree) => void
+  callback: (arg1: null, tree: PostHTMLTree) => void,
 ) => void;

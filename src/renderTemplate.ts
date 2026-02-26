@@ -21,28 +21,30 @@ interface ErrorData {
 
 export function renderTemplate(
   templateName: 'index',
-  data: IndexData
+  data: IndexData,
 ): Promise<string>;
 
-export function renderTemplate(templateName: 'show', data: ShowData): Promise<string>;
+export function renderTemplate(
+  templateName: 'show',
+  data: ShowData,
+): Promise<string>;
 
 export function renderTemplate(
   templateName: 'error',
-  data: ErrorData
+  data: ErrorData,
 ): Promise<string>;
 
 export function renderTemplate(
   templateName: 'index' | 'show' | 'error',
-  data: IndexData | ShowData | ErrorData
+  data: IndexData | ShowData | ErrorData,
 ): Promise<string> {
   return new Promise((resolve) => {
     const template = Handlebars.compile(
       fs
         .readFileSync(path.join(templatesPath, `${templateName}.hbs`))
-        .toString()
+        .toString(),
     );
 
     resolve(template(data));
   });
 }
-

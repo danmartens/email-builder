@@ -3,7 +3,7 @@ import { mergeListItemDefaultValues } from './mergeListItemDefaultValues';
 
 export const deserializeValues = (
   schema: Schema,
-  serializedData: string | null
+  serializedData: string | null,
 ): { [key: string]: string | undefined } => {
   const schemaKeys = schema.map(({ name }) => name);
 
@@ -34,7 +34,7 @@ export const deserializeValues = (
 
     if (value?.type === 'list') {
       data[key] = (data[key] || []).map((itemData: { [key: string]: any }) =>
-        mergeListItemDefaultValues(value.schema, itemData)
+        mergeListItemDefaultValues(value.schema, itemData),
       );
     } else if (!dataKeys.includes(key)) {
       // @ts-expect-error

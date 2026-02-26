@@ -12,7 +12,7 @@ export const stripInlinableStyles: postcss.Plugin = {
         rule.remove();
       }
     });
-  }
+  },
 };
 
 const stripMediaQueries: postcss.Plugin = {
@@ -23,62 +23,61 @@ const stripMediaQueries: postcss.Plugin = {
         rule.remove();
       }
     });
-  }
+  },
 };
 
-export const styleElement = (options: {
-  publish: boolean;
-  stripMediaQueries: boolean;
-}): PostHTMLPlugin => (tree, callback) => {
-  const elements: PostHTMLNode[] = [];
+export const styleElement =
+  (options: { publish: boolean; stripMediaQueries: boolean }): PostHTMLPlugin =>
+  (tree, callback) => {
+    const elements: PostHTMLNode[] = [];
 
-  let tasks = 0;
+    let tasks = 0;
 
-  const done = () => {
-    tasks--;
+    const done = () => {
+      tasks--;
+
+      if (tasks === 0) callback(null, tree);
+    };
+
+    tree.match({ tag: 'style' }, (node) => {
+      if (node.attrs != null && 'data-ignore' in node.attrs) {
+        return node;
+      }
+
+      elements.push(node);
+    });
+
+    tree.match({ tag: 'head' }, (node) => {
+      tasks++;
+
+      const styleNode: PostHTMLNode = {
+        tag: 'style',
+        content: [],
+      };
+
+      const styles: string = elements
+        .flatMap(({ content }) => content)
+        .join('\n');
+
+      postcss(
+        compact([
+          stripInlinableStyles,
+          options.stripMediaQueries ? stripMediaQueries : undefined,
+          options.publish ? autoprefixer() : undefined,
+        ]),
+      )
+        .process(styles, { from: undefined })
+        .then((result) => {
+          styleNode.content!.push(result.css);
+
+          done();
+        });
+
+      return {
+        ...node,
+        content: [...(node.content ?? []), styleNode],
+      };
+    });
 
     if (tasks === 0) callback(null, tree);
   };
-
-  tree.match({ tag: 'style' }, (node) => {
-    if (node.attrs != null && 'data-ignore' in node.attrs) {
-      return node;
-    }
-
-    elements.push(node);
-  });
-
-  tree.match({ tag: 'head' }, (node) => {
-    tasks++;
-
-    const styleNode: PostHTMLNode = {
-      tag: 'style',
-      content: []
-    };
-
-    const styles: string = elements
-      .flatMap(({ content }) => content)
-      .join('\n');
-
-    postcss(
-      compact([
-        stripInlinableStyles,
-        options.stripMediaQueries ? stripMediaQueries : undefined,
-        options.publish ? autoprefixer() : undefined
-      ])
-    )
-      .process(styles, { from: undefined })
-      .then((result) => {
-        styleNode.content!.push(result.css);
-
-        done();
-      });
-
-    return {
-      ...node,
-      content: [...(node.content ?? []), styleNode]
-    };
-  });
-
-  if (tasks === 0) callback(null, tree);
-};

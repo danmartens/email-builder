@@ -17,7 +17,9 @@
     "start": "nodemon --exec \"ts-node src/index.ts develop\" --ext js,ts \"./src/**/*\"",
     "types:check": "tsc --noEmit",
     "types:watch": "tsc --noEmit --watch",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "format": "yarn prettier --write \"**/*.{ts,tsx,js,jsx,json,css,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,yml}\""
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -81,7 +83,7 @@
     "posthtml-inline-css": "^1.2.3",
     "posthtml-parser": "^0.4.2",
     "posthtml-spaceless": "^0.0.3",
-    "prettier": "^1.19.1",
+    "prettier": "^3.8.1",
     "sharp": "^0.28.0",
     "strip-ansi": "^6.0.0",
     "ws": "^7.2.3",

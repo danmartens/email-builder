@@ -5,7 +5,7 @@ const s3 = new AWS.S3();
 export function putObject(
   bucketName: string,
   objectKey: string,
-  fileBuffer: Buffer
+  fileBuffer: Buffer,
 ): Promise<AWS.S3.PutObjectOutput> {
   return new Promise((resolve, reject) => {
     s3.putObject(
@@ -13,7 +13,7 @@ export function putObject(
         Bucket: bucketName,
         Key: objectKey,
         Body: fileBuffer,
-        ACL: 'public-read'
+        ACL: 'public-read',
       },
       (error, result) => {
         if (error) {
@@ -21,7 +21,7 @@ export function putObject(
         } else {
           resolve(result);
         }
-      }
+      },
     );
   });
 }

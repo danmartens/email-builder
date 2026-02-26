@@ -26,12 +26,12 @@ export const ImportFile: React.FC<Props> = (props) => {
 
               const nextValues = {
                 ...values,
-                ...data
+                ...data,
               };
 
               onImport(nextValues);
             },
-            false
+            false,
           );
 
           reader.readAsText(file);

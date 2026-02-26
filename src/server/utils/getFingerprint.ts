@@ -11,7 +11,7 @@ export function getFingerprint(inputPath: string) {
           crypto
             .createHash('md5')
             .update(data.toString(), 'utf8')
-            .digest('hex')
+            .digest('hex'),
         );
       }
     });

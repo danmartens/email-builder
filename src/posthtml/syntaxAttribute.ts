@@ -20,16 +20,16 @@ export const syntaxAttribute: PostHTMLPlugin = (tree) => {
         ...node,
         attrs: buildAttrs({
           ...node.attrs,
-          syntax: undefined
+          syntax: undefined,
         }),
         content: parse(
           marked(
             content
               .split('\n')
               .map((line) => line.replace(/^\s+/, ''))
-              .join('\n')
-          )
-        ) as PostHTMLNode[]
+              .join('\n'),
+          ),
+        ) as PostHTMLNode[],
       };
     }
 

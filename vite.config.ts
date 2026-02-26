@@ -5,8 +5,8 @@ export default defineConfig({
   appType: 'custom',
   plugins: [
     react({
-      jsxRuntime: 'classic'
-    })
+      jsxRuntime: 'classic',
+    }),
   ],
   build: {
     outDir: 'lib/server/public',
@@ -16,8 +16,8 @@ export default defineConfig({
       output: {
         entryFileNames: 'main.js',
         chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
-      }
-    }
-  }
+        assetFileNames: '[name].[ext]',
+      },
+    },
+  },
 });

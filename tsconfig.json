@@ -53,7 +53,9 @@
     // "types": [],                           /* Type declaration files to be included in compilation. */
     "baseUrl": ".",
     "paths": {
-      "postcss-custom-properties": ["node_modules/postcss-custom-properties/dist/index.d.ts"]
+      "postcss-custom-properties": [
+        "node_modules/postcss-custom-properties/dist/index.d.ts"
+      ]
     } /* Path aliases for module resolution */,
     "allowSyntheticDefaultImports": true /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
@@ -74,8 +76,5 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "skipLibCheck": true
   },
-  "exclude": [
-    "vite.config.ts",
-    "node_modules"
-  ]
+  "exclude": ["vite.config.ts", "node_modules"]
 }

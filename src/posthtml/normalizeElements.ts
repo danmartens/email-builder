@@ -11,9 +11,9 @@ export const normalizeElements: PostHTMLPlugin = (tree) => {
       defaultAttrs({
         border: '0',
         cellspacing: '0',
-        cellpadding: '0'
+        cellpadding: '0',
       }),
-      mergeStyle({ 'border-collapse': 'collapse' })
+      mergeStyle({ 'border-collapse': 'collapse' }),
     )(node);
   });
 

@@ -5,7 +5,7 @@ export interface BoxValues {
   right: number;
 }
 
-export const parseBoxValues =(values: string): BoxValues => {
+export const parseBoxValues = (values: string): BoxValues => {
   if (typeof values === 'string') {
     const parsedValues = values
       .split(/\s+/)
@@ -18,7 +18,7 @@ export const parseBoxValues =(values: string): BoxValues => {
           top: parsedValues[0],
           left: parsedValues[1],
           bottom: parsedValues[2],
-          right: parsedValues[3]
+          right: parsedValues[3],
         };
 
       case 2:
@@ -26,7 +26,7 @@ export const parseBoxValues =(values: string): BoxValues => {
           top: parsedValues[0],
           left: parsedValues[1],
           bottom: parsedValues[0],
-          right: parsedValues[1]
+          right: parsedValues[1],
         };
 
       case 1:
@@ -34,7 +34,7 @@ export const parseBoxValues =(values: string): BoxValues => {
           top: parsedValues[0],
           left: parsedValues[0],
           bottom: parsedValues[0],
-          right: parsedValues[0]
+          right: parsedValues[0],
         };
 
       default:
@@ -44,4 +44,3 @@ export const parseBoxValues =(values: string): BoxValues => {
 
   return { top: 0, left: 0, bottom: 0, right: 0 };
 };
-

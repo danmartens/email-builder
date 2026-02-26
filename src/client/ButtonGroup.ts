@@ -18,6 +18,5 @@ export const ButtonGroup = styled.div<{
 ButtonGroup.defaultProps = {
   top: 0,
   bottom: 'auto',
-  right: 0
+  right: 0,
 };
-

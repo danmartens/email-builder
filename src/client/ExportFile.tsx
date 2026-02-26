@@ -24,7 +24,7 @@ interface Props {
   values: object;
 }
 
-export const ExportFile: React.FC<Props> =(props) => {
+export const ExportFile: React.FC<Props> = (props) => {
   const { values } = props;
 
   return (
@@ -44,4 +44,3 @@ export const ExportFile: React.FC<Props> =(props) => {
     </Button>
   );
 };
-

@@ -31,7 +31,7 @@ export class ImageUploader extends React.PureComponent<Props, State> {
         () => {
           this.setState({ imageDataUrl: reader.result as string });
         },
-        false
+        false,
       );
 
       reader.readAsDataURL(file);
@@ -50,7 +50,7 @@ export class ImageUploader extends React.PureComponent<Props, State> {
 
       fetch('/images', {
         method: 'post',
-        body: data
+        body: data,
       })
         .then((response) => response.json())
         .then((responseBody) => {
@@ -81,7 +81,7 @@ export class ImageUploader extends React.PureComponent<Props, State> {
               fontSize: 12,
               fontFamily: 'sans-serif',
               color: '#666666',
-              lineHeight: '1.5em'
+              lineHeight: '1.5em',
             }}
           >
             The uploaded image will be resized to fit within{' '}
@@ -102,7 +102,7 @@ export class ImageUploader extends React.PureComponent<Props, State> {
             justifyContent: 'center',
             marginTop: '1em',
             position: 'relative',
-            padding: '1em'
+            padding: '1em',
           }}
         >
           <img

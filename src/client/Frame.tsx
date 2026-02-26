@@ -11,7 +11,7 @@ interface Props {
   reloading: boolean;
 }
 
-export const Frame: React.FC<Props> =(props) => {
+export const Frame: React.FC<Props> = (props) => {
   const { editorVisible, screenSize, source, reloading } = props;
   const frameRef = useRef<HTMLIFrameElement>(null);
 
@@ -108,4 +108,3 @@ const Overlay = styled.div<{ visible: boolean }>`
   pointer-events: none;
   transition: opacity 150ms;
 `;
-

@@ -4,14 +4,14 @@ const StringFieldSchema = z.object({
   type: z.literal('string'),
   name: z.string(),
   label: z.string(),
-  defaultValue: z.string().optional()
+  defaultValue: z.string().optional(),
 });
 
 const TextFieldSchema = z.object({
   type: z.literal('text'),
   name: z.string(),
   label: z.string(),
-  defaultValue: z.string().optional()
+  defaultValue: z.string().optional(),
 });
 
 const ImageFieldSchema = z.object({
@@ -21,28 +21,28 @@ const ImageFieldSchema = z.object({
   defaultValue: z
     .object({
       src: z.string(),
-      srcset: z.string().optional()
+      srcset: z.string().optional(),
     })
     .optional(),
   dimensions: z
     .object({
       maxWidth: z.number().optional(),
-      maxHeight: z.number().optional()
+      maxHeight: z.number().optional(),
     })
-    .optional()
+    .optional(),
 });
 
 const ListFieldSchemaCodec = z.union([
   StringFieldSchema,
   TextFieldSchema,
-  ImageFieldSchema
+  ImageFieldSchema,
 ]);
 
 const ListFieldSchema = z.object({
   type: z.literal('list'),
   name: z.string(),
   label: z.string(),
-  schema: z.array(ListFieldSchemaCodec)
+  schema: z.array(ListFieldSchemaCodec),
 });
 
 const SchemaCodec = z.array(
@@ -50,8 +50,8 @@ const SchemaCodec = z.array(
     StringFieldSchema,
     TextFieldSchema,
     ImageFieldSchema,
-    ListFieldSchema
-  ])
+    ListFieldSchema,
+  ]),
 );
 
 export type Schema = z.infer<typeof SchemaCodec>;

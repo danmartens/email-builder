@@ -40,13 +40,13 @@ const Email: React.FC = () => {
   });
 
   const [values, setValues] = useState(
-    deserializeValues(schema, localStorage.getItem(EMAIL.name))
+    deserializeValues(schema, localStorage.getItem(EMAIL.name)),
   );
 
   const [source, setSource] = useState<string>();
 
   const message = useWebSocket('ws://localhost:8081', {
-    enabled: location.hostname === 'localhost'
+    enabled: location.hostname === 'localhost',
   });
 
   const screenSize = SCREEN_SIZES[screenWidthIndex];
@@ -58,7 +58,7 @@ const Email: React.FC = () => {
     message,
     screenSize.stripPadding,
     screenSize.stripCustomFonts,
-    screenSize.stripMediaQueries
+    screenSize.stripMediaQueries,
   ]);
 
   useDebouncedLayoutEffect(
@@ -73,9 +73,9 @@ const Email: React.FC = () => {
           data: values.valueOf(),
           stripPadding: screenSize.stripPadding,
           stripCustomFonts: screenSize.stripCustomFonts,
-          stripMediaQueries: screenSize.stripMediaQueries
+          stripMediaQueries: screenSize.stripMediaQueries,
         }),
-        signal
+        signal,
       })
         .then((response) => response.text())
         .then((source) => {
@@ -90,7 +90,7 @@ const Email: React.FC = () => {
       };
     },
     500,
-    [values, message, screenSize.stripMediaQueries]
+    [values, message, screenSize.stripMediaQueries],
   );
 
   useEffect(() => {
@@ -122,8 +122,8 @@ const Email: React.FC = () => {
       method: 'post',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        data: values.valueOf()
-      })
+        data: values.valueOf(),
+      }),
     })
       .then((response) => response.blob())
       .then((source) => {

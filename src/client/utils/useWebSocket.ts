@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const useWebSocket = (
   url: string,
-  options: { enabled: boolean } = { enabled: true }
+  options: { enabled: boolean } = { enabled: true },
 ) => {
   const [message, setMessage] = useState<{ data: string }>();
 
@@ -22,4 +22,3 @@ export const useWebSocket = (
 
   return message;
 };
-

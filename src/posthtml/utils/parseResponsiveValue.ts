@@ -1,8 +1,8 @@
-export const parseResponsiveValue =<
-  TParsed extends (value: string) => any = (value: string) => any
+export const parseResponsiveValue = <
+  TParsed extends (value: string) => any = (value: string) => any,
 >(
   rawValue: string | undefined,
-  parseValue: TParsed
+  parseValue: TParsed,
 ) => {
   const result: Record<string, ReturnType<TParsed>> = {};
 
@@ -70,4 +70,3 @@ class ResponsiveValue<T> {
     }
   }
 }
-
