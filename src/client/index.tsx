@@ -24,7 +24,7 @@ const { EMAIL } = window;
 const baseUrl = `${location.protocol}//${location.host}`;
 
 const Email: React.FC = () => {
-  const [schema, setSchema] = useState(EMAIL.schema);
+  const [schema] = useState(EMAIL.schema);
   const [screenWidthIndex, setScreenWidthIndex] = useState(0);
   const [reloading, setReloading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -34,7 +34,7 @@ const Email: React.FC = () => {
 
     try {
       return JSON.parse(sessionStorage.getItem('editorVisible') || 'false');
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   });
@@ -96,7 +96,7 @@ const Email: React.FC = () => {
   useEffect(() => {
     try {
       sessionStorage.setItem('editorVisible', JSON.stringify(editorVisible));
-    } catch (error) {
+    } catch (_error) {
       // Ignore error setting item
     }
 

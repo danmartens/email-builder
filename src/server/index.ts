@@ -29,7 +29,6 @@ export const server = async (
     emailsPath,
     port,
     host,
-    assetsPort,
     s3BucketName,
     basicAuthPassword
   } = new Configuration();

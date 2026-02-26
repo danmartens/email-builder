@@ -36,7 +36,7 @@ export function processHtml(
   }
 
   return posthtml(
-    // @ts-ignore
+    // @ts-expect-error
     compact([
       syntaxAttribute,
       preprocessStyles(options),

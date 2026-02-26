@@ -21,7 +21,7 @@ interface Props<TValues extends {} = {}> {
 export const editorWidth = 350;
 export const editorActionsHeight = 48;
 
-export const ValuesEditor: React.FC<Props> =(props) => {
+export const ValuesEditor: React.FC<Props> = (props) => {
   const { values, visible, schema, onChange, onToggle } = props;
 
   return (
@@ -240,4 +240,3 @@ const Button = styled.button`
     background-color: rgb(47, 224, 200, 0.7);
   }
 `;
-

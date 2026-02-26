@@ -37,11 +37,10 @@ export const deserializeValues = (
         mergeListItemDefaultValues(value.schema, itemData)
       );
     } else if (!dataKeys.includes(key)) {
-      // @ts-ignore
+      // @ts-expect-error
       data[key] = value.defaultValue;
     }
   }
 
   return data;
 };
-

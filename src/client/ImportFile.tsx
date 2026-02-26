@@ -6,7 +6,7 @@ interface Props<TValues extends {} = {}> {
   onImport(values: TValues): void;
 }
 
-export const ImportFile: React.FC<Props> =(props) => {
+export const ImportFile: React.FC<Props> = (props) => {
   const { values, onImport } = props;
 
   return (
@@ -70,4 +70,3 @@ const Input = styled.input`
   width: 100%;
   cursor: pointer;
 `;
-
