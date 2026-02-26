@@ -1865,7 +1865,7 @@ __metadata:
     "@types/lodash": "npm:^4.14.149"
     "@types/marked": "npm:^0.7.4"
     "@types/multer": "npm:^2.0.0"
-    "@types/node": "npm:^22"
+    "@types/node": "npm:^24"
     "@types/react": "npm:^18.0.0"
     "@types/react-dom": "npm:^18.0.0"
     "@types/sharp": "npm:^0.24.0"
