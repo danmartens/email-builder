@@ -9,7 +9,7 @@ import fs from 'node:fs';
 
 import { program } from 'commander';
 import { server } from './server';
-import chalk from 'chalk';
+import { styleText } from 'node:util';
 import { Configuration } from './Configuration';
 import { logStatus } from './logStatus';
 
@@ -82,15 +82,11 @@ program
     }
 
     console.log(
-      `If the server is running, you can view the template here: ${chalk.cyan(
-        `http://localhost:${port}/emails/${name}`
-      )}\n`
+      `If the server is running, you can view the template here: ${styleText('cyan', `http://localhost:${port}/emails/${name}`)}\n`
     );
 
     console.log(
-      `If the server isn't running, you can start it with: ${chalk.cyan(
-        `yarn run email-builder develop`
-      )}`
+      `If the server isn't running, you can start it with: ${styleText('cyan', 'yarn run email-builder develop')}`
     );
   });
 

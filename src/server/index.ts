@@ -12,7 +12,7 @@ import debounce from 'lodash/debounce';
 import chokidar from 'chokidar';
 import stripAnsi from 'strip-ansi';
 import { createServer as createViteServer, ViteDevServer } from 'vite';
-import chalk from 'chalk';
+import { styleText } from 'node:util';
 import Zip from 'adm-zip';
 import glob from 'glob';
 import { renderEmail } from '../posthtml/renderEmail';
@@ -342,13 +342,13 @@ export const server = async (
 
   app.listen(port, () => {
     console.log(
-      `📧 Server is now listening at ${chalk.cyan(`http://${host}:${port}`)}\n`,
+      `📧 Server is now listening at ${styleText('cyan',`http://${host}:${port}`)}\n`,
     );
 
-    console.log(`Emails path: \t${chalk.cyan(emailsPath)}`);
+    console.log(`Emails path: \t${styleText('cyan',emailsPath)}`);
 
     if (s3BucketName != null) {
-      console.log(`S3 Bucket: \t${chalk.cyan(s3BucketName)}`);
+      console.log(`S3 Bucket: \t${styleText('cyan',s3BucketName)}`);
     }
 
     if (mode === 'development') {

@@ -1,9 +1,9 @@
-import chalk from 'chalk';
+import { styleText } from 'node:util';
 
 const STATUS_TEXT = {
-  SUCCESS: chalk.black.bgGreen(' DONE '),
-  WARNING: chalk.black.bgYellow(' WARN '),
-  ERROR: chalk.black.bgRed(' ERROR '),
+  SUCCESS: styleText(['black', 'bgGreen'], ' DONE '),
+  WARNING: styleText(['black', 'bgYellow'], ' WARN '),
+  ERROR: styleText(['black', 'bgRed'], ' ERROR '),
 };
 
 type Status = 'SUCCESS' | 'WARNING' | 'ERROR';
